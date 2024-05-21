@@ -2,6 +2,6 @@ namespace CRM.Domain.Enums;
 
 public enum PassportType
 {
-    Internal,
-    International 
+    Internal = 0,
+    International = 1
 }

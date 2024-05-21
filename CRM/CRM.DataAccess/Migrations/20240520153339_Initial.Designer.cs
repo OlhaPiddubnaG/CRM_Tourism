@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace CRM.DataAccess.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240513151348_Initial")]
+    [DbContext(typeof(AppDbContext))]
+    [Migration("20240520153339_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -621,6 +621,10 @@ namespace CRM.DataAccess.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("text");
 

@@ -2,6 +2,6 @@ namespace CRM.Domain.Enums;
 
 public enum Gender
 {
-    Woman,
-    Man
+    Woman = 0,
+    Man = 1
 }

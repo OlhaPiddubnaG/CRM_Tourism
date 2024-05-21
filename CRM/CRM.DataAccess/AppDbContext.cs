@@ -4,10 +4,9 @@ using Task = CRM.Domain.Entities.Task;
 
 namespace CRM.DataAccess;
 
-public class ApplicationDbContext : DbContext
+public class AppDbContext : DbContext
 {
-    
-    public ApplicationDbContext(DbContextOptions options) : base(options)
+    public AppDbContext(DbContextOptions options) : base(options)
     {
     }
 
@@ -44,6 +43,6 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 }

@@ -2,8 +2,8 @@ namespace CRM.Domain.Enums;
 
 public enum TaskStatus
 {
-    ToDo,
-    InProgress,
-    Done,
-    Canceled
+    ToDo = 0,
+    InProgress = 1,
+    Done = 2,
+    Canceled = 3
 }

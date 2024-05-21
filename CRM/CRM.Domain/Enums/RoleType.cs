@@ -2,6 +2,6 @@ namespace CRM.Domain.Enums;
 
 public enum RoleType
 {
-    Admin,
-    Manager
+    Admin = 0,
+    Manager = 1
 }
