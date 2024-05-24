@@ -6,4 +6,15 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="13.0.1" />
+      <PackageReference Include="MediatR" Version="11.1.0" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CRM.Core\CRM.Core.csproj" />
+      <ProjectReference Include="..\CRM.Domain\CRM.Domain.csproj" />
+    </ItemGroup>
+
 </Project>

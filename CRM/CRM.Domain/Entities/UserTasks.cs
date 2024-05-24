@@ -2,7 +2,7 @@ using CRM.Domain.Entities.Base;
 
 namespace CRM.Domain.Entities;
 
-public class Task : Auditable
+public class UserTasks : Auditable
 {
     public Guid UserId { get; set; } 
     public User? User { get; set; } 

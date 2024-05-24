@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using CRM.Domain.Entities;
 using CRM.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +18,7 @@ public class MigrationsService : BackgroundService
     private readonly InitialAdminSettings _initialAdminSettings;
 
     public MigrationsService(IServiceProvider serviceProvider,
-        ILogger<MigrationsService> logger, 
+        ILogger<MigrationsService> logger,
         IOptions<InitialAdminSettings> initialAdminSettings)
     {
         _serviceProvider = serviceProvider;
@@ -24,7 +26,7 @@ public class MigrationsService : BackgroundService
         _initialAdminSettings = initialAdminSettings.Value;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken) 
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         using var scope = _serviceProvider.CreateScope();
         await using var context = scope.ServiceProvider.GetService<AppDbContext>()!;
@@ -40,11 +42,11 @@ public class MigrationsService : BackgroundService
 
         await SeedCompanyAndAdmin(context, stoppingToken);
     }
-    
+
     private async Task SeedCompanyAndAdmin(AppDbContext context, CancellationToken cancellationToken)
     {
-        var company = await SeedCompany(context, cancellationToken);
-        await SeedAdmin(context, company.Id, cancellationToken);
+        Guid companyId = (await SeedCompany(context, cancellationToken)).Id;
+        await SeedAdmin(context, companyId, cancellationToken);
     }
 
     private async Task<Company> SeedCompany(AppDbContext context, CancellationToken cancellationToken)
@@ -70,41 +72,49 @@ public class MigrationsService : BackgroundService
 
     private async Task SeedAdmin(AppDbContext context, Guid companyId, CancellationToken cancellationToken)
     {
-        var adminExists = await context.Users.AnyAsync(x => x.Email == _initialAdminSettings.Email, cancellationToken);
+        var adminExists = await context.Users.AnyAsync(x => x.Email.ToUpper() == _initialAdminSettings.Email.ToUpper(),
+            cancellationToken);
 
         if (adminExists)
         {
             return;
         }
 
+        var hashedPassword = ComputeSha256Hash(_initialAdminSettings.Password);
+
         var admin = new User
         {
             Email = _initialAdminSettings.Email,
             Name = _initialAdminSettings.Name,
             Surname = _initialAdminSettings.Surname,
-            Password = _initialAdminSettings.Password,
-            CompanyId = companyId 
+            Password = hashedPassword,
+            CompanyId = companyId
         };
 
         context.Users.Add(admin);
 
-        var role = await context.Roles.FirstOrDefaultAsync(x => x.RoleType == RoleType.Admin, cancellationToken);
-        if (role == null)
+        var userRole = new UserRoles
         {
-            role = new Role
-            {
-                RoleType = RoleType.Admin,
-                UserId = admin.Id,
-                User = admin
-            };
-            context.Roles.Add(role);
-        }
-        else
-        {
-            role.UserId = admin.Id;
-            role.User = admin;
-        }
+            RoleType = RoleType.Admin,
+            UserId = admin.Id
+        };
+        context.UserRoles.Add(userRole);
 
         await context.SaveChangesAsync(cancellationToken);
+    }
+
+    private static string ComputeSha256Hash(string rawData)
+    {
+        using (SHA256 sha256Hash = SHA256.Create())
+        {
+            byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                builder.Append(bytes[i].ToString("x2"));
+            }
+            return builder.ToString();
+        }
     }
 }

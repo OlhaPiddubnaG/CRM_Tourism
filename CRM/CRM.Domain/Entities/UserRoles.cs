@@ -3,7 +3,7 @@ using CRM.Domain.Enums;
 
 namespace CRM.Domain.Entities;
 
-public class Role : BaseEntity
+public class UserRoles : BaseEntity
 {
     public Guid UserId { get; set; } 
     public User? User { get; set; } 

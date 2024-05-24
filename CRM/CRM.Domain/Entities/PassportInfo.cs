@@ -18,10 +18,4 @@ public class PassportInfo : Auditable
     public PassportType PassportType { get; set; } 
     public string NameLatinScript { get; set; } 
     public string  SurnameLatinScript { get; set; } 
-        
-    
-        
-   
-        
-    
 }

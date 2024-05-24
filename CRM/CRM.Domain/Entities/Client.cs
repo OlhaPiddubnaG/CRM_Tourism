@@ -5,10 +5,10 @@ namespace CRM.Domain.Entities;
 
 public class Client : Auditable
 {
-    public Guid CountryId { get; set; } 
-    public Country? Country { get; set; } 
     public Guid CompanyId { get; set; } 
     public Company? Company { get; set; } 
+    public Guid CountryId { get; set; } 
+    public Country? Country { get; set; } 
     public string Name { get; set; } = null!;
     public string? Surname { get; set; } 
     public string? Patronymic { get; set; } 

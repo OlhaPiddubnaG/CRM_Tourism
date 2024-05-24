@@ -4,12 +4,12 @@ namespace CRM.Domain.Entities;
 
 public class Order : Auditable
 {
+    public Guid CompanyId { get; set; } 
+    public Company? Company { get; set; }
     public Guid UserId { get; set; } 
     public User? User { get; set; } 
     public Guid ClientId { get; set; } 
     public Client? Client { get; set; } 
-    public Guid CompanyId { get; set; } 
-    public Company? Company { get; set; }
     public Touroperator? Touroperator { get; set; } 
     public DateTime DateFrom { get; set; } 
     public DateTime DateTo { get; set; } 

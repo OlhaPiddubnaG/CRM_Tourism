@@ -1,6 +1,5 @@
 using CRM.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Task = CRM.Domain.Entities.Task;
 
 namespace CRM.DataAccess;
 
@@ -9,14 +8,13 @@ public class AppDbContext : DbContext
     public AppDbContext(DbContextOptions options) : base(options)
     {
     }
-
+    public  DbSet<Company> Companies { get; set; }
+    
     public  DbSet<City> Cities { get; set; }
     
     public  DbSet<Client> Clients { get; set; }
     
     public  DbSet<ClientPrivateData> ClientPrivateDatas { get; set; }
-    
-    public  DbSet<Company> Companies { get; set; }
     
     public  DbSet<Country> Countries { get; set; }
     
@@ -32,9 +30,9 @@ public class AppDbContext : DbContext
     
     public  DbSet<Payment> Payments { get; set; }
     
-    public  DbSet<Role> Roles { get; set; }
+    public  DbSet<UserRoles> UserRoles { get; set; }
     
-    public  DbSet<Task> Tasks { get; set; }
+    public  DbSet<UserTasks> UserTasks { get; set; }
     
     public  DbSet<Touroperator> Touroperators { get; set; }
     
