@@ -25,4 +25,13 @@ public class AuthenticationController : ControllerBase
 
         return Ok(response);
     }
+
+    [HttpPost("forgotPassword")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordCommand command, CancellationToken cancellationToken)
+    {
+        await _sender.Send(command, cancellationToken);
+
+        return NoContent();
+    }
 }

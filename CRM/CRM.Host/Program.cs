@@ -38,7 +38,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddScoped<IRequestHandler<LoginUserCommand, LoginUserResponse>, LoginHandler>();
-
+builder.Services.AddScoped<IRequestHandler<ForgotPasswordCommand, Unit>, ForgotPasswordHandler>();
+    
 builder.Services.AddScoped<IRequestHandler<CreateCompanyCommand, CreatedResponse>, CreateCompanyHandler>();
 builder.Services.AddScoped<IRequestHandler<UpdateCompanyCommand, Unit>, UpdateCompanyHandler>();
 builder.Services.AddScoped<IRequestHandler<DeleteCommand<Company>, Unit>, DeleteCompanyHandler>();
