@@ -1,4 +1,3 @@
-using AutoMapper;
 using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands.User;
@@ -11,12 +10,10 @@ namespace CRM.Handlers.UserHandlers;
 public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Unit>
 {
     private readonly AppDbContext _context;
-    private readonly IMapper _mapper;
 
-    public UpdateUserHandler(AppDbContext context, IMapper mapper)
+    public UpdateUserHandler(AppDbContext context)
     {
         _context = context;
-        _mapper = mapper;
     }
 
     public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
@@ -28,9 +25,9 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Unit>
         {
             throw new NotFoundException(typeof(User), request.Id);
         }
-
-        _mapper.Map(request, existingUser);
-
+        existingUser.Name = request.Name;
+        existingUser.Surname = request.Surname;
+        
         try
         {
             await _context.SaveChangesAsync(cancellationToken);

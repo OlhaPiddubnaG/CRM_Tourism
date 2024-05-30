@@ -29,6 +29,7 @@ namespace CRM.Handlers.AuthenticationHandlers
         public async Task<LoginUserResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
         {
             var user = await _context.Users
+                .Include(u => u.UserRoles)
                 .FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
 
             if (user == null || !VerifyPassword(user.Password, request.Password))
@@ -56,7 +57,7 @@ namespace CRM.Handlers.AuthenticationHandlers
             await _context.SaveChangesAsync();
             var accessToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
-            return new LoginUserResponse(user.Name, user.Email, accessToken, refreshToken);
+            return new LoginUserResponse(user.Id, accessToken, refreshToken);
         }
 
         private static string GenerateRefreshToken()
@@ -83,8 +84,9 @@ namespace CRM.Handlers.AuthenticationHandlers
             {
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Sid, user.Id.ToString()),
+                new Claim(ClaimTypes.GroupSid, user.CompanyId.ToString()),
                 new Claim(ClaimTypes.Expiration,
-                    DateTime.UtcNow.AddMinutes(Convert.ToDouble(_jwtConfiguration.Value.Expires)).ToString("O"))
+                    DateTime.UtcNow.AddMinutes(Convert.ToDouble(_jwtConfiguration.Value.Expires)).ToString("O")),
             };
 
             foreach (var userRole in user.UserRoles)
@@ -108,6 +110,7 @@ namespace CRM.Handlers.AuthenticationHandlers
         private bool VerifyPassword(string storedPassword, string enteredPassword)
         {
             var hashedEnteredPassword = ComputeSha256Hash(enteredPassword);
+
             return storedPassword.Equals(hashedEnteredPassword);
         }
 

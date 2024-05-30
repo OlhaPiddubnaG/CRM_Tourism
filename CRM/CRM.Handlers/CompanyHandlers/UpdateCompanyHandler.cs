@@ -1,4 +1,3 @@
-using AutoMapper;
 using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands.Company;
@@ -11,12 +10,10 @@ namespace CRM.Handlers.CompanyHandlers;
 public class UpdateCompanyHandler : IRequestHandler<UpdateCompanyCommand, Unit>
 {
     private readonly AppDbContext _context;
-    private readonly IMapper _mapper;
 
-    public UpdateCompanyHandler(AppDbContext context, IMapper mapper)
+    public UpdateCompanyHandler(AppDbContext context)
     {
         _context = context;
-        _mapper = mapper;
     }
 
     public async Task<Unit> Handle(UpdateCompanyCommand request, CancellationToken cancellationToken)
@@ -29,7 +26,7 @@ public class UpdateCompanyHandler : IRequestHandler<UpdateCompanyCommand, Unit>
             throw new NotFoundException(typeof(Company), request.Id);
         }
 
-        _mapper.Map(request, existingCompany);
+        existingCompany.Name = request.Name;
 
         try
         {

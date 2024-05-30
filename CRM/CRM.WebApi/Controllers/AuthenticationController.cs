@@ -1,8 +1,10 @@
 using CRM.Domain.Commands.Authentication;
 using CRM.Domain.Responses.Authentication;
+using CRM.Handlers.Services;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace CRM.WebApi.Controllers;
 
@@ -11,10 +13,14 @@ namespace CRM.WebApi.Controllers;
 public class AuthenticationController : ControllerBase
 {
     private readonly ISender _sender;
+    private readonly IEmail _email;
+    private readonly IConfiguration _configuration;
 
-    public AuthenticationController(ISender sender)
+    public AuthenticationController(ISender sender, IEmail email, IConfiguration configuration)
     {
         _sender = sender;
+        _email = email;
+        _configuration = configuration;
     }
 
     [HttpPost("login")]
@@ -31,7 +37,16 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> ForgotPassword(ForgotPasswordCommand command, CancellationToken cancellationToken)
     {
         await _sender.Send(command, cancellationToken);
+        
+        return NoContent();
+    }
 
+    [HttpPost("resetPassword")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> ResetPassword(ResetPasswordCommand command, CancellationToken cancellationToken)
+    {
+        await _sender.Send(command, cancellationToken);
+        
         return NoContent();
     }
 }

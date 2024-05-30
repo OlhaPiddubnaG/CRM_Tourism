@@ -25,6 +25,7 @@ public class CreateCompanyHandler : IRequestHandler<CreateCompanyCommand, Create
         var existingCompany =
             await _context.Companies.FirstOrDefaultAsync(c => c.Name == request.Name, cancellationToken);
 
+
         if (existingCompany != null)
         {
             throw new ExistException();

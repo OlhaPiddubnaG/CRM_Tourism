@@ -3,6 +3,7 @@ using CRM.DataAccess;
 using CRM.Domain.Commands;
 using CRM.Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.UserHandlers;
 
@@ -17,13 +18,13 @@ public class DeleteUserHandler : IRequestHandler<DeleteCommand<User>, Unit>
 
     public async Task<Unit> Handle(DeleteCommand<User> request, CancellationToken cancellationToken)
     {
-        var user = await _context.Users.FindAsync(new object[] { request.Id }, cancellationToken);
+        var user = await _context.Users.FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
         if (user == null)
         {
             throw new NotFoundException(typeof(User), request.Id);
         }
-
-        _context.Users.Remove(user);
+        
+        user.IsDeleted = true;
         await _context.SaveChangesAsync(cancellationToken);
         
         return Unit.Value;

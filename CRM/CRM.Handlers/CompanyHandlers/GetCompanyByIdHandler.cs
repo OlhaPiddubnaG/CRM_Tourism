@@ -2,8 +2,10 @@ using AutoMapper;
 using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Entities;
+using CRM.Domain.Enums;
 using CRM.Domain.Requests;
 using CRM.Domain.Responses.Company;
+using CRM.Handlers.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,18 +15,32 @@ public class GetCompanyByIdHandler : IRequestHandler<GetByIdRequest<CompanyRespo
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
+    private readonly ICurrentUser _currentUser;
 
-    public GetCompanyByIdHandler(AppDbContext context, IMapper mapper)
+    public GetCompanyByIdHandler(AppDbContext context, IMapper mapper, ICurrentUser currentUser)
     {
         _context = context;
         _mapper = mapper;
+        _currentUser = currentUser;
     }
 
     public async Task<CompanyResponse> Handle(GetByIdRequest<CompanyResponse> request,
         CancellationToken cancellationToken)
     {
-        var company = await _context.Companies
-            .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
+        Company company;
+
+        var role = _currentUser.GetRoleForCurrentUser();
+        if (role == RoleType.Admin)
+        {
+            company = await _context.Companies
+                .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
+        }
+        else
+        {
+            var companyId = _currentUser.GetCompanyIdForCurrentUser();
+            company = await _context.Companies.FirstOrDefaultAsync(c => c.Id == companyId && c.Id == request.Id,
+                cancellationToken);
+        }
 
         if (company == null)
         {
@@ -32,7 +48,7 @@ public class GetCompanyByIdHandler : IRequestHandler<GetByIdRequest<CompanyRespo
         }
 
         var companyResponse = _mapper.Map<CompanyResponse>(company);
-        
+
         return companyResponse;
     }
 }

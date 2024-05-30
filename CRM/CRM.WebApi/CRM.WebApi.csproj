@@ -7,15 +7,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoMapper" Version="11.0.1" />
       <PackageReference Include="Carter" Version="8.1.0" />
       <PackageReference Include="MediatR" Version="11.1.0" />
       <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+      <PackageReference Include="PasswordGenerator" Version="2.1.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\CRM.Core\CRM.Core.csproj" />
       <ProjectReference Include="..\CRM.Domain\CRM.Domain.csproj" />
+      <ProjectReference Include="..\CRM.Handlers\CRM.Handlers.csproj" />
     </ItemGroup>
 
 </Project>

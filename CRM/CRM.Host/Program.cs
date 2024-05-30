@@ -3,19 +3,11 @@ using Carter;
 using CRM.Core.Extensions;
 using CRM.DataAccess;
 using CRM.DataAccess.InitialAdminSettings;
-using CRM.Domain.Commands;
-using CRM.Domain.Commands.Authentication;
-using CRM.Domain.Commands.Company;
-using CRM.Domain.Commands.User;
-using CRM.Domain.Entities;
-using CRM.Domain.Requests;
-using CRM.Domain.Responses;
-using CRM.Domain.Responses.Authentication;
-using CRM.Domain.Responses.Company;
-using CRM.Domain.Responses.User;
-using CRM.Handlers.AuthenticationHandlers;
-using CRM.Handlers.CompanyHandlers;
-using CRM.Handlers.UserHandlers;
+using CRM.Domain.Enums;
+using CRM.Handlers;
+using CRM.Handlers.Services;
+using CRM.Handlers.Services.CurrentUser;
+using CRM.Handlers.Services.Email;
 using CRM.WebApi.Mapping;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +20,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         builder.Configuration.GetConnectionString("AppDbContext"),
         optionsBuilder => optionsBuilder.MigrationsAssembly("CRM.DataAccess")));
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.ConfigureJwt(builder.Configuration);
 builder.Services.AddJwtConfiguration(builder.Configuration);
@@ -36,22 +29,13 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "CRM API", Version = "v1" });
 });
-
-builder.Services.AddScoped<IRequestHandler<LoginUserCommand, LoginUserResponse>, LoginHandler>();
-builder.Services.AddScoped<IRequestHandler<ForgotPasswordCommand, Unit>, ForgotPasswordHandler>();
-    
-builder.Services.AddScoped<IRequestHandler<CreateCompanyCommand, CreatedResponse>, CreateCompanyHandler>();
-builder.Services.AddScoped<IRequestHandler<UpdateCompanyCommand, Unit>, UpdateCompanyHandler>();
-builder.Services.AddScoped<IRequestHandler<DeleteCommand<Company>, Unit>, DeleteCompanyHandler>();
-builder.Services.AddScoped<IRequestHandler<GetByIdRequest<CompanyResponse>, CompanyResponse>, GetCompanyByIdHandler>();
-builder.Services.AddScoped<IRequestHandler<GetAllRequest<CompanyResponse>, List<CompanyResponse>>, GetAllCompaniesHandler>();
-
-builder.Services.AddScoped<IRequestHandler<CreateUserCompanyAdminCommand, CreatedResponse>, CreateUserCompanyAdminHandler>();
-builder.Services.AddScoped<IRequestHandler<CreateUserManagerCommand, CreatedResponse>, CreateUserManagerHandler>();
-builder.Services.AddScoped<IRequestHandler<UpdateUserCommand, Unit>, UpdateUserHandler>();
-builder.Services.AddScoped<IRequestHandler<DeleteCommand<User>, Unit>, DeleteUserHandler>();
-builder.Services.AddScoped<IRequestHandler<GetByIdRequest<UserResponse>, UserResponse>, GetUserByIdHandler>();
-builder.Services.AddScoped<IRequestHandler<GetAllRequest<UserResponse>, List<UserResponse>>, GetAllUsersHandler>();
+builder.Services.AddRequestHandlers();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy => policy.RequireRole(RoleType.Admin.ToString()));
+    options.AddPolicy("CompanyAdmin", policy => policy.RequireRole(RoleType.CompanyAdmin.ToString()));
+    options.AddPolicy("User", policy => policy.RequireRole(RoleType.User.ToString()));
+});
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
@@ -65,8 +49,9 @@ builder.Services.AddCors(options =>
 
 builder.Services.Configure<InitialAdminSettings>(builder.Configuration.GetSection(InitialAdminSettings.Section));
 builder.Services.AddHostedService<MigrationsService>();
-builder.Services.AddAutoMapper(typeof(CompanyProfile).Assembly);
-builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
+builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+builder.Services.AddScoped<IEmail, Email>();
+builder.Services.AddAutoMapper(AutoMapperProfiles.GetAssemblies());
 builder.Services.AddCarter();
 
 var app = builder.Build();

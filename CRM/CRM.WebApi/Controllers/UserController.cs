@@ -5,6 +5,7 @@ using CRM.Domain.Requests;
 using CRM.Domain.Responses;
 using CRM.Domain.Responses.User;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,27 +42,20 @@ public class UserController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost("boss")]
+    [HttpPost]
+    [Authorize(Policy = "CompanyAdmin")]
+    [Authorize(Policy = "Admin")]
     [ProducesResponseType(typeof(CreatedResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> CreateCompanyAdmin([FromBody] CreateUserManagerCommand request, CancellationToken token)
+    public async Task<IActionResult> CreateUser([FromBody] CreateUserCommand request, CancellationToken token)
     {
         var response = await _sender.Send(request, token);
-        
-        return Ok(response);
-    }
 
-    [HttpPost("manager")]
-    [ProducesResponseType(typeof(CreatedResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> CreateManager([FromBody] CreateUserManagerCommand request, CancellationToken token)
-    {
-        var response = await _sender.Send(request, token);
-        
         return Ok(response);
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "CompanyAdmin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken token)
     {

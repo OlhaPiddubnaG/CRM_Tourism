@@ -5,25 +5,24 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands.User;
 using CRM.Domain.Entities;
-using CRM.Domain.Enums;
 using CRM.Domain.Responses;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.UserHandlers;
 
-public class CreateUserManagerHandler : IRequestHandler<CreateUserManagerCommand, CreatedResponse>
+public class CreateUserHandler : IRequestHandler<CreateUserCommand, CreatedResponse>
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
 
-    public CreateUserManagerHandler(AppDbContext context, IMapper mapper)
+    public CreateUserHandler(AppDbContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
     }
 
-    public async Task<CreatedResponse> Handle(CreateUserManagerCommand request, CancellationToken cancellationToken)
+    public async Task<CreatedResponse> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         var existingUser = await _context.Users.AnyAsync(u => u.Email == request.Email);
         if (existingUser)
@@ -32,14 +31,14 @@ public class CreateUserManagerHandler : IRequestHandler<CreateUserManagerCommand
         }
 
         var hashedPassword = ComputeSha256Hash(request.Password);
-        var userManager = _mapper.Map<User>(request);
-        userManager.Password = hashedPassword;
-        _context.Users.Add(userManager);
+        var user = _mapper.Map<User>(request);
+        user.Password = hashedPassword;
+        _context.Users.Add(user);
 
         var userRoles = new UserRoles()
         {
-            UserId = userManager.Id,
-            RoleType = RoleType.Manager,
+            UserId = user.Id,
+            RoleType = request.RoleType,
         };
 
         _mapper.Map<UserRoles>(userRoles);
@@ -53,7 +52,7 @@ public class CreateUserManagerHandler : IRequestHandler<CreateUserManagerCommand
             throw new SaveDatabaseException(typeof(Company), ex);
         }
 
-        return new CreatedResponse(userManager.Id);
+        return new CreatedResponse(user.Id);
     }
 
     private static string ComputeSha256Hash(string rawData)

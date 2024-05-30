@@ -2,9 +2,9 @@ using CRM.Domain.Commands;
 using CRM.Domain.Commands.Company;
 using CRM.Domain.Entities;
 using CRM.Domain.Requests;
-using CRM.Domain.Responses;
 using CRM.Domain.Responses.Company;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,17 +41,8 @@ public class CompanyController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost]
-    [ProducesResponseType(typeof(CreatedResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Create(CreateCompanyCommand request, CancellationToken token)
-    {
-        var response = await _sender.Send(request, token);
-
-        return Ok(response);
-    }
-
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken token)
     {
@@ -61,6 +52,7 @@ public class CompanyController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Update(UpdateCompanyCommand request, CancellationToken token)
     {

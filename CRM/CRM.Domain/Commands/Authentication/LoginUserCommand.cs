@@ -3,7 +3,8 @@ using MediatR;
 
 namespace CRM.Domain.Commands.Authentication;
 
-public record LoginUserCommand(string Email, string Password) : IRequest<LoginUserResponse>;
-
-
-
+public record LoginUserCommand : IRequest<LoginUserResponse>
+{
+    public string Email { get; set; }
+    public string Password { get; set; }
+}

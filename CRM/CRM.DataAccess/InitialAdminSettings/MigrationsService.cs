@@ -58,7 +58,7 @@ public class MigrationsService : BackgroundService
         {
             return existingCompany;
         }
-
+       
         var company = new Company
         {
             Name = _initialAdminSettings.CompanyName,
@@ -92,6 +92,7 @@ public class MigrationsService : BackgroundService
         };
 
         context.Users.Add(admin);
+        await context.SaveChangesAsync(cancellationToken);
 
         var userRole = new UserRoles
         {
@@ -99,8 +100,9 @@ public class MigrationsService : BackgroundService
             UserId = admin.Id
         };
         context.UserRoles.Add(userRole);
-
         await context.SaveChangesAsync(cancellationToken);
+
+        admin.UserRoles.Add(userRole);
     }
 
     private static string ComputeSha256Hash(string rawData)
@@ -114,6 +116,7 @@ public class MigrationsService : BackgroundService
             {
                 builder.Append(bytes[i].ToString("x2"));
             }
+
             return builder.ToString();
         }
     }
