@@ -22,9 +22,9 @@ public class CreateCompanyHandler : IRequestHandler<CreateCompanyCommand, Create
 
     public async Task<CreatedResponse> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
     {
+        request.Name = request.Name.ToUpper();
         var existingCompany =
             await _context.Companies.FirstOrDefaultAsync(c => c.Name == request.Name, cancellationToken);
-
 
         if (existingCompany != null)
         {
@@ -32,6 +32,7 @@ public class CreateCompanyHandler : IRequestHandler<CreateCompanyCommand, Create
         }
 
         var company = _mapper.Map<Company>(request);
+        company.CreatedAt = DateTime.UtcNow;
         _context.Companies.Add(company);
 
         try

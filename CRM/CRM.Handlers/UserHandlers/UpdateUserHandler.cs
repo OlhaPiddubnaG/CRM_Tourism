@@ -27,6 +27,7 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Unit>
         }
         existingUser.Name = request.Name;
         existingUser.Surname = request.Surname;
+        existingUser.UpdatedAt = DateTime.UtcNow;
         
         try
         {

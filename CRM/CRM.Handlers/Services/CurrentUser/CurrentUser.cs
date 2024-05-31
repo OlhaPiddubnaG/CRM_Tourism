@@ -13,7 +13,7 @@ public class CurrentUser : ICurrentUser
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public RoleType GetRoleForCurrentUser()
+    public RoleType GetRoles()
     {
         var claimsPrincipal = _httpContextAccessor.HttpContext?.User;
         if (claimsPrincipal == null || !claimsPrincipal.Identity.IsAuthenticated)
@@ -30,7 +30,7 @@ public class CurrentUser : ICurrentUser
         return role;
     }
 
-    public Guid GetCompanyIdForCurrentUser()
+    public Guid GetCompanyId()
     {
         var claimsPrincipal = _httpContextAccessor.HttpContext?.User;
         if (claimsPrincipal == null || !claimsPrincipal.Identity.IsAuthenticated)
@@ -45,5 +45,22 @@ public class CurrentUser : ICurrentUser
         }
 
         return companyId;
+    }
+
+    public Guid GetUserId()
+    {
+        var claimsPrincipal = _httpContextAccessor.HttpContext?.User;
+        if (claimsPrincipal == null || !claimsPrincipal.Identity.IsAuthenticated)
+        {
+            throw new UnauthorizedAccessException("User is not authenticated.");
+        }
+
+        var userIdClaim = claimsPrincipal.FindFirst(ClaimTypes.Sid);
+        if (userIdClaim == null)
+        {
+            throw new UnauthorizedAccessException("User ID not found in claims.");
+        }
+
+        return Guid.Parse(userIdClaim.Value);
     }
 }

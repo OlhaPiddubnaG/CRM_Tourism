@@ -30,7 +30,7 @@ namespace CRM.Handlers.AuthenticationHandlers
         {
             var user = await _context.Users
                 .Include(u => u.UserRoles)
-                .FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
+                .FirstOrDefaultAsync(u => u.Email.ToUpper() == request.Email.ToUpper(), cancellationToken);
 
             if (user == null || !VerifyPassword(user.Password, request.Password))
             {

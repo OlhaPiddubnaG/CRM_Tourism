@@ -5,6 +5,7 @@ using CRM.Domain.Enums;
 using CRM.Domain.Requests;
 using CRM.Domain.Responses.User;
 using CRM.Handlers.Services;
+using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,14 +29,14 @@ public class GetAllUsersHandler : IRequestHandler<GetAllRequest<UserResponse>, L
     {
         List<User> users;
         
-        var role = _currentUser.GetRoleForCurrentUser();
-        if (role == RoleType.Admin)
+        var roles = _currentUser.GetRoles();
+        if (roles == RoleType.Admin)
         {
             users = await _context.Users.ToListAsync(cancellationToken);
         }
         else
         {
-            var companyId = _currentUser.GetCompanyIdForCurrentUser();
+            var companyId = _currentUser.GetCompanyId();
             users = await _context.Users.Where(u => u.CompanyId == companyId).ToListAsync(cancellationToken);
         }
 

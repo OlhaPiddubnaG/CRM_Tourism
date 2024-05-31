@@ -2,6 +2,8 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands;
 using CRM.Domain.Entities;
+using CRM.Handlers.Services;
+using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +12,12 @@ namespace CRM.Handlers.UserHandlers;
 public class DeleteUserHandler : IRequestHandler<DeleteCommand<User>, Unit>
 {
     private readonly AppDbContext _context;
+    private readonly ICurrentUser _currentUser;
 
-    public DeleteUserHandler(AppDbContext context)
+    public DeleteUserHandler(AppDbContext context, ICurrentUser currentUser)
     {
         _context = context;
+        _currentUser = currentUser;
     }
 
     public async Task<Unit> Handle(DeleteCommand<User> request, CancellationToken cancellationToken)
@@ -25,6 +29,8 @@ public class DeleteUserHandler : IRequestHandler<DeleteCommand<User>, Unit>
         }
         
         user.IsDeleted = true;
+        user.DeletedAt = DateTime.UtcNow;
+        user.DeletedUserId = _currentUser.GetUserId();
         await _context.SaveChangesAsync(cancellationToken);
         
         return Unit.Value;

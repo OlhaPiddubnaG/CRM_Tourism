@@ -27,6 +27,7 @@ public class UpdateCompanyHandler : IRequestHandler<UpdateCompanyCommand, Unit>
         }
 
         existingCompany.Name = request.Name;
+        existingCompany.UpdatedAt = DateTime.UtcNow;
 
         try
         {

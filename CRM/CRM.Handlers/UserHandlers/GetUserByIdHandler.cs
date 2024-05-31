@@ -6,6 +6,7 @@ using CRM.Domain.Enums;
 using CRM.Domain.Requests;
 using CRM.Domain.Responses.User;
 using CRM.Handlers.Services;
+using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,15 +29,15 @@ public class GetUserByIdHandler : IRequestHandler<GetByIdRequest<UserResponse>, 
         CancellationToken cancellationToken)
     {
         User user;
-        var role = _currentUser.GetRoleForCurrentUser();
-        if (role == RoleType.Admin)
+        var roles = _currentUser.GetRoles();
+        if (roles == RoleType.Admin)
         {
             user = await _context.Users
                 .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
         }
         else
         {
-            var companyId = _currentUser.GetCompanyIdForCurrentUser();
+            var companyId = _currentUser.GetCompanyId();
             user = await _context.Users
                 .FirstOrDefaultAsync(c => c.CompanyId == companyId && c.Id == request.Id, cancellationToken);
         }
@@ -47,6 +48,7 @@ public class GetUserByIdHandler : IRequestHandler<GetByIdRequest<UserResponse>, 
         }
 
         var userResponse = _mapper.Map<UserResponse>(user);
+        
         return userResponse;
     }
 }

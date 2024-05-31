@@ -1,9 +1,10 @@
 using CRM.Domain.Enums;
 
-namespace CRM.Handlers.Services;
+namespace CRM.Handlers.Services.CurrentUser;
 
 public interface ICurrentUser
 {
-    RoleType GetRoleForCurrentUser();
-    Guid GetCompanyIdForCurrentUser();
+    RoleType GetRoles();
+    Guid GetCompanyId();
+    Guid GetUserId();
 }

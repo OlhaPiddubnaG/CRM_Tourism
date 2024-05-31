@@ -5,6 +5,7 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands.User;
 using CRM.Domain.Entities;
+using CRM.Domain.Enums;
 using CRM.Domain.Responses;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,8 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, CreatedRespo
 
     public async Task<CreatedResponse> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
+        request.Email = request.Email.ToUpper();
+
         var existingUser = await _context.Users.AnyAsync(u => u.Email == request.Email);
         if (existingUser)
         {
@@ -33,16 +36,26 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, CreatedRespo
         var hashedPassword = ComputeSha256Hash(request.Password);
         var user = _mapper.Map<User>(request);
         user.Password = hashedPassword;
+        user.CreatedAt = DateTime.UtcNow;
         _context.Users.Add(user);
 
-        var userRoles = new UserRoles()
+        foreach (var roleType in request.RoleTypes)
         {
-            UserId = user.Id,
-            RoleType = request.RoleType,
-        };
+            if (roleType == RoleType.Admin)
+            {
+                throw new InvalidOperationException("Creating a user with the Admin role is not allowed.");
+            }
 
-        _mapper.Map<UserRoles>(userRoles);
-        _context.UserRoles.Add(userRoles);
+            var userRole = new UserRoles()
+            {
+                UserId = user.Id,
+                RoleType = roleType,
+            };
+
+            user.UserRoles.Add(userRole);
+            _context.UserRoles.Add(userRole);
+        }
+
         try
         {
             await _context.SaveChangesAsync(cancellationToken);

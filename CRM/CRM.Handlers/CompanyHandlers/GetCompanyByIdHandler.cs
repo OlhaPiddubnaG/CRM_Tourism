@@ -6,6 +6,7 @@ using CRM.Domain.Enums;
 using CRM.Domain.Requests;
 using CRM.Domain.Responses.Company;
 using CRM.Handlers.Services;
+using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,15 +30,15 @@ public class GetCompanyByIdHandler : IRequestHandler<GetByIdRequest<CompanyRespo
     {
         Company company;
 
-        var role = _currentUser.GetRoleForCurrentUser();
-        if (role == RoleType.Admin)
+        var roles = _currentUser.GetRoles();
+        if (roles == RoleType.Admin)
         {
             company = await _context.Companies
                 .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
         }
         else
         {
-            var companyId = _currentUser.GetCompanyIdForCurrentUser();
+            var companyId = _currentUser.GetCompanyId();
             company = await _context.Companies.FirstOrDefaultAsync(c => c.Id == companyId && c.Id == request.Id,
                 cancellationToken);
         }

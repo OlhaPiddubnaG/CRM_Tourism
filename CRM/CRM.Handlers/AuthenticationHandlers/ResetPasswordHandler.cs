@@ -20,17 +20,17 @@ public class ResetPasswordHandler : IRequestHandler<ResetPasswordCommand, Unit>
 
     public async Task<Unit> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
-        if (request.NewPassword != request.ConfirmPassword)
-        {
-            throw new ValidationException("Passwords do not match");
-        }
         var user = await _context.Users.FirstOrDefaultAsync(u => u.PasswordResetToken == request.Token, cancellationToken);
-
         if (user == null || user.PasswordResetTokenExpiryTime < DateTime.UtcNow)
         {
             throw new InvalidTokenException("Invalid or expired token");
         }
-
+        
+        if (request.NewPassword != request.ConfirmPassword)
+        {
+            throw new ValidationException("Passwords do not match");
+        }
+        
         user.Password = HashPassword(request.NewPassword); 
         user.PasswordResetToken = null;
         user.PasswordResetTokenExpiryTime = null;

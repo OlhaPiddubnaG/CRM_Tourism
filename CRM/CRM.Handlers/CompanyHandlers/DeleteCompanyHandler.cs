@@ -2,6 +2,8 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands;
 using CRM.Domain.Entities;
+using CRM.Handlers.Services;
+using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +12,12 @@ namespace CRM.Handlers.CompanyHandlers;
 public class DeleteCompanyHandler : IRequestHandler<DeleteCommand<Company>, Unit>
 {
     private readonly AppDbContext _context;
+    private readonly ICurrentUser _currentUser;
 
-    public DeleteCompanyHandler(AppDbContext context)
+    public DeleteCompanyHandler(AppDbContext context, ICurrentUser currentUser)
     {
         _context = context;
+        _currentUser = currentUser;
     }
 
     public async Task<Unit> Handle(DeleteCommand<Company> request, CancellationToken cancellationToken)
@@ -26,6 +30,8 @@ public class DeleteCompanyHandler : IRequestHandler<DeleteCommand<Company>, Unit
         }
 
         company.IsDeleted = true;
+        company.DeletedAt = DateTime.UtcNow;
+        company.DeletedUserId = _currentUser.GetUserId();
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
