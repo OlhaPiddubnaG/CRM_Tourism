@@ -1,66 +1,45 @@
 using System.Security.Claims;
 using CRM.Domain.Enums;
+using CRM.Helper;
 using Microsoft.AspNetCore.Http;
 
 namespace CRM.Handlers.Services.CurrentUser;
 
 public class CurrentUser : ICurrentUser
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly List<RoleType> _roles;
+    private readonly Guid _companyId;
+    private readonly Guid _userId;
 
     public CurrentUser(IHttpContextAccessor httpContextAccessor)
     {
-        _httpContextAccessor = httpContextAccessor;
-    }
-
-    public RoleType GetRoles()
-    {
-        var claimsPrincipal = _httpContextAccessor.HttpContext?.User;
+        var claimsPrincipal = httpContextAccessor.HttpContext?.User;
         if (claimsPrincipal == null || !claimsPrincipal.Identity.IsAuthenticated)
         {
             throw new UnauthorizedAccessException("User is not authenticated.");
         }
 
-        var roleClaim = claimsPrincipal.FindFirst(ClaimTypes.Role);
-        if (roleClaim == null || !Enum.TryParse<RoleType>(roleClaim.Value, out var role))
+        _roles = claimsPrincipal.FindAll(ClaimTypes.Role)
+            .Select(c =>
+                Enum.TryParse<RoleType>(c.Value, out var role)
+                    ? role
+                    : throw new UnauthorizedAccessException("Role claim not found or invalid."))
+            .ToList();
+
+        var companyIdClaim = claimsPrincipal.FindFirst(CustomClaimTypes.CompanyId);
+        if (companyIdClaim == null || !Guid.TryParse(companyIdClaim.Value, out _companyId))
         {
-            throw new UnauthorizedAccessException("Role claim not found or invalid.");
+            throw new UnauthorizedAccessException("Company not found in the claims.");
         }
 
-        return role;
-    }
-
-    public Guid GetCompanyId()
-    {
-        var claimsPrincipal = _httpContextAccessor.HttpContext?.User;
-        if (claimsPrincipal == null || !claimsPrincipal.Identity.IsAuthenticated)
-        {
-            throw new UnauthorizedAccessException("User is not authenticated.");
-        }
-
-        var companyId = Guid.Parse(claimsPrincipal.FindFirst(ClaimTypes.GroupSid).Value);
-        if (companyId == null)
-        {
-            throw new UnauthorizedAccessException("Company not found in the database.");
-        }
-
-        return companyId;
-    }
-
-    public Guid GetUserId()
-    {
-        var claimsPrincipal = _httpContextAccessor.HttpContext?.User;
-        if (claimsPrincipal == null || !claimsPrincipal.Identity.IsAuthenticated)
-        {
-            throw new UnauthorizedAccessException("User is not authenticated.");
-        }
-
-        var userIdClaim = claimsPrincipal.FindFirst(ClaimTypes.Sid);
-        if (userIdClaim == null)
+        var userIdClaim = claimsPrincipal.FindFirst(CustomClaimTypes.UserId);
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out _userId))
         {
             throw new UnauthorizedAccessException("User ID not found in claims.");
         }
-
-        return Guid.Parse(userIdClaim.Value);
     }
+
+    public List<RoleType> GetRoles() => _roles;
+    public Guid GetCompanyId() => _companyId;
+    public Guid GetUserId() => _userId;
 }

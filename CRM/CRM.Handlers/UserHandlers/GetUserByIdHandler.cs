@@ -5,7 +5,6 @@ using CRM.Domain.Entities;
 using CRM.Domain.Enums;
 using CRM.Domain.Requests;
 using CRM.Domain.Responses.User;
-using CRM.Handlers.Services;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -25,22 +24,9 @@ public class GetUserByIdHandler : IRequestHandler<GetByIdRequest<UserResponse>, 
         _currentUser = currentUser;
     }
 
-    public async Task<UserResponse> Handle(GetByIdRequest<UserResponse> request,
-        CancellationToken cancellationToken)
+    public async Task<UserResponse> Handle(GetByIdRequest<UserResponse> request, CancellationToken cancellationToken)
     {
-        User user;
-        var roles = _currentUser.GetRoles();
-        if (roles == RoleType.Admin)
-        {
-            user = await _context.Users
-                .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
-        }
-        else
-        {
-            var companyId = _currentUser.GetCompanyId();
-            user = await _context.Users
-                .FirstOrDefaultAsync(c => c.CompanyId == companyId && c.Id == request.Id, cancellationToken);
-        }
+        var user = await GetUserByIdAsync(request.Id, cancellationToken);
 
         if (user == null)
         {
@@ -48,7 +34,19 @@ public class GetUserByIdHandler : IRequestHandler<GetByIdRequest<UserResponse>, 
         }
 
         var userResponse = _mapper.Map<UserResponse>(user);
-        
         return userResponse;
+    }
+
+    private async Task<User> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var roles = _currentUser.GetRoles();
+        if (roles.Contains(RoleType.Admin))
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+        }
+
+        var companyId = _currentUser.GetCompanyId();
+        return await _context.Users.FirstOrDefaultAsync(u => u.CompanyId == companyId && u.Id == userId,
+            cancellationToken);
     }
 }

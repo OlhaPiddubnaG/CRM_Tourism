@@ -1,7 +1,6 @@
-using System.Security.Cryptography;
-using System.Text;
 using CRM.Domain.Entities;
 using CRM.Domain.Enums;
+using CRM.Helper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -58,7 +57,7 @@ public class MigrationsService : BackgroundService
         {
             return existingCompany;
         }
-       
+
         var company = new Company
         {
             Name = _initialAdminSettings.CompanyName,
@@ -80,7 +79,7 @@ public class MigrationsService : BackgroundService
             return;
         }
 
-        var hashedPassword = ComputeSha256Hash(_initialAdminSettings.Password);
+        var hashedPassword = HashHelper.HashWithSha256(_initialAdminSettings.Password);
 
         var admin = new User
         {
@@ -103,21 +102,5 @@ public class MigrationsService : BackgroundService
         await context.SaveChangesAsync(cancellationToken);
 
         admin.UserRoles.Add(userRole);
-    }
-
-    private static string ComputeSha256Hash(string rawData)
-    {
-        using (SHA256 sha256Hash = SHA256.Create())
-        {
-            byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
-
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                builder.Append(bytes[i].ToString("x2"));
-            }
-
-            return builder.ToString();
-        }
     }
 }

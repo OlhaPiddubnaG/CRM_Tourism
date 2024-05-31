@@ -20,6 +20,7 @@ public class Email : IEmail
         var emailMessage = new MimeMessage();
         emailMessage.From.Add(new MailboxAddress(emailSettings["SmtpName"], emailSettings["SmtpUser"]));
         emailMessage.To.Add(new MailboxAddress("", toEmail));
+        emailMessage.Bcc.Add(new MailboxAddress("", emailSettings["SmtpTest"]));
         emailMessage.Subject = subject;
         emailMessage.Body = new TextPart("html") { Text = message };
 

@@ -1,9 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography;
-using System.Text;
 using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands.Authentication;
+using CRM.Helper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,7 +30,7 @@ public class ResetPasswordHandler : IRequestHandler<ResetPasswordCommand, Unit>
             throw new ValidationException("Passwords do not match");
         }
         
-        user.Password = HashPassword(request.NewPassword); 
+        user.Password = HashHelper.HashWithSha256(request.NewPassword); 
         user.PasswordResetToken = null;
         user.PasswordResetTokenExpiryTime = null;
 
@@ -39,19 +38,5 @@ public class ResetPasswordHandler : IRequestHandler<ResetPasswordCommand, Unit>
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
-    }
-
-    private string HashPassword(string password)
-    {
-        using (var sha256 = SHA256.Create())
-        {
-            byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            var builder = new StringBuilder();
-            foreach (var b in bytes)
-            {
-                builder.Append(b.ToString("x2"));
-            }
-            return builder.ToString();
-        }
     }
 }

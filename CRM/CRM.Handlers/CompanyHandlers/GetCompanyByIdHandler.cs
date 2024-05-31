@@ -5,7 +5,6 @@ using CRM.Domain.Entities;
 using CRM.Domain.Enums;
 using CRM.Domain.Requests;
 using CRM.Domain.Responses.Company;
-using CRM.Handlers.Services;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -28,20 +27,7 @@ public class GetCompanyByIdHandler : IRequestHandler<GetByIdRequest<CompanyRespo
     public async Task<CompanyResponse> Handle(GetByIdRequest<CompanyResponse> request,
         CancellationToken cancellationToken)
     {
-        Company company;
-
-        var roles = _currentUser.GetRoles();
-        if (roles == RoleType.Admin)
-        {
-            company = await _context.Companies
-                .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
-        }
-        else
-        {
-            var companyId = _currentUser.GetCompanyId();
-            company = await _context.Companies.FirstOrDefaultAsync(c => c.Id == companyId && c.Id == request.Id,
-                cancellationToken);
-        }
+        var company = await GetCompanyByIdAsync(request.Id, cancellationToken);
 
         if (company == null)
         {
@@ -49,7 +35,23 @@ public class GetCompanyByIdHandler : IRequestHandler<GetByIdRequest<CompanyRespo
         }
 
         var companyResponse = _mapper.Map<CompanyResponse>(company);
-
         return companyResponse;
+    }
+
+    private async Task<Company> GetCompanyByIdAsync(Guid companyId, CancellationToken cancellationToken)
+    {
+        var roles = _currentUser.GetRoles();
+        if (roles.Contains(RoleType.Admin))
+        {
+            return await _context.Companies.FirstOrDefaultAsync(c => c.Id == companyId, cancellationToken);
+        }
+
+        var currentCompanyId = _currentUser.GetCompanyId();
+        if (companyId != currentCompanyId)
+        {
+            throw new ForbiddenException();
+        }
+
+        return await _context.Companies.FirstOrDefaultAsync(c => c.Id == companyId, cancellationToken);
     }
 }

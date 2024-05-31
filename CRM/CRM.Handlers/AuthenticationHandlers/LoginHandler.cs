@@ -8,6 +8,7 @@ using CRM.DataAccess;
 using CRM.Domain.Commands.Authentication;
 using CRM.Domain.Entities;
 using CRM.Domain.Responses.Authentication;
+using CRM.Helper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -83,8 +84,8 @@ namespace CRM.Handlers.AuthenticationHandlers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.Sid, user.Id.ToString()),
-                new Claim(ClaimTypes.GroupSid, user.CompanyId.ToString()),
+                new Claim(CustomClaimTypes.UserId, user.Id.ToString()),
+                new Claim(CustomClaimTypes.CompanyId, user.CompanyId.ToString()),
                 new Claim(ClaimTypes.Expiration,
                     DateTime.UtcNow.AddMinutes(Convert.ToDouble(_jwtConfiguration.Value.Expires)).ToString("O")),
             };
@@ -109,25 +110,9 @@ namespace CRM.Handlers.AuthenticationHandlers
 
         private bool VerifyPassword(string storedPassword, string enteredPassword)
         {
-            var hashedEnteredPassword = ComputeSha256Hash(enteredPassword);
+            var hashedEnteredPassword = HashHelper.HashWithSha256(enteredPassword);
 
             return storedPassword.Equals(hashedEnteredPassword);
-        }
-
-        private static string ComputeSha256Hash(string rawData)
-        {
-            using (SHA256 sha256Hash = SHA256.Create())
-            {
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
-
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-
-                return builder.ToString();
-            }
         }
     }
 }

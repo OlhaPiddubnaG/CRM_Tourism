@@ -4,7 +4,6 @@ using CRM.Domain.Entities;
 using CRM.Domain.Enums;
 using CRM.Domain.Requests;
 using CRM.Domain.Responses.User;
-using CRM.Handlers.Services;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -24,24 +23,23 @@ public class GetAllUsersHandler : IRequestHandler<GetAllRequest<UserResponse>, L
         _currentUser = currentUser;
     }
 
-    public async Task<List<UserResponse>> Handle(GetAllRequest<UserResponse> request,
-        CancellationToken cancellationToken)
+    public async Task<List<UserResponse>> Handle(GetAllRequest<UserResponse> request, CancellationToken cancellationToken)
     {
-        List<User> users;
-        
-        var roles = _currentUser.GetRoles();
-        if (roles == RoleType.Admin)
-        {
-            users = await _context.Users.ToListAsync(cancellationToken);
-        }
-        else
-        {
-            var companyId = _currentUser.GetCompanyId();
-            users = await _context.Users.Where(u => u.CompanyId == companyId).ToListAsync(cancellationToken);
-        }
+        var users = await GetUsersByRoleAsync(cancellationToken);
 
         var userResponses = _mapper.Map<List<UserResponse>>(users);
-
         return userResponses;
+    }
+
+    private async Task<List<User>> GetUsersByRoleAsync(CancellationToken cancellationToken)
+    {
+        var roles = _currentUser.GetRoles();
+        if (roles.Contains(RoleType.Admin))
+        {
+            return await _context.Users.ToListAsync(cancellationToken);
+        }
+
+        var companyId = _currentUser.GetCompanyId();
+        return await _context.Users.Where(u => u.CompanyId == companyId).ToListAsync(cancellationToken);
     }
 }

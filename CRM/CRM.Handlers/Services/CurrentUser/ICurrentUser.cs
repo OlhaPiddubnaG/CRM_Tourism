@@ -4,7 +4,7 @@ namespace CRM.Handlers.Services.CurrentUser;
 
 public interface ICurrentUser
 {
-    RoleType GetRoles();
+    List<RoleType> GetRoles();
     Guid GetCompanyId();
     Guid GetUserId();
 }
