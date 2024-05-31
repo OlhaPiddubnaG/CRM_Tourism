@@ -28,6 +28,11 @@ public class DeleteUserHandler : IRequestHandler<DeleteCommand<User>, Unit>
             throw new NotFoundException(typeof(User), request.Id);
         }
         
+        if (user.IsDeleted)
+        {
+            throw new InvalidOperationException($"User with ID {request.Id} is already deleted.");
+        }
+        
         user.IsDeleted = true;
         user.DeletedAt = DateTime.UtcNow;
         user.DeletedUserId = _currentUser.GetUserId();

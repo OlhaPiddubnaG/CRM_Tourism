@@ -23,10 +23,13 @@ public class DeleteCompanyHandler : IRequestHandler<DeleteCommand<Company>, Unit
     public async Task<Unit> Handle(DeleteCommand<Company> request, CancellationToken cancellationToken)
     {
         var company = await _context.Companies.FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
-
         if (company == null)
         {
             throw new NotFoundException(typeof(Company), request.Id);
+        }
+        if (company.IsDeleted)
+        {
+            throw new InvalidOperationException($"Company with ID {request.Id} is already deleted.");
         }
 
         company.IsDeleted = true;
