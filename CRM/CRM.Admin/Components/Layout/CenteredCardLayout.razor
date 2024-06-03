@@ -1,0 +1,32 @@
+@layout LoginLayout
+@inherits LayoutComponentBase
+<MudItem xs="10" Class="ma-auto pt-10 border" Style="width: 900px; height: 500px; border-radius: 30px">
+    <MudPaper Outlined="true">
+        <MudGrid>
+            <MudItem Class="d-flex justify-center align-center" xs="7" Style="padding-top:20px; padding-left:2px">
+                <MudImage Src="loginPage/logIn.jpg" Width="400" Height="330" Class="rounded-lg"/>
+            </MudItem>
+            <MudItem xs="5">
+                <MudCard Elevation="0" Class="mt-8 mb-8">
+                    <div>
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Align="Align.Center" Typo="Typo.overline" Style="display: block; text-align: center;">ВХІД В "AWESOME TOURISM CRM 🐍"</MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                    </div>
+                    @Body
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+</MudItem>
+
+
+<style>
+    .border {
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        padding: 16px;
+    }
+</style>
