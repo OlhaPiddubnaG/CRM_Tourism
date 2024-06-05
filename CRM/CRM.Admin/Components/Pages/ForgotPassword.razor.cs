@@ -1,36 +1,36 @@
-using System.Security.Claims;
-using CRM.Admin.Data.UserDTO;
+using CRM.Admin.Data;
+using CRM.Admin.Requests.AuthRequests;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
+using MudBlazor;
 
 namespace CRM.Admin.Components.Pages;
 
 public partial class ForgotPassword
 {
-    private UserDTO user;
-    public string LoginMesssage { get; set; }
-    ClaimsPrincipal claimsPrincipal;
+    [Inject] IAuthenticationRequest AuthenticationRequest { get; set; }
+    [Inject] NavigationManager NavigationManager { get; set; }
+    private string _email;
+    private string _message;
+    private Severity _alertSeverity;
 
-    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
-
-    protected async override Task OnInitializedAsync()
+    private async Task ResetPassword()
     {
-        user = new UserDTO();
+        var result = await AuthenticationRequest.ForgotPassword(new ForgotPasswordModel { Email = _email });
 
-        claimsPrincipal = (await authenticationStateTask).User;
-
-        if (claimsPrincipal.Identity.IsAuthenticated)
+        if (result.Success)
         {
-            NavigationManager.NavigateTo("/index");
+            _message = "Перевірте свою електронну пошту для подальших інструкцій.";
+            _alertSeverity = Severity.Success;
         }
-
+        else
         {
-            // user.EmailAddress = "philip.cramer@gmail.com";
-            // user.Password = "philip.cramer";
+            _message = result.Message ?? "Сталася помилка при спробі скидання пароля. Спробуйте ще раз.";
+            _alertSeverity = Severity.Error;
         }
     }
 
-    private void ValidateUser()
+    private void ClearMessage()
     {
+        _message = string.Empty;
     }
 }
