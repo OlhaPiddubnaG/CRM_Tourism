@@ -1,6 +1,6 @@
 using Microsoft.JSInterop;
 
-namespace CRM.Admin;
+namespace CRM.Admin.Extensions;
 
 public static class JSRuntimeExtensions
 {

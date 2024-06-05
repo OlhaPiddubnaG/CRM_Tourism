@@ -1,5 +1,6 @@
 using CRM.Admin.Auth;
 using CRM.Admin.Data;
+using CRM.Admin.Extensions;
 using CRM.Admin.Requests.AuthRequests;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;

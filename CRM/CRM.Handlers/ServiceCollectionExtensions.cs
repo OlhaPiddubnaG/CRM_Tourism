@@ -22,7 +22,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IRequestHandler<LoginUserCommand, LoginUserResponse>, LoginHandler>();
         services.AddScoped<IRequestHandler<ForgotPasswordCommand,ResultBaseResponse>, ForgotPasswordHandler>();
-        services.AddScoped<IRequestHandler<ResetPasswordCommand, Unit>, ResetPasswordHandler> (); 
+        services.AddScoped<IRequestHandler<ResetPasswordCommand,ResultBaseResponse>, ResetPasswordHandler> (); 
 
         services.AddScoped<IRequestHandler<CreateCompanyCommand, CreatedResponse>, CreateCompanyHandler>();
         services.AddScoped<IRequestHandler<UpdateCompanyCommand, Unit>, UpdateCompanyHandler>();

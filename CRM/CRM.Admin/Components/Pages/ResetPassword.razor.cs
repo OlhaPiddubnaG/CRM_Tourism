@@ -10,10 +10,11 @@ public partial class ResetPassword
 {
     [Inject] IAuthenticationRequest AuthenticationRequest { get; set; }
     [Inject] NavigationManager NavigationManager { get; set; }
-    [Inject] ISnackbar Snackbar { get; set; }
     private string _newPassword;
     private string _confirmPassword;
     private string _token;
+    private string _message;
+    private Severity _alertSeverity;
 
     protected override void OnInitialized()
     {
@@ -24,17 +25,31 @@ public partial class ResetPassword
         }
     }
 
-    private void ChangePassword()
+    private async Task ChangePassword()
     {
         if (_newPassword != _confirmPassword)
         {
-            Snackbar.Add("Паролі не співпадають", Severity.Error);
+            _message = "Паролі не співпадають";
+            await Task.Delay(5000);
         }
 
-        var result = AuthenticationRequest.ResetPassword(new ResetPasswordModel
+        var result = await AuthenticationRequest.ResetPassword(new ResetPasswordModel
             { Token = _token, NewPassword = _newPassword, ConfirmPassword = _confirmPassword });
+        if (result.Success)
+        {
+            _message = "Пароль змінено успішно";
+            _alertSeverity = Severity.Success;
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            _message = result.Message ?? "Сталася помилка при спробі скидання пароля. Спробуйте ще раз.";
+            _alertSeverity = Severity.Error;
+        }
+    }
 
-        Snackbar.Add("Password reset successfully", Severity.Success);
-        NavigationManager.NavigateTo("/home");
+    private void ClearMessage()
+    {
+        _message = string.Empty;
     }
 }

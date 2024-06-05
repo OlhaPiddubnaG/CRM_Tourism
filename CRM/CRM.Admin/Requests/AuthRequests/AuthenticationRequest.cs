@@ -1,6 +1,5 @@
 using CRM.Admin.Data;
 using CRM.Admin.HttpRequests;
-using CRM.Admin.Responses;
 using Newtonsoft.Json;
 
 namespace CRM.Admin.Requests.AuthRequests;
@@ -32,8 +31,9 @@ public class AuthenticationRequest : IAuthenticationRequest
 
     public async Task<ResultModel> ForgotPassword(ForgotPasswordModel forgotPasswordModel)
     {
-        var response = await _httpCrmApiRequests.SendPostRequestAsync($"{RequestUri}/forgotPassword", forgotPasswordModel);
-        var content = await response.Content.ReadAsStringAsync();
+        var response =
+            await _httpCrmApiRequests.SendPostRequestAsync($"{RequestUri}/forgotPassword", forgotPasswordModel);
+        await response.Content.ReadAsStringAsync();
 
         if (response.IsSuccessStatusCode)
         {
@@ -53,10 +53,26 @@ public class AuthenticationRequest : IAuthenticationRequest
         }
     }
 
-    public async Task ResetPassword(ResetPasswordModel resetPasswordModel)
+    public async Task<ResultModel> ResetPassword(ResetPasswordModel resetPasswordModel)
     {
         var response =
             await _httpCrmApiRequests.SendPostRequestAsync($"{RequestUri}/resetPassword", resetPasswordModel);
         await response.Content.ReadAsStringAsync();
+        if (response.IsSuccessStatusCode)
+        {
+            return new ResultModel
+            {
+                Success = true,
+                Message = "Password reset successfully."
+            };
+        }
+        else
+        {
+            return new ResultModel
+            {
+                Success = false,
+                Message = "An error occurred while resetting your password."
+            };
+        }
     }
 }
