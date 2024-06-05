@@ -24,7 +24,8 @@ public partial class ForgotPassword
         }
         else
         {
-            _message = result.Message ?? "Сталася помилка при спробі скидання пароля. Спробуйте ще раз.";
+            _message = "Сталася помилка. Перевірте чи правильно введений Ваш Email.";
+            await Task.Delay(5000);
             _alertSeverity = Severity.Error;
         }
     }
