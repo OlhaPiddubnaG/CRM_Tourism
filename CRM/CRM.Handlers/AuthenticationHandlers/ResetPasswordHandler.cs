@@ -25,12 +25,7 @@ public class ResetPasswordHandler : IRequestHandler<ResetPasswordCommand, Result
         {
             throw new InvalidTokenException("Invalid or expired token");
         }
-        
-        if (request.NewPassword != request.ConfirmPassword)
-        {
-            throw new ValidationException("Passwords do not match");
-        }
-        
+       
         user.Password = HashHelper.HashWithSha256(request.NewPassword); 
         user.PasswordResetToken = null;
         user.PasswordResetTokenExpiryTime = null;

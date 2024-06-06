@@ -3,6 +3,7 @@ using Microsoft.JSInterop;
 using System.Security.Claims;
 using System.Text.Json;
 using CRM.Admin.Extensions;
+using CRM.Helper;
 
 namespace CRM.Admin.Auth
 {
@@ -33,7 +34,7 @@ namespace CRM.Admin.Auth
 
         private async Task<string> GetTokenAsync()
         {
-            if (!_jsRuntime.IsInvokeable())
+            if (!_jsRuntime.IsInvokable())
             {
                 return null;
             }
@@ -41,7 +42,7 @@ namespace CRM.Admin.Auth
             return await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
         }
 
-        public void NotifyUserAuthentication(string token)
+       public void NotifyUserAuthentication(string token)
         {
             var claims = ParseClaimsFromJwt(token);
             var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt"));
@@ -56,21 +57,43 @@ namespace CRM.Admin.Auth
             var jsonBytes = ParseBase64WithoutPadding(payload);
             var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
 
-            keyValuePairs.TryGetValue(ClaimTypes.Name, out object name);
-            keyValuePairs.TryGetValue(ClaimTypes.Role, out object role);
-
-            if (name != null)
+            foreach (var kvp in keyValuePairs)
             {
-                claims.Add(new Claim(ClaimTypes.Name, name.ToString()));
-            }
-
-            if (role != null)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+                if (kvp.Key == ClaimTypes.Role)
+                {
+                    if (kvp.Value is JsonElement element && element.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var role in element.EnumerateArray())
+                        {
+                            claims.Add(new Claim(ClaimTypes.Role, role.GetString()));
+                        }
+                    }
+                    else
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, kvp.Value.ToString()));
+                    }
+                }
+                else if (kvp.Key == ClaimTypes.Name)
+                {
+                    claims.Add(new Claim(ClaimTypes.Name, kvp.Value.ToString()));
+                }
+                else if (kvp.Key == "CustomClaimTypes.UserId") 
+                {
+                    claims.Add(new Claim(CustomClaimTypes.UserId, kvp.Value.ToString()));
+                }
+                else if (kvp.Key == "CustomClaimTypes.CompanyId") 
+                {
+                    claims.Add(new Claim(CustomClaimTypes.CompanyId, kvp.Value.ToString()));
+                }
+                else
+                {
+                    claims.Add(new Claim(kvp.Key, kvp.Value.ToString()));
+                }
             }
 
             return claims;
         }
+
 
         private static byte[] ParseBase64WithoutPadding(string base64)
         {

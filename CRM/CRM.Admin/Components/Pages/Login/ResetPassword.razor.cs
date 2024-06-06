@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 using MudBlazor;
 
-namespace CRM.Admin.Components.Pages;
+namespace CRM.Admin.Components.Pages.Login;
 
 public partial class ResetPassword
 {
@@ -34,7 +34,7 @@ public partial class ResetPassword
         }
 
         var result = await AuthenticationRequest.ResetPassword(new ResetPasswordModel
-            { Token = _token, NewPassword = _newPassword, ConfirmPassword = _confirmPassword });
+            { Token = _token, NewPassword = _newPassword});
         if (result.Success)
         {
             _message = "Пароль змінено успішно";

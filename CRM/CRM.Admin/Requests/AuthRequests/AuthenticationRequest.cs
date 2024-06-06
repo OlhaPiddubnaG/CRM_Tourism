@@ -17,14 +17,13 @@ public class AuthenticationRequest : IAuthenticationRequest
     public async Task<LoginUser?> Login(LoginModel loginModel)
     {
         var response = await _httpCrmApiRequests.SendPostRequestAsync($"{RequestUri}/login", loginModel);
+        var content = await response.Content.ReadAsStringAsync();
         if (response.IsSuccessStatusCode)
         {
-            var content = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<LoginUser>(content);
         }
         else
         {
-            var content = await response.Content.ReadAsStringAsync();
             return new LoginUser { Success = false, Message = content };
         }
     }
