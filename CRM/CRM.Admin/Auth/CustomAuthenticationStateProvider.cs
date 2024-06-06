@@ -42,7 +42,7 @@ namespace CRM.Admin.Auth
             return await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
         }
 
-       public void NotifyUserAuthentication(string token)
+        public void NotifyUserAuthentication(string token)
         {
             var claims = ParseClaimsFromJwt(token);
             var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt"));
@@ -77,13 +77,17 @@ namespace CRM.Admin.Auth
                 {
                     claims.Add(new Claim(ClaimTypes.Name, kvp.Value.ToString()));
                 }
-                else if (kvp.Key == "CustomClaimTypes.UserId") 
+                else if (kvp.Key == CustomClaimTypes.UserId)
                 {
                     claims.Add(new Claim(CustomClaimTypes.UserId, kvp.Value.ToString()));
                 }
-                else if (kvp.Key == "CustomClaimTypes.CompanyId") 
+                else if (kvp.Key == CustomClaimTypes.CompanyId)
                 {
                     claims.Add(new Claim(CustomClaimTypes.CompanyId, kvp.Value.ToString()));
+                }
+                else if (kvp.Key == ClaimTypes.Expiration)
+                {
+                    claims.Add(new Claim(ClaimTypes.Expiration, kvp.Value.ToString()));
                 }
                 else
                 {
@@ -94,14 +98,18 @@ namespace CRM.Admin.Auth
             return claims;
         }
 
-
         private static byte[] ParseBase64WithoutPadding(string base64)
         {
             switch (base64.Length % 4)
             {
-                case 2: base64 += "=="; break;
-                case 3: base64 += "="; break;
+                case 2:
+                    base64 += "==";
+                    break;
+                case 3:
+                    base64 += "=";
+                    break;
             }
+
             return Convert.FromBase64String(base64);
         }
     }
