@@ -1,0 +1,19 @@
+@layout LoginLayout
+@inherits LayoutComponentBase
+
+<MudItem xs="10" Class="ma-auto pt-10 border" Style="width: 780px; height: 450px; border: 20px solid #ff5722;   padding: 20px;">
+    <MudPaper Outlined="true">
+        <MudGrid>
+            <MudItem Class="d-flex justify-center align-center" xs="7" Style="padding-top:20px; padding-right:2px">
+                <MudImage Src="bootstrap/log.jpg" Width="400" Height="320" Class="rounded-lg"/>
+            </MudItem>
+            <MudItem xs="5">
+                <MudCard Elevation="0" Class="mt-8 mb-8">
+                    @Body
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+</MudItem>
+
+

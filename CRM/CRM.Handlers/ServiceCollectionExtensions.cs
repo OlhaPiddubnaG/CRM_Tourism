@@ -21,8 +21,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddRequestHandlers(this IServiceCollection services)
     {
         services.AddScoped<IRequestHandler<LoginUserCommand, LoginUserResponse>, LoginHandler>();
-        services.AddScoped<IRequestHandler<ForgotPasswordCommand, Unit>, ForgotPasswordHandler>();
-        services.AddScoped<IRequestHandler<ResetPasswordCommand, Unit>, ResetPasswordHandler> (); 
+        services.AddScoped<IRequestHandler<ForgotPasswordCommand,ResultBaseResponse>, ForgotPasswordHandler>();
+        services.AddScoped<IRequestHandler<ResetPasswordCommand,ResultBaseResponse>, ResetPasswordHandler> (); 
 
         services.AddScoped<IRequestHandler<CreateCompanyCommand, CreatedResponse>, CreateCompanyHandler>();
         services.AddScoped<IRequestHandler<UpdateCompanyCommand, Unit>, UpdateCompanyHandler>();
