@@ -4,7 +4,7 @@ namespace CRM.Admin.Extensions;
 
 public static class JSRuntimeExtensions
 {
-    public static bool IsInvokeable(this IJSRuntime jsRuntime)
+    public static bool IsInvokable(this IJSRuntime jsRuntime)
     {
         return jsRuntime is IJSInProcessRuntime;
     }
