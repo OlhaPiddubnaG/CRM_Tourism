@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using System.Security.Claims;
 using System.Text.Json;
-using CRM.Admin.Extensions;
 using CRM.Helper;
 
 namespace CRM.Admin.Auth
@@ -34,12 +33,14 @@ namespace CRM.Admin.Auth
 
         private async Task<string> GetTokenAsync()
         {
-            if (!_jsRuntime.IsInvokable())
+            try
+            {
+                return await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+            }
+            catch (Exception)
             {
                 return null;
             }
-
-            return await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
         }
 
         public void NotifyUserAuthentication(string token)

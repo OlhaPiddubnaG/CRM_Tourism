@@ -14,13 +14,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("AppDbContext"),
         optionsBuilder => optionsBuilder.MigrationsAssembly("CRM.DataAccess")));
+
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
+
 
 builder.Services.ConfigureJwt(builder.Configuration);
 builder.Services.AddJwtConfiguration(builder.Configuration);
@@ -36,6 +39,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("CompanyAdmin", policy => policy.RequireRole(RoleType.CompanyAdmin.ToString()));
     options.AddPolicy("User", policy => policy.RequireRole(RoleType.User.ToString()));
 });
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
@@ -51,6 +55,7 @@ builder.Services.Configure<InitialAdminSettings>(builder.Configuration.GetSectio
 builder.Services.AddHostedService<MigrationsService>();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.AddScoped<IEmail, Email>();
+
 builder.Services.AddAutoMapper(AutoMapperProfiles.GetAssemblies());
 builder.Services.AddCarter();
 
@@ -61,7 +66,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
