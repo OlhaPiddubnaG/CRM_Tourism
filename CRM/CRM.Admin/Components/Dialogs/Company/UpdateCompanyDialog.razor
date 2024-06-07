@@ -1,0 +1,16 @@
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6"></MudText>
+    </TitleContent>
+    <DialogContent>
+        <EditForm Model="@companyUpdateDTO" OnValidSubmit="SubmitExperience">
+            <DataAnnotationsValidator/>
+            <MudTextField Class="mb-2" Label="Name" @bind-Value="companyUpdateDTO.Name" For="@(() => companyUpdateDTO.Name)"/>
+            <MudItem Class="d-flex justify-space-between flex-grow-1 gap-4 mt-5 mb-4">
+                <MudButton Variant="Variant.Outlined" OnClick="Cancel">Cancel</MudButton>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Warning">Confirm</MudButton>
+            </MudItem>
+        </EditForm>
+    </DialogContent>
+</MudDialog>
+
