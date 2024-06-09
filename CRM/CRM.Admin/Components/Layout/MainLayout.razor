@@ -10,7 +10,17 @@
         <AppBar/>
     </MudAppBar>
     <MudDrawer @bind-Open="@open" ClipMode="clipMode" Breakpoint="@breakpoint" PreserveOpenState="@preserveOpenState" Elevation="1" Variant="@DrawerVariant.Mini">
-        <NavMenu/>
+        @if (user != null)
+        {
+            if (isAdmin)
+            {
+                <AdminNavMenu/>
+            }
+            else
+            {
+                <NavMenu/>
+            }
+        }
     </MudDrawer>
     <MudMainContent>
         <MudContainer Class="content-container">

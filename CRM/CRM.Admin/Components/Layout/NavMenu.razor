@@ -1,16 +1,7 @@
 <MudNavMenu>
-    <MudText Typo="Typo.h6" Class="px-4">CRM</MudText>
-    <MudDivider Class="my-2"/>
     <MudNavLink Href="/home" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
     <MudNavLink Href="/reminder" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Notifications">Нагадування</MudNavLink>
-    <MudNavGroup Title="Замовлення" Icon="@Icons.Material.Filled.AddTask" Expanded="true">
-        <MudNavLink Href="/order">Активні</MudNavLink>
-        <MudNavLink Href="/order">Завершені</MudNavLink>
-    </MudNavGroup>
-    <MudNavGroup Title="Туристи" Icon="@Icons.Material.Filled.EmojiPeople" Expanded="true">
-        <MudNavLink Href="/client">В роботі</MudNavLink>
-        <MudNavLink Href="/client">Архів</MudNavLink>
-    </MudNavGroup>
+    <MudNavLink Href="/order" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AddTask">Замовлення</MudNavLink>
+    <MudNavLink Href="/client" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.EmojiPeople">Туристи</MudNavLink>
     <MudNavLink Href="/tour" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.LocationOn">Підбірки</MudNavLink>
-    <MudNavLink Href="/company" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Note">Компанії</MudNavLink>
 </MudNavMenu>
