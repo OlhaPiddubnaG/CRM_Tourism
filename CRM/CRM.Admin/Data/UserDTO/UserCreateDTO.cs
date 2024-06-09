@@ -9,5 +9,5 @@ public class UserCreateDTO
     public string Surname { get; set; } 
     public string Email { get; set; } 
     public string Password { get; set; } 
-    public ICollection<RoleType> RoleTypes { get; set; }
+    public IEnumerable<RoleType> RoleTypes { get; set; }
 }

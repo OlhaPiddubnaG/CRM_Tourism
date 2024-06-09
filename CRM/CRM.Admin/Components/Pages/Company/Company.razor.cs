@@ -5,40 +5,40 @@ using CRM.Admin.Data.UserDTO;
 using CRM.Admin.Requests.CompanyRequests;
 using CRM.Admin.Requests.UserRequests;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 
 namespace CRM.Admin.Components.Pages.Company;
 
 public partial class Company
 {
-    [Inject] AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
     [Inject] IDialogService DialogService { get; set; } = default!;
+    [Inject] ISnackbar Snackbar { get; set; } = default!;
     [Inject] ICompanyRequest CompanyRequest { get; set; } = default!;
     [Inject] IUserRequest UserRequest { get; set; } = default!;
-    
+
     private DialogOptions dialogOptions = new() { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
     private IEnumerable<CompanyDTO> _companyDTOs = new List<CompanyDTO>();
-    private IEnumerable<CompanyDTO> _filteredCompanyDTOs = new List<CompanyDTO>();
     private IEnumerable<UserDTO> _userDTOs = new List<UserDTO>();
+    private IEnumerable<UserDTO> _filteredUserDTOs = new List<UserDTO>();
     private bool _loading = true;
+    private bool _isCreateUserButtonDisabled = true;
     private Guid? _selectedCompanyId;
 
     private MudTable<CompanyDTO> _tableCompany = default!;
     private MudDataGrid<UserDTO> _tableUser = default!;
-    
+
     protected override async Task OnInitializedAsync()
     {
-        _userDTOs = await UserRequest.GetAllAsync();
-        _companyDTOs = await CompanyRequest.GetAllAsync();
-        _filteredCompanyDTOs = _companyDTOs.Where(c => !c.IsDeleted && c.Name != "Admin");
-
+        _userDTOs = (await UserRequest.GetAllAsync()).Where(u => !u.IsDeleted && u.Name != "Admin").ToList();
+        _companyDTOs = (await CompanyRequest.GetAllAsync()).Where(c => !c.IsDeleted && c.Name != "Admin").ToList();
+        UpdateCreateUserButtonState();
     }
-    
-    private async Task CreateUser()
+
+    private async Task CreateUser(Guid selectedCompanyId)
     {
         _loading = true;
-        var dialogReference = await DialogService.ShowAsync<CreateUserDialog>("", dialogOptions);
+        var parameters = new DialogParameters { { "Id", selectedCompanyId } };
+        var dialogReference = await DialogService.ShowAsync<CreateUserDialog>("", parameters, dialogOptions);
         var dialogResult = await dialogReference.Result;
 
         _loading = false;
@@ -47,7 +47,7 @@ public partial class Company
 
         await _tableUser.ReloadServerData();
     }
-    
+
     private async Task CreateCompany()
     {
         _loading = true;
@@ -70,11 +70,11 @@ public partial class Company
 
         _loading = false;
         if (dialogResult.Canceled)
-            return; 
+            return;
 
         await _tableUser.ReloadServerData();
     }
-    
+
     private async Task UpdateCompany(Guid id)
     {
         _loading = true;
@@ -84,7 +84,7 @@ public partial class Company
 
         _loading = false;
         if (dialogResult.Canceled)
-            return; 
+            return;
 
         await _tableUser.ReloadServerData();
     }
@@ -92,31 +92,37 @@ public partial class Company
     private async Task DeleteUser(Guid id)
     {
         bool? result = await DialogService.ShowMessageBox(
-            "Warning",
-            "Deleting can not be undone!",
-            yesText: "Delete", cancelText: "Cancel");
+            "Увага",
+            "Ви впевнені, що хочете видалити вибраний обєкт?",
+            yesText: "Так", cancelText: "Ні");
 
-        if (result is not null)
+        if (result is not null && result == true)
+        {
             await UserRequest.DeleteAsync(id);
+            Snackbar.Add("Користувач успішно видалений", Severity.Success);
+        }
 
         _loading = false;
         await _tableUser.ReloadServerData();
     }
-    
+
     private async Task DeleteCompany(Guid id)
     {
         bool? result = await DialogService.ShowMessageBox(
-            "Warning",
-            "Deleting can not be undone!",
-            yesText: "Delete", cancelText: "Cancel");
+            "Увага",
+            "Ви впевнені, що хочете видалити вибраний обєкт?",
+            yesText: "Так", cancelText: "Ні");
 
         if (result is not null)
+        {
             await CompanyRequest.DeleteAsync(id);
+            Snackbar.Add("Компанія успішно видалена", Severity.Success);
+        }
 
         _loading = false;
         await _tableCompany.ReloadServerData();
     }
-    
+
     private async Task<GridData<UserDTO>> SetTableDataUserAsync(GridState<UserDTO> state)
     {
         if (_selectedCompanyId == null)
@@ -129,13 +135,14 @@ public partial class Company
         }
 
         _loading = true;
-        var filteredUsers = _userDTOs.Where(user => user.CompanyId == _selectedCompanyId.Value).ToList();
+        _filteredUserDTOs = _userDTOs.Where(user => user.CompanyId == _selectedCompanyId.Value).ToList();
+        
         _loading = false;
-        var pagedData = filteredUsers.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        var pagedData = _filteredUserDTOs.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
         return new GridData<UserDTO>
         {
             Items = pagedData,
-            TotalItems = filteredUsers.Count()
+            TotalItems = _filteredUserDTOs.Count()
         };
     }
 
@@ -143,6 +150,19 @@ public partial class Company
     {
         _selectedCompanyId = args.Item.Id;
         _tableUser.ReloadServerData();
+        UpdateCreateUserButtonState();
+    }
+    
+    private void UpdateCreateUserButtonState()
+    {
+        if (_selectedCompanyId == null)
+        {
+            _isCreateUserButtonDisabled = true;
+        }
+        else
+        {
+            _isCreateUserButtonDisabled = false;
+        }
     }
 
     private string SelectedRowClassFunc(CompanyDTO company, int rowNumber)
@@ -151,6 +171,7 @@ public partial class Company
         {
             return "selected";
         }
+
         return string.Empty;
     }
 }

@@ -1,14 +1,14 @@
 <MudDialog>
     <TitleContent>
-        <MudText Typo="Typo.h6"></MudText>
+        <MudText Typo="Typo.h6">Створення компанії</MudText>
     </TitleContent>
     <DialogContent>
         <EditForm Model="@companyCreateDTO" OnValidSubmit="SubmitExperience">
             <DataAnnotationsValidator/>
-            <MudTextField Class="mb-2" Label="Name" @bind-Value="companyCreateDTO.Name" For="@(() => companyCreateDTO.Name)"/>
+            <MudTextField Class="mb-2" Label="Назва" @bind-Value="companyCreateDTO.Name" For="@(() => companyCreateDTO.Name)" Lines="2"/>
             <MudItem Class="d-flex justify-space-between flex-grow-1 gap-4 mt-5 mb-4">
-                <MudButton Variant="Variant.Outlined" OnClick="Cancel">Cancel</MudButton>
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Warning">Confirm</MudButton>
+                <MudButton Variant="Variant.Filled" OnClick="Cancel" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel">ВІДМІНА</MudButton>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Info" StartIcon="@Icons.Material.Filled.Save">ЗБЕРЕГТИ</MudButton>
             </MudItem>
         </EditForm>
     </DialogContent>

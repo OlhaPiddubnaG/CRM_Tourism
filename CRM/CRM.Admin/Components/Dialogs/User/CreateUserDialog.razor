@@ -1,0 +1,25 @@
+@using CRM.Domain.Enums
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Створення користувача</MudText>
+    </TitleContent>
+    <DialogContent>
+        <EditForm Model="@userCreateDTO" OnValidSubmit="SubmitExperience">
+            <DataAnnotationsValidator/>
+            <MudTextField Class="mb-2" Label="Iм'я" @bind-Value="userCreateDTO.Name" For="@(() => userCreateDTO.Name)" Lines="2"/>
+            <MudTextField Class="mb-5" Label="Прізвище" @bind-Value="userCreateDTO.Surname" For="@(() => userCreateDTO.Surname)" Lines="2"/>
+            <MudTextField Class="mb-5" Label="Eлектронна пошта" @bind-Value="userCreateDTO.Email" For="@(() => userCreateDTO.Email)" Lines="2"/>
+            <MudSelect T="RoleType" @bind-SelectedValues="userCreateDTO.RoleTypes" Label="Роль" MultiSelection="true" Class="mb-5" Lines="2">
+                @foreach (RoleType role in Enum.GetValues(typeof(RoleType)))
+                {
+                    <MudSelectItem  Value="role">@role.ToString()</MudSelectItem>
+                }
+            </MudSelect>
+            <MudItem Class="d-flex justify-space-between flex-grow-1 gap-4 mt-5 mb-4">
+                <MudButton Variant="Variant.Filled" OnClick="Cancel" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel">ВІДМІНА</MudButton>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Info" StartIcon="@Icons.Material.Filled.Save">ЗБЕРЕГТИ</MudButton>
+            </MudItem>
+        </EditForm>
+    </DialogContent>
+</MudDialog>
