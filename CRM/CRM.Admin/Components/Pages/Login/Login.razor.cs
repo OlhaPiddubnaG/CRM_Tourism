@@ -1,9 +1,7 @@
 using CRM.Admin.Auth;
 using CRM.Admin.Data;
-using CRM.Admin.Extensions;
 using CRM.Admin.Requests.AuthRequests;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using MudBlazor;
 
@@ -12,7 +10,6 @@ namespace CRM.Admin.Components.Pages.Login;
 public partial class Login
 {
     [Inject] IAuthenticationRequest AuthenticationRequest { get; set; }
-    [Inject] AuthenticationStateProvider AuthenticationStateProvider  {get; set; }
     [Inject] CustomAuthenticationStateProvider CustomAuthStateProvider { get; set; }
     [Inject] NavigationManager NavigationManager { get; set; }
     [Inject] IJSRuntime JSRuntime { get; set; }
@@ -22,8 +19,6 @@ public partial class Login
     private string _accessToken;
     private string _message;
     private Severity _alertSeverity;
-    private bool _shouldSetAuthToken;
-    private bool isAdmin = false;
 
  
     public async Task LogIn()
@@ -34,15 +29,7 @@ public partial class Login
         {
             await JSRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", response.AccessToken);
             CustomAuthStateProvider.NotifyUserAuthentication(response.AccessToken);
-            
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (user.Identity.IsAuthenticated)
-        {
-            isAdmin = user.IsInRole("Admin");
-        }
-            NavigationManager.NavigateTo("/client");
+            NavigationManager.NavigateTo("/home");
         }
         else
         {

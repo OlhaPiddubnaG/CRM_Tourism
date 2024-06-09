@@ -1,39 +1,6 @@
 @page "/client"
-@using Microsoft.AspNetCore.Components.Authorization
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject NavigationManager NavigationManager
-
-<h3>Client Page</h3>
-
-@if (isLoading)
-{
-<p>Loading...</p>
-}
-else if (isAdmin)
-{
-<p>Welcome, Admin! Here is the secret data:</p>
-<p>@secretData</p>
-}
-else
-{
-<p>You do not have access to the secret data.</p>
-}
+<h3>Client</h3>
 
 @code {
-private bool isLoading = true;
-private bool isAdmin = false;
-private string secretData = "This is some secret data that only admins can see.";
-
-protected override async Task OnInitializedAsync()
-{
-var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-var user = authState.User;
-
-if (user.Identity.IsAuthenticated)
-{
-isAdmin = user.IsInRole("Admin");
-}
-
-isLoading = false;
-}
+    
 }
