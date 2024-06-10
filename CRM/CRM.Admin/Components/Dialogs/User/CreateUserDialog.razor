@@ -11,9 +11,9 @@
             <MudTextField Class="mb-5" Label="Прізвище" @bind-Value="userCreateDTO.Surname" For="@(() => userCreateDTO.Surname)" Lines="2"/>
             <MudTextField Class="mb-5" Label="Eлектронна пошта" @bind-Value="userCreateDTO.Email" For="@(() => userCreateDTO.Email)" Lines="2"/>
             <MudSelect T="RoleType" @bind-SelectedValues="userCreateDTO.RoleTypes" Label="Роль" MultiSelection="true" Class="mb-5" Lines="2">
-                @foreach (RoleType role in Enum.GetValues(typeof(RoleType)))
+                @foreach (RoleType role in Enum.GetValues(typeof(RoleType)).Cast<RoleType>().Where(r => r != RoleType.Admin))
                 {
-                    <MudSelectItem  Value="role">@role.ToString()</MudSelectItem>
+                    <MudSelectItem Value="role">@role.ToString()</MudSelectItem>
                 }
             </MudSelect>
             <MudItem Class="d-flex justify-space-between flex-grow-1 gap-4 mt-5 mb-4">

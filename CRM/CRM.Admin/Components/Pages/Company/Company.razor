@@ -4,7 +4,7 @@
 @attribute [Authorize(Roles = "Admin")]
 
 <MudGrid>
-    <MudItem xs="5">
+    <MudItem xs="4">
         <MudButton
             Variant="Variant.Filled"
             OnClick="CreateCompany"
@@ -39,7 +39,7 @@
         </MudTable>
     </MudItem>
 
-    <MudItem xs="7">
+    <MudItem xs="8">
         <MudButton
             OnClick="() => CreateUser(_selectedCompanyId.Value)"
             Variant="Variant.Filled"
@@ -50,7 +50,7 @@
         </MudButton>
 
         <MudDataGrid ServerData="@(new Func<GridState<UserDTO>, Task<GridData<UserDTO>>>(SetTableDataUserAsync))" Elevation="3"
-                     T="UserDTO" ColumnResizeMode="ResizeMode.Column" RowsPerPage="5" @ref="_tableUser" Loading="_loading">
+                     T="UserDTO" ColumnResizeMode="ResizeMode.Column" RowsPerPage="5" @ref="_tableUser" >
             <Columns>
                 <PropertyColumn Property="x => x.Name" Title="Ім'я"/>
                 <PropertyColumn Property="x => x.Surname" Title="Прізвище"/>
