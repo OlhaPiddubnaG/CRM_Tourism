@@ -3,7 +3,7 @@ using CRM.Admin.Requests.AuthRequests;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
-namespace CRM.Admin.Components.Pages;
+namespace CRM.Admin.Components.Pages.Login;
 
 public partial class ForgotPassword
 {

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CRM.WebApi.Controllers;
-
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class CompanyController : ControllerBase

@@ -1,0 +1,71 @@
+@page "/company"
+@using CRM.Admin.Data.CompanyDTO
+@using CRM.Admin.Data.UserDTO
+@attribute [Authorize(Roles = "Admin")]
+
+<MudGrid>
+    <MudItem xs="4">
+        <MudButton
+            Variant="Variant.Filled"
+            OnClick="CreateCompany"
+            StartIcon="@Icons.Material.Filled.AddCircleOutline"
+            Class="buttonBase">
+            СТВОРИТИ
+        </MudButton>
+
+        <MudButton
+            Variant="Variant.Filled"
+            OnClick="() => UpdateCompany(_selectedCompanyId.Value)"
+            StartIcon="@Icons.Material.Filled.Edit"
+            Class="buttonBase">
+        </MudButton>
+
+        <MudButton
+            Variant="Variant.Filled"
+            OnClick="() => DeleteCompany(_selectedCompanyId.Value)"
+            StartIcon="@Icons.Material.Filled.Delete"
+            Color="Color.Error"
+            Style="margin: 10px;">
+        </MudButton>
+
+        <MudTable T="CompanyDTO" Items="_companyDTOs" Hover="true" Breakpoint="Breakpoint.Sm" @ref="_tableCompany"
+                  RowClass="cursor-pointer" RowClassFunc="SelectedRowClassFunc" OnRowClick="OnCompanySelected">
+            <HeaderContent>
+                <MudTh>Компанії</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Company">@context.Name</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudItem>
+
+    <MudItem xs="8">
+        <MudButton
+            OnClick="CreateUser"
+            Variant="Variant.Filled"
+            StartIcon="@Icons.Material.Filled.Add"
+            Class="buttonBase" 
+            Style="border-radius: 30px;"
+            Disabled="@(_selectedCompanyId == null)">
+            СТВОРИТИ КОРИСТУВАЧА
+        </MudButton>
+
+        <MudDataGrid ServerData="@(new Func<GridState<UserDTO>, Task<GridData<UserDTO>>>(SetTableDataUserAsync))" Elevation="3"
+                     T="UserDTO" ColumnResizeMode="ResizeMode.Column" RowsPerPage="5" @ref="_tableUser" >
+            <Columns>
+                <PropertyColumn Property="x => x.Name" Title="Ім'я"/>
+                <PropertyColumn Property="x => x.Surname" Title="Прізвище"/>
+                <PropertyColumn Property="x => x.Email" Title="Електронна пошта"/>
+                <TemplateColumn CellClass="d-flex justify-end">
+                    <CellTemplate>
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Edit" OnClick="() => UpdateUser(context.Item.Id)"/>
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="() => DeleteUser(context.Item.Id)"/>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+            <PagerContent>
+                <MudDataGridPager T="UserDTO" PageSizeOptions=@(new int[] { 5, 10, 20 })/>
+            </PagerContent>
+        </MudDataGrid>
+    </MudItem>
+</MudGrid>

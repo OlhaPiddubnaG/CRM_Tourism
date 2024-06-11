@@ -1,14 +1,15 @@
 using CRM.Domain.Enums;
 
-namespace CRM.Domain.Responses.User;
+namespace CRM.Admin.Data.UserDTO;
 
-public record UserResponse
+public class UserDTO
 {
     public Guid Id { get; set; }
-    public Guid CompanyId { get; set; }
+    public Guid CompanyId { get; set; } 
     public string Name { get; set; } 
     public string Surname { get; set; } 
     public string Email { get; set; } 
+    public string Password { get; set; } 
     public bool IsDeleted { get; set; } 
-    public List<RoleType> RoleTypes { get; set; }
+    public IEnumerable<RoleType> RoleTypes { get; set; }
 }

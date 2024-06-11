@@ -9,9 +9,18 @@
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.5" />
       <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.5" />
-      <PackageReference Include="MudBlazor" Version="7.0.0-preview.3" />
+      <PackageReference Include="MudBlazor" Version="6.20.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Components\Pages\Login.razor.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CRM.Domain\CRM.Domain.csproj" />
+      <ProjectReference Include="..\CRM.Helper\CRM.Helper.csproj" />
     </ItemGroup>
 
 </Project>
