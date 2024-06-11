@@ -19,6 +19,7 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Unit>
     public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
         var existingUser = await _context.Users
+            .Include(u => u.UserRoles) 
             .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
 
         if (existingUser == null)
@@ -28,7 +29,23 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Unit>
         existingUser.Name = request.Name;
         existingUser.Surname = request.Surname;
         existingUser.UpdatedAt = DateTime.UtcNow;
-        
+        var existingRoleTypes = existingUser.UserRoles.Select(u => u.RoleType).ToList();
+        var newRoleTypes = request.RoleTypes.Except(existingRoleTypes).ToList();
+        var removedRoleTypes = existingRoleTypes.Except(request.RoleTypes).ToList();
+
+        foreach (var roleType in newRoleTypes)
+        {
+            existingUser.UserRoles.Add(new UserRoles { UserId = existingUser.Id, RoleType = roleType });
+        }
+
+        foreach (var roleType in removedRoleTypes)
+        {
+            var userRole = existingUser.UserRoles.FirstOrDefault(ur => ur.RoleType == roleType);
+            if (userRole != null)
+            {
+                _context.UserRoles.Remove(userRole);
+            }
+        }
         try
         {
             await _context.SaveChangesAsync(cancellationToken);

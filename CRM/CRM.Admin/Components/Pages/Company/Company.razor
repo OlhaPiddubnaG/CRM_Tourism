@@ -9,15 +9,15 @@
             Variant="Variant.Filled"
             OnClick="CreateCompany"
             StartIcon="@Icons.Material.Filled.AddCircleOutline"
-            Color="Color.Warning" Style="margin: 10px;">
+            Class="buttonBase">
             СТВОРИТИ
         </MudButton>
 
         <MudButton
             Variant="Variant.Filled"
             OnClick="() => UpdateCompany(_selectedCompanyId.Value)"
-            StartIcon="@Icons.Material.Filled.Edit" Color="Color.Warning"
-            Style="margin: 10px;">
+            StartIcon="@Icons.Material.Filled.Edit"
+            Class="buttonBase">
         </MudButton>
 
         <MudButton
@@ -41,10 +41,11 @@
 
     <MudItem xs="8">
         <MudButton
-            OnClick="() => CreateUser(_selectedCompanyId.Value)"
+            OnClick="CreateUser"
             Variant="Variant.Filled"
             StartIcon="@Icons.Material.Filled.Add"
-            Color="Color.Warning" Style="margin: 10px; border-radius: 30px;"
+            Class="buttonBase" 
+            Style="border-radius: 30px;"
             Disabled="@(_selectedCompanyId == null)">
             СТВОРИТИ КОРИСТУВАЧА
         </MudButton>
@@ -68,12 +69,3 @@
         </MudDataGrid>
     </MudItem>
 </MudGrid>
-
-<style>
-    .selected {
-        background-color: #FF9800 !important;
-    }
-    .selected > td {
-        color: white !important;
-    }
-</style>

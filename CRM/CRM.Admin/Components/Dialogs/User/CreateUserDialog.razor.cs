@@ -1,7 +1,6 @@
 using CRM.Admin.Data.UserDTO;
 using CRM.Admin.Requests.SuperAdminRequests;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 
 namespace CRM.Admin.Components.Dialogs.User;
@@ -13,20 +12,37 @@ public partial class CreateUserDialog
     [Inject] ISnackbar Snackbar { get; set; }
     private UserCreateDTO userCreateDTO { get; set; } = new();
     [Parameter] public Guid Id { get; set; }
-    
+
     protected override async Task OnInitializedAsync()
     {
         userCreateDTO.CompanyId = Id;
         userCreateDTO.Password = "123456789Qaz";
     }
 
-    private async Task SubmitExperience(EditContext editContext)
+    private async Task Create()
     {
-        if (editContext.Validate())
+        if (string.IsNullOrEmpty(userCreateDTO.Name) || string.IsNullOrEmpty(userCreateDTO.Surname) ||
+            string.IsNullOrEmpty(userCreateDTO.Email))
         {
-            await SuperAdminRequest.CreateCompanyAdmin(userCreateDTO);
+            Snackbar.Add("Будь ласка, заповніть всі поля", Severity.Error);
+            return;
+        }
+
+        if (userCreateDTO.RoleTypes == null)
+        {
+            Snackbar.Add("Будь ласка, виберіть хоча б одну роль", Severity.Error);
+            return;
+        }
+
+        try
+        {
+            await SuperAdminRequest.CreateUser(userCreateDTO);
             Snackbar.Add("Створено", Severity.Success);
-            MudDialog.Close(DialogResult.Ok(true));           
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Помилка: {ex.Message}", Severity.Error);
         }
     }
 

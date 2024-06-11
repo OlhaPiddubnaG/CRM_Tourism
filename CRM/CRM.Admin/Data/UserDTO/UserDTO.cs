@@ -11,5 +11,5 @@ public class UserDTO
     public string Email { get; set; } 
     public string Password { get; set; } 
     public bool IsDeleted { get; set; } 
-    public ICollection<RoleType> RoleTypes { get; set; }
+    public IEnumerable<RoleType> RoleTypes { get; set; }
 }

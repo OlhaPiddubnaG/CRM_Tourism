@@ -8,38 +8,83 @@ namespace CRM.Admin.Requests.CompanyRequests;
 public class CompanyRequest : ICompanyRequest
 {
     private readonly IHttpCrmApiRequests _httpCrmApiRequests;
+    private readonly ILogger<CompanyRequest> _logger;
     private const string RequestUri = "api/Company";
     
-    public CompanyRequest(IHttpCrmApiRequests httpCrmApiRequests)
+    public CompanyRequest(IHttpCrmApiRequests httpCrmApiRequests, ILogger<CompanyRequest> logger)
     {
         _httpCrmApiRequests = httpCrmApiRequests;
+        _logger = logger;
+
     }
     
     public async Task<List<CompanyDTO>> GetAllAsync()
     {
-        var response = await _httpCrmApiRequests.SendGetRequestAsync(RequestUri);
-        var content = await response.Content.ReadAsStringAsync();
+        try
+        {
+            var response = await _httpCrmApiRequests.SendGetRequestAsync(RequestUri);
+            response.EnsureSuccessStatusCode(); 
 
-        return JsonConvert.DeserializeObject<List<CompanyDTO>>(content);
+            var content = await response.Content.ReadAsStringAsync();
+            _logger.LogInformation("GetAllAsync method executed successfully");
+            return JsonConvert.DeserializeObject<List<CompanyDTO>>(content);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetAllAsync method");
+            throw;
+        }
     }
 
-    public async Task<T> GetByIdAsync<T>(Guid id) where T : ICompanyDTO
-    {
-        var response = await _httpCrmApiRequests.SendGetRequestAsync($"{RequestUri}/{id}");
-        var content = await response.Content.ReadAsStringAsync();
+   public async Task<T> GetByIdAsync<T>(Guid id) where T : ICompanyDTO
+        {
+            try
+            {
+                var response = await _httpCrmApiRequests.SendGetRequestAsync($"{RequestUri}/{id}");
+                response.EnsureSuccessStatusCode(); 
 
-        return JsonConvert.DeserializeObject<T>(content);
-    }
-    
-    public async Task<bool> UpdateAsync(CompanyUpdateDTO categotyUpdateDTO)
-    {
-        var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, categotyUpdateDTO);
-        return response.StatusCode == HttpStatusCode.NoContent;
-    }
+                var content = await response.Content.ReadAsStringAsync();
+                _logger.LogInformation($"GetByIdAsync method executed successfully for id: {id}");
+                return JsonConvert.DeserializeObject<T>(content);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in GetByIdAsync method for id: {id}");
+                throw;
+            }
+        }
 
-    public async Task<bool> DeleteAsync(Guid id)
-    {
-        var response = await _httpCrmApiRequests.SendDeleteRequestAsync($"{RequestUri}/{id}");
-        return response.StatusCode == HttpStatusCode.NoContent;
-    }
+        public async Task<bool> UpdateAsync(CompanyUpdateDTO companyUpdateDTO)
+        {
+            try
+            {
+                var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, companyUpdateDTO);
+                response.EnsureSuccessStatusCode(); 
+
+                _logger.LogInformation($"UpdateAsync method executed successfully for company with id: {companyUpdateDTO.Id}");
+                return response.StatusCode == HttpStatusCode.NoContent;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in UpdateAsync method for company with id: {companyUpdateDTO.Id}");
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteAsync(Guid id)
+        {
+            try
+            {
+                var response = await _httpCrmApiRequests.SendDeleteRequestAsync($"{RequestUri}/{id}");
+                response.EnsureSuccessStatusCode(); 
+
+                _logger.LogInformation($"DeleteAsync method executed successfully for id: {id}");
+                return response.StatusCode == HttpStatusCode.NoContent;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in DeleteAsync method for id: {id}");
+                throw;
+            }
+        }
 }

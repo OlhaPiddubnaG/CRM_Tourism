@@ -6,5 +6,5 @@ namespace CRM.Admin.Requests.SuperAdminRequests;
 public interface ISuperAdminRequest
 {
     Task CreateCompany(CompanyCreateDTO categoryCreateDTO);
-    Task CreateCompanyAdmin(UserCreateDTO userCreateDTO);
+    Task CreateUser(UserCreateDTO userCreateDTO);
 }

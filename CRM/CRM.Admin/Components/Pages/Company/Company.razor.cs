@@ -4,6 +4,7 @@ using CRM.Admin.Data.CompanyDTO;
 using CRM.Admin.Data.UserDTO;
 using CRM.Admin.Requests.CompanyRequests;
 using CRM.Admin.Requests.UserRequests;
+using CRM.Domain.Constants;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -15,8 +16,15 @@ public partial class Company
     [Inject] ISnackbar Snackbar { get; set; } = default!;
     [Inject] ICompanyRequest CompanyRequest { get; set; } = default!;
     [Inject] IUserRequest UserRequest { get; set; } = default!;
-
-    private DialogOptions dialogOptions = new() { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+    
+    private DialogOptions dialogOptions = new() 
+    {   
+        CloseOnEscapeKey = true, 
+        CloseButton = true, 
+        DisableBackdropClick = true,
+        MaxWidth = MaxWidth.Small, 
+        FullWidth = true 
+    };
     private IEnumerable<CompanyDTO> _companyDTOs = new List<CompanyDTO>();
     private IEnumerable<UserDTO> _userDTOs = new List<UserDTO>();
     private IEnumerable<UserDTO> _filteredUserDTOs = new List<UserDTO>();
@@ -33,14 +41,14 @@ public partial class Company
 
     private async Task LoadDataAsync()
     {
-        _userDTOs = (await UserRequest.GetAllAsync()).Where(u => !u.IsDeleted && u.Name != "Admin").ToList();
-        _companyDTOs = (await CompanyRequest.GetAllAsync()).Where(c => !c.IsDeleted && c.Name != "Admin").ToList();
+        _userDTOs = (await UserRequest.GetAllAsync()).Where(u => !u.IsDeleted && u.Name != Constants.DefaultAdminUserName).ToList();
+        _companyDTOs = (await CompanyRequest.GetAllAsync()).Where(c => !c.IsDeleted && c.Name != Constants.DefaultCompanyAdminName).ToList();
         StateHasChanged();
     }
 
-    private async Task CreateUser(Guid selectedCompanyId)
+    private async Task CreateUser()
     {
-        var parameters = new DialogParameters { { "Id", selectedCompanyId } };
+        var parameters = new DialogParameters { { "Id", _selectedCompanyId } };
         var dialogReference = await DialogService.ShowAsync<CreateUserDialog>("", parameters, dialogOptions);
         var dialogResult = await dialogReference.Result;
 
@@ -98,8 +106,15 @@ public partial class Company
 
         if (result is not null && result == true)
         {
-            await UserRequest.DeleteAsync(id);
-            Snackbar.Add("Користувач успішно видалений", Severity.Success);
+            try
+            {
+                await UserRequest.DeleteAsync(id);
+                Snackbar.Add("Користувач успішно видалений", Severity.Success);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Помилка видалення користувача: {ex.Message}", Severity.Error);
+            }
         }
 
         await LoadDataAsync();
@@ -115,8 +130,15 @@ public partial class Company
 
         if (result is not null)
         {
-            await CompanyRequest.DeleteAsync(id);
-            Snackbar.Add("Компанія успішно видалена", Severity.Success);
+            try
+            {
+                await CompanyRequest.DeleteAsync(id);
+                Snackbar.Add("Компанія успішно видалена", Severity.Success);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Помилка видалення компанії: {ex.Message}", Severity.Error);
+            }
         }
 
         await LoadDataAsync();
@@ -157,6 +179,6 @@ public partial class Company
 
     private string SelectedRowClassFunc(CompanyDTO company, int rowNumber)
     {
-        return _selectedCompanyId.HasValue && _selectedCompanyId.Value == company.Id ? "selected" : string.Empty;
+        return _selectedCompanyId.HasValue && _selectedCompanyId.Value == company.Id ? "selected-row" : string.Empty;
     }
 }

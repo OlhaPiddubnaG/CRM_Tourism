@@ -1,16 +1,21 @@
+@using CRM.Domain.Enums
 <MudDialog>
     <TitleContent>
         <MudText Typo="Typo.h6">Редагування</MudText>
     </TitleContent>
     <DialogContent>
-        <EditForm Model="@userUpdateDTO" OnValidSubmit="SubmitExperience">
-            <DataAnnotationsValidator/>
-            <MudTextField Class="mb-2" Label="Iм'я" @bind-Value="userUpdateDTO.Name" For="@(() => userUpdateDTO.Name)" Lines="2"/>
-            <MudTextField Class="mb-5" Label="Прізвище" @bind-Value="userUpdateDTO.Surname" For="@(() => userUpdateDTO.Surname)" Lines="2"/>
-            <MudItem Class="d-flex justify-space-between flex-grow-1 gap-4 mt-5 mb-4">
-                <MudButton Variant="Variant.Filled" OnClick="Cancel" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel">ВІДМІНА</MudButton>
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Info" StartIcon="@Icons.Material.Filled.Save">ЗБЕРЕГТИ</MudButton>
-            </MudItem>
-        </EditForm>
+        <MudTextField Class="mb-2" Label="Iм'я" @bind-Value="userUpdateDTO.Name" For="@(() => userUpdateDTO.Name)" Lines="2"/>
+        <MudTextField Class="mb-5" Label="Прізвище" @bind-Value="userUpdateDTO.Surname" For="@(() => userUpdateDTO.Surname)" Lines="2"/>
+        <MudSelect T="RoleType" @bind-SelectedValues="userUpdateDTO.RoleTypes" Label="Роль" MultiSelection="true" Class="mb-5" Lines="2">
+            @foreach (RoleType role in Enum.GetValues(typeof(RoleType)).Cast<RoleType>().Where(r => r != RoleType.Admin))
+            {
+                <MudSelectItem Value="role">@role.ToString()</MudSelectItem>
+            }
+        </MudSelect>
     </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" OnClick="Cancel" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel">ВІДМІНА</MudButton>
+        <MudSpacer/>
+        <MudButton Variant="Variant.Filled" OnClick="Update" Class="buttonBase" StartIcon="@Icons.Material.Filled.Save">ЗБЕРЕГТИ</MudButton>
+    </DialogActions>
 </MudDialog>

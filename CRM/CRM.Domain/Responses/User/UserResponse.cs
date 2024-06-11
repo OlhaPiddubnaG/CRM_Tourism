@@ -1,3 +1,5 @@
+using CRM.Domain.Enums;
+
 namespace CRM.Domain.Responses.User;
 
 public record UserResponse
@@ -8,4 +10,5 @@ public record UserResponse
     public string Surname { get; set; } 
     public string Email { get; set; } 
     public bool IsDeleted { get; set; } 
+    public List<RoleType> RoleTypes { get; set; }
 }
