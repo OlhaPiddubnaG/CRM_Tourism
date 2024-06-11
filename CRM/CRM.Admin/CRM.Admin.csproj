@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <Compile Remove="Components\Pages\Login.razor.cs" />
+      <Compile Remove="Extensions\JSRuntimeExtensions.cs" />
     </ItemGroup>
 
     <ItemGroup>
