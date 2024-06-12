@@ -8,9 +8,16 @@ namespace CRM.Admin.Components.Layout;
 public partial class AppBar
 {
     [Inject] IDialogService DialogService { get; set; } = default!;
-    private DialogOptions dialogOptions = new() { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+    private DialogOptions dialogOptions = new()
+    {
+        CloseOnEscapeKey = true,
+        CloseButton = true,
+        DisableBackdropClick = true,
+        MaxWidth = MaxWidth.Small,
+        FullWidth = true
+    };
     bool disabled = false;
-    
+
     private async Task NewClient()
     {
         var dialogReference = await DialogService.ShowAsync<CreateClientDialog>("", dialogOptions);
@@ -19,7 +26,7 @@ public partial class AppBar
         if (dialogResult.Canceled)
             return;
     }
-    
+
     private async Task NewOrder()
     {
         var dialogReference = await DialogService.ShowAsync<CreateOrderDialog>("", dialogOptions);

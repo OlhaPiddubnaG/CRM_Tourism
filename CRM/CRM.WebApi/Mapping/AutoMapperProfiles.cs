@@ -10,6 +10,8 @@ public static class AutoMapperProfiles
         {
             typeof(CompanyProfile).Assembly,
             typeof(UserProfile).Assembly,
+            typeof(ClientProfile).Assembly,
+            typeof(CountryProfile).Assembly,
         };
     }
 }

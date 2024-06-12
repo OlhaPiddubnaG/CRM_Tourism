@@ -1,15 +1,21 @@
 using CRM.Domain.Commands;
 using CRM.Domain.Commands.Authentication;
+using CRM.Domain.Commands.Client;
 using CRM.Domain.Commands.Company;
+using CRM.Domain.Commands.Country;
 using CRM.Domain.Commands.User;
 using CRM.Domain.Entities;
 using CRM.Domain.Requests;
 using CRM.Domain.Responses;
 using CRM.Domain.Responses.Authentication;
+using CRM.Domain.Responses.Client;
 using CRM.Domain.Responses.Company;
 using CRM.Domain.Responses.User;
+using CRM.Domain.Responses.Сountry;
 using CRM.Handlers.AuthenticationHandlers;
+using CRM.Handlers.ClientHandlers;
 using CRM.Handlers.CompanyHandlers;
+using CRM.Handlers.CountryHandlers;
 using CRM.Handlers.UserHandlers;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +42,18 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<DeleteCommand<User>, Unit>, DeleteUserHandler>();
         services.AddScoped<IRequestHandler<GetByIdRequest<UserResponse>, UserResponse>, GetUserByIdHandler>();
         services.AddScoped<IRequestHandler<GetAllRequest<UserResponse>, List<UserResponse>>, GetAllUsersHandler>();
+        
+        services.AddScoped<IRequestHandler<CreateClientCommand, CreatedResponse>, CreateClientHandler>();
+        services.AddScoped<IRequestHandler<UpdateClientCommand, Unit>, UpdateClientHandler>();
+        services.AddScoped<IRequestHandler<DeleteCommand<Client>, Unit>, DeleteClientHandler>();
+        services.AddScoped<IRequestHandler<GetByIdRequest<ClientResponse>, ClientResponse>, GetClientByIdHandler>(); 
+        services.AddScoped<IRequestHandler<GetAllRequest<ClientResponse>, List<ClientResponse>>, GetAllClientsHandler>(); 
+        
+        services.AddScoped<IRequestHandler<CreateCountryCommand, CreatedResponse>, CreateCountryHandler>();
+        services.AddScoped<IRequestHandler<UpdateCountryCommand, Unit>, UpdateCountryHandler>();
+        services.AddScoped<IRequestHandler<DeleteCommand<Country>, Unit>, DeleteCountryHandler>();
+        services.AddScoped<IRequestHandler<GetByIdRequest<CountryResponse>, CountryResponse>, GetCountryByIdHandler>(); 
+        services.AddScoped<IRequestHandler<GetAllRequest<CountryResponse>, List<CountryResponse>>, GetAllCountriesHandler>(); 
 
         return services;
     }
