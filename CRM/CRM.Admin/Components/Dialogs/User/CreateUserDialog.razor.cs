@@ -36,7 +36,7 @@ public partial class CreateUserDialog
 
         try
         {
-            await SuperAdminRequest.CreateUser(userCreateDTO);
+            await SuperAdminRequest.CreateUserAsync(userCreateDTO);
             Snackbar.Add("Створено", Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
         }

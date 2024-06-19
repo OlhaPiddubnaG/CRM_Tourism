@@ -21,7 +21,7 @@ public partial class CreateCompanyDialog
         }
         try
         {
-            await SuperAdminRequest.CreateCompany(companyCreateDTO);
+            await SuperAdminRequest.CreateCompanyAsync(companyCreateDTO);
             Snackbar.Add("Створено", Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
         }

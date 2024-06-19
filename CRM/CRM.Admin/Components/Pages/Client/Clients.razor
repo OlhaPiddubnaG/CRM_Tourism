@@ -1,0 +1,49 @@
+@page "/client"
+@using CRM.Admin.Data.ClientDTO
+
+<MudTable ServerData="@(new Func<TableState, Task<TableData<ClientDTO>>>(ServerReload))"
+          Dense="true" Hover="true" @ref="table">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Туристи в роботі</MudText>
+        <MudSpacer/>
+        <MudTextField T="string" ValueChanged="@(s => OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
+        </MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>
+            <MudTableSortLabel SortLabel="name_field" T="ClientDTO">Ім`я</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortLabel="phone_field" T="ClientDTO">Телефон</MudTableSortLabel>
+        </MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Ім'я та Прізвище">
+            <MudLink Href=@($"clientById/{context.Id}") Underline="Underline.None" Color="Color.Dark">
+                @($"{context.Name} {context.Surname}")
+            </MudLink>
+        </MudTd>
+        <MudTd DataLabel="Телефон">@context.Phone</MudTd>
+        <MudTd DataLabel="Дія" Class="d-flex justify-end">
+            <MudTooltip Text="Додати коментар">
+                <MudIconButton  OnClick="() => AddComment(context.Id)" Icon="@Icons.Material.Outlined.Comment" Color="Color.Dark"/>
+            </MudTooltip>
+            <MudTooltip Text="Призначити менеджера">
+                <MudIconButton Icon="@Icons.Material.Outlined.PeopleOutline" Color="Color.Dark"/>
+            </MudTooltip>
+            <MudTooltip Text="В архів">
+                <MudIconButton Icon="@Icons.Material.Outlined.StarBorder" Color="Color.Dark"/>
+            </MudTooltip>
+        </MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No matching records found</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager/>
+    </PagerContent>
+</MudTable>

@@ -23,15 +23,8 @@ public class CreateClientHandler : IRequestHandler<CreateClientCommand, CreatedR
     public async Task<CreatedResponse> Handle(CreateClientCommand request, CancellationToken cancellationToken)
     {
         request.Name = request.Name.ToUpper();
-        var existingClient =
-            await _context.Clients.FirstOrDefaultAsync(c => c.Name == request.Name, cancellationToken);
-
-        if (existingClient != null)
-        {
-            throw new ExistException();
-        }
-
         var client = _mapper.Map<Client>(request);
+        
         client.CreatedAt = DateTime.UtcNow;
         _context.Clients.Add(client);
 

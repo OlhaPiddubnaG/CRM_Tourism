@@ -1,0 +1,112 @@
+@using CRM.Domain.Enums
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Новий турист</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6" @bind-ActivePanelIndex="@activeTabIndex">
+            <MudTabPanel Text="Дані туриста">
+                <MudGrid>
+                    <MudItem xs="12" md="4">
+                        <MudTextField Variant="Variant.Outlined" Label="Ім`я" @bind-Value="clientCreateDTO.Name" For="@(() => clientCreateDTO.Name)"/>
+                    </MudItem>
+                    <MudItem xs="12" md="5">
+                        <MudTextField Variant="Variant.Outlined" Label="Прізвище" @bind-Value="clientCreateDTO.Surname" For="@(() => clientCreateDTO.Surname)"/>
+                    </MudItem>
+                    <MudItem xs="12" md="3">
+                        <MudSelect T="Gender" @bind-SelectedValue="clientCreateDTO.Gender">
+                            @foreach (Gender gender in Enum.GetValues(typeof(Gender)))
+                            {
+                                <MudSelectItem Value="gender">@gender.ToString()</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="12" md="7">
+                        <MudTextField Variant="Variant.Outlined" Label="По-батькові" @bind-Value="clientCreateDTO.Patronymic" For="@(() => clientCreateDTO.Patronymic)"/>
+                    </MudItem>
+                    <MudItem xs="12" md="5">
+                        <MudDatePicker @bind-Date="dateOfBirth" DateFormat="yyyy-MM-dd"/>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudTextField Variant="Variant.Outlined" Label="Номер телефону" @bind-Value="clientCreateDTO.Phone" For="@(() => clientCreateDTO.Phone)"/>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudTextField Variant="Variant.Outlined" Label="Коментар" @bind-Value="clientCreateDTO.Comment" For="@(() => clientCreateDTO.Comment)"/>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudTextField Variant="Variant.Outlined" Label="Електронна пошта" @bind-Value="clientCreateDTO.Email" For="@(() => clientCreateDTO.Email)"/>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudSelect T="SourceOfEngagement" @bind-SelectedValue="clientCreateDTO.SourceOfEngagement">
+                            @foreach (SourceOfEngagement engagement in Enum.GetValues(typeof(SourceOfEngagement)))
+                            {
+                                <MudSelectItem Value="engagement">@engagement.ToString()</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField Variant="Variant.Outlined" Label="Адреса" @bind-Value="clientCreateDTO.Address" For="@(() => clientCreateDTO.Address)" Lines="2"/>
+                    </MudItem>
+                </MudGrid>
+            </MudTabPanel>
+            <MudTabPanel Text="Внутрішній паспорт">
+                <MudGrid>
+                    <MudItem xs="12" md="4">
+                        <MudTextField Variant="Variant.Outlined" Label="Серія паспорту" @bind-Value="passportInternalCreateDTO.RecordNo"/>
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudTextField Variant="Variant.Outlined" Label="Номер паспорта" @bind-Value="passportInternalCreateDTO.DocumentNo"/>
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudDatePicker Variant="Variant.Outlined" DateFormat="yyyy-MM-dd" Label="Дата видачі" @bind-Date="passportInternalIssueDate"/>
+                    </MudItem>
+                    <MudItem xs="12" md="8">
+                        <MudTextField Variant="Variant.Outlined" Label="Ким виданий" @bind-Value="passportInternalCreateDTO.Authority"/>
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudDatePicker Variant="Variant.Outlined" DateFormat="yyyy-MM-dd" Label="Дійсний до" @bind-Date="passportInternalExpiryDate"/>
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudTextField Variant="Variant.Outlined" Label="Національність" @bind-Value="passportInternalCreateDTO.Nationality"/>
+                    </MudItem>
+                    <MudItem xs="12" md="8">
+                        <MudTextField Variant="Variant.Outlined" Label="ІПН" @bind-Value="passportInternalCreateDTO.TaxpayerNo"/>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudTextField Variant="Variant.Outlined" Label="Адреса прописки" @bind-Value="passportInternalCreateDTO.PlaceOfBirth" Lines="2"/>
+                    </MudItem>
+                </MudGrid>
+            </MudTabPanel>
+            <MudTabPanel Text="Закордонний паспорт">
+                <MudGrid>
+                    <MudItem xs="12" md="6">
+                        <MudTextField Variant="Variant.Outlined" Label="Ім'я латиницею" @bind-Value="passportInternationalCreateDTO.NameLatinScript"/>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudTextField Variant="Variant.Outlined" Label="Прізвище латиницею" @bind-Value="passportInternationalCreateDTO.SurnameLatinScript"/>
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudTextField Variant="Variant.Outlined" Label="Серія" @bind-Value="passportInternationalCreateDTO.RecordNo"/>
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudTextField Variant="Variant.Outlined" Label="Номер" @bind-Value="passportInternationalCreateDTO.DocumentNo"/>
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudDatePicker Variant="Variant.Outlined" DateFormat="yyyy-MM-dd" Label="Дата видачі" @bind-Date="passportInternationalIssueDate"/>
+                    </MudItem>
+                    <MudItem xs="12" md="8">
+                        <MudTextField Variant="Variant.Outlined" Label="Ким виданий" @bind-Value="passportInternationalCreateDTO.Authority"/>
+                    </MudItem>
+                    <MudItem xs="12" md="4">
+                        <MudDatePicker Variant="Variant.Outlined" DateFormat="yyyy-MM-dd" Label="Дійсний до" @bind-Date="passportInternationalExpiryDate"/>
+                    </MudItem>
+                </MudGrid>
+            </MudTabPanel>
+        </MudTabs>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" OnClick="Cancel" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel">ВІДМІНА</MudButton>
+        <MudSpacer/>
+        <MudButton OnClick="CreateClientAsync" Variant="Variant.Filled" Class="buttonBase" StartIcon="@Icons.Material.Filled.Save" Disabled="@(activeTabIndex != 0)">ЗБЕРЕГТИ</MudButton>
+    </DialogActions>
+</MudDialog>
