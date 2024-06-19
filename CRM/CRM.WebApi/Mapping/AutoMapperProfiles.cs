@@ -12,6 +12,8 @@ public static class AutoMapperProfiles
             typeof(UserProfile).Assembly,
             typeof(ClientProfile).Assembly,
             typeof(CountryProfile).Assembly,
+            typeof(ClientPrivateDataProfile).Assembly,
+            typeof(PassportInfoProfile).Assembly,
         };
     }
 }
