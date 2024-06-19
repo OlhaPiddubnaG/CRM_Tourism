@@ -41,6 +41,6 @@ public class GetAllClientsHandler : IRequestHandler<GetAllRequest<ClientResponse
         }
 
         var companyId = _currentUser.GetCompanyId();
-        return await _context.Clients.Where(c => c.Id == companyId).ToListAsync(cancellationToken);
+        return await _context.Clients.Where(c => c.CompanyId == companyId).ToListAsync(cancellationToken);
     }
 }

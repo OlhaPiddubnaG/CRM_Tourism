@@ -25,8 +25,14 @@ public class UpdateClientHandler : IRequestHandler<UpdateClientCommand, Unit>
         {
             throw new NotFoundException(typeof(Client), request.Id);
         }
-
         existingClient.Name = request.Name;
+        existingClient.Surname = request.Surname;
+        existingClient.Patronymic = request.Patronymic; 
+        existingClient.DateOfBirth = request.DateOfBirth;
+        existingClient.Address = request.Address;
+        existingClient.Email = request.Email;
+        existingClient.Phone = request.Phone;
+        existingClient.Comment = request.Comment;
         existingClient.UpdatedAt = DateTime.UtcNow;
 
         try

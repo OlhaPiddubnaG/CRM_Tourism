@@ -38,20 +38,16 @@ public class GetClientByIdHandler : IRequestHandler<GetByIdRequest<ClientRespons
         return clientResponse;
     }
 
-    private async Task<Client> GetClientByIdAsync(Guid companyId, CancellationToken cancellationToken)
+    private async Task<Client> GetClientByIdAsync(Guid clientId, CancellationToken cancellationToken)
     {
         var roles = _currentUser.GetRoles();
         if (roles.Contains(RoleType.Admin))
         {
-            return await _context.Clients.FirstOrDefaultAsync(c => c.Id == companyId, cancellationToken);
+            return await _context.Clients.FirstOrDefaultAsync(c => c.Id == clientId, cancellationToken);
         }
 
-        var currentCompanyId = _currentUser.GetCompanyId();
-        if (companyId != currentCompanyId)
-        {
-            throw new ForbiddenException();
-        }
+        var companyId = _currentUser.GetCompanyId();
 
-        return await _context.Clients.FirstOrDefaultAsync(c => c.Id == companyId, cancellationToken);
+        return await _context.Clients.FirstOrDefaultAsync(c => c.CompanyId == companyId && c.Id == clientId, cancellationToken);
     }
 }
