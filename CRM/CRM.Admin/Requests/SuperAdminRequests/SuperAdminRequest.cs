@@ -16,7 +16,7 @@ public class SuperAdminRequest : ISuperAdminRequest
         _logger = logger;
     }
 
-    public async Task CreateCompany(CompanyCreateDTO categoryCreateDTO)
+    public async Task CreateCompanyAsync(CompanyCreateDTO categoryCreateDTO)
     {
         try
         {
@@ -30,7 +30,7 @@ public class SuperAdminRequest : ISuperAdminRequest
         }
     }
 
-    public async Task CreateUser(UserCreateDTO userCreateDTO)
+    public async Task CreateUserAsync(UserCreateDTO userCreateDTO)
     {
         try
         {
