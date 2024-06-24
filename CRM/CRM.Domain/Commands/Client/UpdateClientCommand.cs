@@ -18,4 +18,5 @@ public class UpdateClientCommand : IRequest<Unit>
     public string? Phone { get; set; } 
     public string? Comment { get; set; } 
     public SourceOfEngagement SourceOfEngagement { get; set; } 
+    public List<Guid> ManagerIds { get; set; } = new();
 }

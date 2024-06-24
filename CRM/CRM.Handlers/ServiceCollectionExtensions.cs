@@ -2,6 +2,7 @@ using CRM.Domain.Commands;
 using CRM.Domain.Commands.Authentication;
 using CRM.Domain.Commands.Client;
 using CRM.Domain.Commands.ClientPrivateData;
+using CRM.Domain.Commands.ClientStatusHistory;
 using CRM.Domain.Commands.Company;
 using CRM.Domain.Commands.Country;
 using CRM.Domain.Commands.PassportInfo;
@@ -12,6 +13,7 @@ using CRM.Domain.Responses;
 using CRM.Domain.Responses.Authentication;
 using CRM.Domain.Responses.Client;
 using CRM.Domain.Responses.ClientPrivateData;
+using CRM.Domain.Responses.ClientStatusHistory;
 using CRM.Domain.Responses.Company;
 using CRM.Domain.Responses.PassportInfo;
 using CRM.Domain.Responses.User;
@@ -19,6 +21,7 @@ using CRM.Domain.Responses.Сountry;
 using CRM.Handlers.AuthenticationHandlers;
 using CRM.Handlers.ClientHandlers;
 using CRM.Handlers.ClientPrivateDataHandlers;
+using CRM.Handlers.ClientStatusHistoryHandlers;
 using CRM.Handlers.CompanyHandlers;
 using CRM.Handlers.CountryHandlers;
 using CRM.Handlers.PassportInfoHandlers;
@@ -62,6 +65,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<GetByIdRequest<ClientPrivateDataResponse>, ClientPrivateDataResponse>, GetClientPrivateDataByIdHandler>(); 
         services.AddScoped<IRequestHandler<GetAllRequest<ClientPrivateDataResponse>, List<ClientPrivateDataResponse>>, GetAllClientPrivateDatasHandler>(); 
         
+        services.AddScoped<IRequestHandler<CreateClientStatusHistoryCommand, CreatedResponse>, CreateClientStatusHistoryHandler>();
+        services.AddScoped<IRequestHandler<UpdateClientStatusHistoryCommand, Unit>, UpdateClientStatusHistoryHandler>();
+        services.AddScoped<IRequestHandler<DeleteCommand<ClientStatusHistory>, Unit>, DeleteClientStatusHistoryHandler>();
+        services.AddScoped<IRequestHandler<GetByIdRequest<ClientStatusHistoryResponse>, ClientStatusHistoryResponse>, GetClientStatusHistoryByIdHandler>(); 
+        services.AddScoped<IRequestHandler<GetAllRequest<ClientStatusHistoryResponse>, List<ClientStatusHistoryResponse>>, GetAllClientsStatusHistoryHandler>();
+      
         services.AddScoped<IRequestHandler<CreatePassportInfoCommand, CreatedResponse>, CreatePassportInfoHandler>();
         services.AddScoped<IRequestHandler<UpdatePassportInfoCommand, Unit>, UpdatePassportInfoHandler>();
         services.AddScoped<IRequestHandler<DeleteCommand<PassportInfo>, Unit>, DeletePassportInfoHandler>();

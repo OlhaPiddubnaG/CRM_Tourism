@@ -1,6 +1,7 @@
 using CRM.Admin.Requests.AuthRequests;
 using CRM.Admin.Requests.ClientPrivateDataRequests;
 using CRM.Admin.Requests.ClientRequests;
+using CRM.Admin.Requests.ClientStatusHistoryRequests;
 using CRM.Admin.Requests.CompanyRequests;
 using CRM.Admin.Requests.CountryRequests;
 using CRM.Admin.Requests.PassportInfoRequests;
@@ -19,6 +20,7 @@ public static class ServiceExtensions
         services.AddTransient<IUserRequest, UserRequest>();
         services.AddTransient<IClientRequest, ClientRequest>();
         services.AddTransient<IClientPrivateDataRequest, ClientPrivateDataRequest>();
+        services.AddTransient<IClientStatusHistoryRequest, ClientStatusHistoryRequest>();
         services.AddTransient<IPassportInfoRequest, PassportInfoRequest>();
         services.AddTransient<ICountryRequest, CountryRequest>();
         

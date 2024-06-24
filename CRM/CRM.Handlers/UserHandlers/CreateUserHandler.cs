@@ -61,7 +61,7 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, CreatedRespo
         }
         catch (DbUpdateException ex)
         {
-            throw new SaveDatabaseException(typeof(Company), ex);
+            throw new SaveDatabaseException(typeof(User), ex);
         }
 
         return new CreatedResponse(user.Id);

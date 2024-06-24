@@ -1,5 +1,6 @@
 using CRM.Admin.Data.UserDTO;
 using CRM.Admin.Requests.SuperAdminRequests;
+using CRM.Domain.Constants;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -16,7 +17,7 @@ public partial class CreateUserDialog
     protected override async Task OnInitializedAsync()
     {
         userCreateDTO.CompanyId = Id;
-        userCreateDTO.Password = "123456789Qaz";
+        userCreateDTO.Password = Constants.DefaultPassword;
     }
 
     private async Task Create()
