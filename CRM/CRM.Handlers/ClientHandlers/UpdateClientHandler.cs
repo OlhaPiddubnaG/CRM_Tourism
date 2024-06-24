@@ -19,6 +19,7 @@ public class UpdateClientHandler : IRequestHandler<UpdateClientCommand, Unit>
     public async Task<Unit> Handle(UpdateClientCommand request, CancellationToken cancellationToken)
     {
         var existingClient = await _context.Clients
+            .Include(c => c.Users) 
             .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
 
         if (existingClient == null)
@@ -35,6 +36,21 @@ public class UpdateClientHandler : IRequestHandler<UpdateClientCommand, Unit>
         existingClient.Comment = request.Comment;
         existingClient.UpdatedAt = DateTime.UtcNow;
 
+        if (request.ManagerIds != null && request.ManagerIds.Any())
+        {
+            var newManagers = await _context.Users
+                .Where(u => request.ManagerIds.Contains(u.Id))
+                .ToListAsync(cancellationToken);
+
+            if (newManagers.Count != request.ManagerIds.Count)
+            {
+                throw new KeyNotFoundException("One or more user IDs are invalid.");
+            }
+
+            existingClient.Users.Clear();
+            existingClient.Users.AddRange(newManagers);
+        }
+        
         try
         {
             await _context.SaveChangesAsync(cancellationToken);

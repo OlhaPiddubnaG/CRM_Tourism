@@ -38,5 +38,4 @@ public class CreateClientPrivateDataHandler : IRequestHandler<CreateClientPrivat
 
         return new CreatedResponse(clientPrivateData.Id);
     }
-
 }
