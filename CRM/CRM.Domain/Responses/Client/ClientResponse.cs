@@ -18,4 +18,6 @@ public class ClientResponse
     public string? Comment { get; set; } 
     public SourceOfEngagement SourceOfEngagement { get; set; } 
     public bool IsDeleted { get; set; } 
+    public List<string> ManagerNames { get; set; } = new();
+    public ClientStatus? LatestStatus { get; set; }
 }

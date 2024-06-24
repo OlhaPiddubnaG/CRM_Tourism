@@ -15,5 +15,6 @@ public class ClientCreateDTO
     public string Email { get; set; } = "";  
     public string Phone { get; set; } = "";
     public string Comment { get; set; } = "";
-    public SourceOfEngagement SourceOfEngagement { get; set; } 
+    public SourceOfEngagement SourceOfEngagement { get; set; }
+    public IEnumerable<Guid> ManagerIds { get; set; } = new List<Guid>();
 }

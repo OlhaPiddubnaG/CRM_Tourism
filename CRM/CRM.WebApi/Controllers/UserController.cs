@@ -44,7 +44,6 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [Authorize(Policy = "CompanyAdmin")]
-    [Authorize(Policy = "Admin")]
     [ProducesResponseType(typeof(CreatedResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserCommand request, CancellationToken token)
@@ -55,7 +54,6 @@ public class UserController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken token)
     {

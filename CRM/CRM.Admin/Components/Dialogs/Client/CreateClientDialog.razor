@@ -14,7 +14,7 @@
                         <MudTextField Variant="Variant.Outlined" Label="Прізвище" @bind-Value="clientCreateDTO.Surname" For="@(() => clientCreateDTO.Surname)"/>
                     </MudItem>
                     <MudItem xs="12" md="3">
-                        <MudSelect T="Gender" @bind-SelectedValue="clientCreateDTO.Gender">
+                        <MudSelect T="Gender" @bind-Value="clientCreateDTO.Gender">
                             @foreach (Gender gender in Enum.GetValues(typeof(Gender)))
                             {
                                 <MudSelectItem Value="gender">@gender.ToString()</MudSelectItem>
@@ -31,7 +31,12 @@
                         <MudTextField Variant="Variant.Outlined" Label="Номер телефону" @bind-Value="clientCreateDTO.Phone" For="@(() => clientCreateDTO.Phone)"/>
                     </MudItem>
                     <MudItem xs="12" md="6">
-                        <MudTextField Variant="Variant.Outlined" Label="Коментар" @bind-Value="clientCreateDTO.Comment" For="@(() => clientCreateDTO.Comment)"/>
+                        <MudSelect T="Guid" @bind-SelectedValues="clientCreateDTO.ManagerIds" Label="Менеджер" MultiSelection="true" Class="mb-5">
+                            @foreach (var user in users)
+                            {
+                            <MudSelectItem Value="@user.Id">@($"{user.Name} {user.Surname}")</MudSelectItem>
+                            }
+                        </MudSelect> 
                     </MudItem>
                     <MudItem xs="12" md="6">
                         <MudTextField Variant="Variant.Outlined" Label="Електронна пошта" @bind-Value="clientCreateDTO.Email" For="@(() => clientCreateDTO.Email)"/>
@@ -45,7 +50,7 @@
                         </MudSelect>
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField Variant="Variant.Outlined" Label="Адреса" @bind-Value="clientCreateDTO.Address" For="@(() => clientCreateDTO.Address)" Lines="2"/>
+                        <MudTextField Variant="Variant.Outlined" Label="Адреса" @bind-Value="clientCreateDTO.Address" For="@(() => clientCreateDTO.Address)" Lines="1"/>
                     </MudItem>
                 </MudGrid>
             </MudTabPanel>

@@ -1,11 +1,15 @@
 using CRM.Admin.Data.ClientDTO;
 using CRM.Admin.Data.ClientPrivateDataDTO;
+using CRM.Admin.Data.ClientStatusHistoryDTO;
 using CRM.Admin.Data.CountryDTO;
 using CRM.Admin.Data.PassportInfoDTO;
+using CRM.Admin.Data.UserDTO;
 using CRM.Admin.Requests.ClientPrivateDataRequests;
 using CRM.Admin.Requests.ClientRequests;
+using CRM.Admin.Requests.ClientStatusHistoryRequests;
 using CRM.Admin.Requests.CountryRequests;
 using CRM.Admin.Requests.PassportInfoRequests;
+using CRM.Admin.Requests.UserRequests;
 using CRM.Domain.Enums;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -18,14 +22,18 @@ public partial class CreateClientDialog
     [Inject] NavigationManager NavigationManager { get; set; }
     [Inject] IClientRequest ClientRequest { get; set; }
     [Inject] IClientPrivateDataRequest ClientPrivateDataRequest { get; set; }
+    [Inject] IClientStatusHistoryRequest ClientStatusHistoryRequest { get; set; }
     [Inject] IPassportInfoRequest PassportInfoRequest { get; set; }
     [Inject] ICountryRequest CountryRequest { get; set; }
+    [Inject] IUserRequest UserRequest { get; set; }
     [Inject] ISnackbar Snackbar { get; set; }
     [Parameter] public Guid Id { get; set; }
 
     private ClientCreateDTO clientCreateDTO { get; set; } = new();
     private CountryCreateDTO countryCreateDTO { get; set; } = new();
+    
     private ClientPrivateDataCreateDTO clientPrivateDataCreateDTO { get; set; } = new();
+    private ClientStatusHistoryCreateDTO clientStatusHistoryCreateDTO { get; set; } = new();
 
     private PassportInfoCreateDTO passportInternalCreateDTO { get; set; } =
         new() { PassportType = PassportType.Internal };
@@ -39,6 +47,12 @@ public partial class CreateClientDialog
     private DateTime? passportInternationalExpiryDate = DateTime.UtcNow;
     private DateTime? passportInternationalIssueDate = DateTime.UtcNow;
     private int activeTabIndex = 0;
+    private List<UserDTO> users = new (); 
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = (await UserRequest.GetAllAsync()).Where(u => !u.IsDeleted).ToList();
+    }
 
     private async Task CreateClientAsync()
     {
@@ -64,6 +78,8 @@ public partial class CreateClientDialog
             Snackbar.Add("Клієнт створений", Severity.Success);
 
             Guid clientPrivateDataId = await CreateClientPrivateDataAsync(clientId);
+            Guid clientStatusHistoryId = await CreateClientStatusHistoryAsync(clientId);
+            
             passportInternalCreateDTO.ClientPrivateDataId = clientPrivateDataId;
             passportInternalCreateDTO.ExpiryDate = passportInternalExpiryDate.HasValue
                 ? DateOnly.FromDateTime(passportInternalExpiryDate.Value)
@@ -129,6 +145,19 @@ public partial class CreateClientDialog
 
         Snackbar.Add("Особисті дані створені", Severity.Success);
         return clientPrivateDataId;
+    }
+    
+    private async Task<Guid> CreateClientStatusHistoryAsync(Guid clientId)
+    {
+        clientStatusHistoryCreateDTO.ClientId = clientId;
+        clientStatusHistoryCreateDTO.ClientStatus = ClientStatus.Active;
+        clientStatusHistoryCreateDTO.DateTime = DateTime.UtcNow; 
+        Guid clientStatusHistoryId = await ClientStatusHistoryRequest.CreateAsync(clientStatusHistoryCreateDTO);
+        if (clientStatusHistoryId == Guid.Empty)
+        {
+            Snackbar.Add("Статус не змінено", Severity.Error);
+        }
+        return clientStatusHistoryId;
     }
 
     private void Cancel() => MudDialog.Cancel();

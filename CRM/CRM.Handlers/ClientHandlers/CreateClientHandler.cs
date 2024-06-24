@@ -23,8 +23,24 @@ public class CreateClientHandler : IRequestHandler<CreateClientCommand, CreatedR
     public async Task<CreatedResponse> Handle(CreateClientCommand request, CancellationToken cancellationToken)
     {
         request.Name = request.Name.ToUpper();
+        request.Surname = request.Surname.ToUpper();
+
         var client = _mapper.Map<Client>(request);
-        
+
+        if (request.ManagerIds.Any())
+        {
+            var users = await _context.Users
+                .Where(u => request.ManagerIds.Contains(u.Id))
+                .ToListAsync(cancellationToken);
+
+            if (users.Count != request.ManagerIds.Count)
+            {
+                throw new KeyNotFoundException("One or more user IDs are invalid.");
+            }
+
+            client.Users.AddRange(users);
+        }
+
         client.CreatedAt = DateTime.UtcNow;
         _context.Clients.Add(client);
 

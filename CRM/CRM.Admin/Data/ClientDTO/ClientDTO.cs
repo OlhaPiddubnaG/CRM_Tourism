@@ -17,4 +17,6 @@ public class ClientDTO
     public string? Phone { get; set; } 
     public string? Comment { get; set; } 
     public SourceOfEngagement SourceOfEngagement { get; set; } 
+    public List<string> ManagerNames { get; set; } = new List<string>();
+    public ClientStatus? LatestStatus { get; set; }
 }

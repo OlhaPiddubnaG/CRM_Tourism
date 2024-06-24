@@ -17,4 +17,6 @@ public class ClientUpdateDTO : IClientDTO
     public string Phone { get; set; } = "";
     public string Comment { get; set; } = "";
     public SourceOfEngagement SourceOfEngagement { get; set; } 
+    public IEnumerable<Guid> ManagerIds { get; set; } = new List<Guid>();
+    public ClientStatus? LatestStatus { get; set; }
 }

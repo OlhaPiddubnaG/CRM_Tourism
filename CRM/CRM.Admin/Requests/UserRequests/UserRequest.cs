@@ -52,6 +52,20 @@ public class UserRequest : IUserRequest
             throw;
         }
     }
+    
+    public async Task CreateAsync(UserCreateDTO userCreateDTO)
+    {
+        try
+        {
+            await _httpCrmApiRequests.SendPostRequestAsync(RequestUri, userCreateDTO);
+            _logger.LogInformation("CreateUser method executed successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in CreateUser method");
+            throw;
+        }
+    }
 
     public async Task<bool> UpdateAsync(UserUpdateDTO userUpdateDTO)
     {
