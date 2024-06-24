@@ -3,6 +3,7 @@ using System;
 using CRM.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CRM.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240620064445_AddClientStatusHistoryToClient")]
+    partial class AddClientStatusHistoryToClient
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -762,21 +765,6 @@ namespace CRM.DataAccess.Migrations
                     b.ToTable("UserTasks");
                 });
 
-            modelBuilder.Entity("ClientUser", b =>
-                {
-                    b.Property<Guid>("ClientsId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UsersId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("ClientsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("ClientUser");
-                });
-
             modelBuilder.Entity("CRM.Domain.Entities.City", b =>
                 {
                     b.HasOne("CRM.Domain.Entities.Company", "Company")
@@ -995,21 +983,6 @@ namespace CRM.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ClientUser", b =>
-                {
-                    b.HasOne("CRM.Domain.Entities.Client", null)
-                        .WithMany()
-                        .HasForeignKey("ClientsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CRM.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CRM.Domain.Entities.Client", b =>

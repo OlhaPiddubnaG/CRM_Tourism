@@ -19,6 +19,8 @@ public class Client : Auditable
     public string? Phone { get; set; } 
     public string? Comment { get; set; } 
     public SourceOfEngagement SourceOfEngagement { get; set; } 
+    public List<User> Users { get; set; } = new();
     public List<Order> Orders { get; set; } = new();
     public List<ClientPrivateData> ClientPrivateDatas { get; set; } = new();
+    public List<ClientStatusHistory> ClientStatusHistory { get; set; } = new(); 
 }

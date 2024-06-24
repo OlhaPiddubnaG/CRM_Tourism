@@ -17,4 +17,5 @@ public class User : Auditable
     public List<UserRoles> UserRoles { get; set; } = new();
     public List<UserTasks> Tasks { get; set; } = new();
     public List<Order> Orders { get; set; } = new();
+    public List<Client> Clients { get; set; } = new();
 }
