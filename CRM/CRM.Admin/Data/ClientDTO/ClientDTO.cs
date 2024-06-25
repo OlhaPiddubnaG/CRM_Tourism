@@ -2,7 +2,7 @@ using CRM.Domain.Enums;
 
 namespace CRM.Admin.Data.ClientDTO;
 
-public class ClientDTO
+public class ClientDTO : IClientDTO
 {
     public Guid Id { get; set; } 
     public Guid CompanyId { get; set; } 

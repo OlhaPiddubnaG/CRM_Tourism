@@ -24,4 +24,9 @@
       <ProjectReference Include="..\CRM.Helper\CRM.Helper.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Components\Dialogs\PassportInfo\CreateInternalPassportInfoDialog.razor" />
+      <_ContentIncludedByDefault Remove="Components\Dialogs\PassportInfo\CreateInternationalPassportInfoDialog.razor" />
+    </ItemGroup>
+
 </Project>

@@ -1,0 +1,52 @@
+@using CRM.Domain.Enums
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Змінити дані про туриста</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudGrid>
+            <MudItem xs="12" md="4">
+                <MudTextField Variant="Variant.Outlined" Label="Ім`я" @bind-Value="clientUpdateDTO.Name" For="@(() => clientUpdateDTO.Name)"/>
+            </MudItem>
+            <MudItem xs="12" md="5">
+                <MudTextField Variant="Variant.Outlined" Label="Прізвище" @bind-Value="clientUpdateDTO.Surname" For="@(() => clientUpdateDTO.Surname)"/>
+            </MudItem>
+            <MudItem xs="12" md="3">
+                <MudSelect T="Gender" @bind-Value="clientUpdateDTO.Gender">
+                    @foreach (Gender gender in Enum.GetValues(typeof(Gender)))
+                    {
+                        <MudSelectItem Value="gender">@gender.ToString()</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" md="7">
+                <MudTextField Variant="Variant.Outlined" Label="По-батькові" @bind-Value="clientUpdateDTO.Patronymic" For="@(() => clientUpdateDTO.Patronymic)"/>
+            </MudItem>
+            <MudItem xs="12" md="5">
+                <MudDatePicker @bind-Date="dateOfBirth" DateFormat="yyyy-MM-dd"/>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField Variant="Variant.Outlined" Label="Номер телефону" @bind-Value="clientUpdateDTO.Phone" For="@(() => clientUpdateDTO.Phone)"/>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField Variant="Variant.Outlined" Label="Електронна пошта" @bind-Value="clientUpdateDTO.Email" For="@(() => clientUpdateDTO.Email)"/>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudSelect T="SourceOfEngagement" @bind-SelectedValue="clientUpdateDTO.SourceOfEngagement">
+                    @foreach (SourceOfEngagement engagement in Enum.GetValues(typeof(SourceOfEngagement)))
+                    {
+                        <MudSelectItem Value="engagement">@engagement.ToString()</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField Variant="Variant.Outlined" Label="Адреса" @bind-Value="clientUpdateDTO.Address" For="@(() => clientUpdateDTO.Address)" Lines="1"/>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" OnClick="Cancel" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel">ВІДМІНА</MudButton>
+        <MudSpacer/>
+        <MudButton OnClick="UpdateClientAsync" Variant="Variant.Filled" Class="buttonBase" StartIcon="@Icons.Material.Filled.Save">ЗБЕРЕГТИ</MudButton>
+    </DialogActions>
+</MudDialog>

@@ -1,0 +1,232 @@
+@page "/clientById/{clientId}"
+
+<MudGrid Style="margin-top: 20px">
+<MudItem xs="12">
+<MudTabs Elevation="4" Rounded="true" Style="color: #0a5702;">
+<MudTabPanel Text="Інформація" ToolTip="Інформація про туриста">
+<MudGrid Style="margin-top: 2px">
+<MudItem xs="5">
+    <MudCard Class="client-card">
+        <MudCardContent>
+            <MudGrid>
+                <MudItem xs="6">
+                    <MudText Typo="Typo.h6">Основна інформація</MudText>
+                </MudItem>
+                <MudItem xs="6" Style="text-align: right;">
+                    <MudButton
+                        Variant="Variant.Outlined"
+                        OnClick="ChangeClientInfo"
+                        StartIcon="@Icons.Material.Filled.Edit"
+                        Size="Size.Small">
+                        змінити
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
+            <MudGrid>
+                <MudItem xs="6">
+                    <MudText Style="margin-top: 16px;">ПІБ:</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText Style="margin-top: 10px;">
+                        <i>@clientDTO.Name @clientDTO.Surname @clientDTO.Patronymic</i>
+                    </MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText>День народження:</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText>
+                        <i>@clientDTO.DateOfBirth</i>
+                    </MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText>Телефон:</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText>
+                        <i>@clientDTO.Phone</i>
+                    </MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText>Електронна пошта:</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText>
+                        <i>@clientDTO.Email</i>
+                    </MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText>Національність:</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText>
+                        <i>@passportInternalDTO.Nationality</i>
+                    </MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText>Адреса:</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText>
+                        <i>@clientDTO.Address</i>
+                    </MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText>Коментар:</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText>
+                        <i>@clientDTO.Comment</i>
+                    </MudText>
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
+</MudItem>
+
+<MudItem xs="7">
+    <MudCard Class="client-card">
+        <MudCardContent>
+            <MudGrid>
+                <MudItem xs="6">
+                    <MudText Typo="Typo.h6">Паспортні дані</MudText>
+                </MudItem>
+                <MudItem xs="6" Style="text-align: right;">
+                    <MudButton
+                        Variant="Variant.Outlined"
+                        OnClick="ChangePassportInfo"
+                        StartIcon="@Icons.Material.Filled.Edit"
+                        Size="Size.Small">
+                        змінити
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
+
+            <MudGrid>
+                <MudItem xs="6">
+                    <MudText Style="margin-top: 16px;" Typo="Typo.overline">ВНУТРІШНІЙ ПАСПОРТ</MudText>
+                    <MudGrid>
+                        <MudItem xs="6">
+                            <MudText>Серія паспорту:</MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>
+                                <i>@passportInternalDTO.RecordNo</i>
+                            </MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>Номер паспорта:</MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>
+                                <i>@passportInternalDTO.DocumentNo</i>
+                            </MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>Ким виданий:</MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>
+                                <i>@passportInternalDTO.Authority</i>
+                            </MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>Дійсний до:</MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>
+                                <i>@passportInternalDTO.ExpiryDate</i>
+                            </MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>Дата видачі:</MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>
+                                <i>@passportInternalDTO.DateOfIssue</i>
+                            </MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>Адреса прописки: </MudText>
+                            <MudText>
+                                <i> @passportInternalDTO.PlaceOfBirth</i>
+                            </MudText>
+
+                            <MudText>ІПН: <i>@passportInternalDTO.TaxpayerNo</i></MudText>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudText Style="margin-top: 16px;" Typo="Typo.overline">ЗАКОРДОННИЙ ПАСПОРТ</MudText>
+                    <MudGrid>
+                        <MudItem xs="6">
+                            <MudText>Прізвище латиницею:</MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>
+                                <i>@passportInternationalDTO.SurnameLatinScript</i>
+                            </MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>Ім'я латиницею:</MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>
+                                <i>@passportInternationalDTO.NameLatinScript</i>
+                            </MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>Серія паспорту:</MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>
+                                <i>@passportInternationalDTO.RecordNo</i>
+                            </MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>Номер паспорта:</MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>
+                                <i>@passportInternationalDTO.DocumentNo</i>
+                            </MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>Ким виданий:</MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>
+                                <i>@passportInternationalDTO.Authority</i>
+                            </MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>Дата видачі:</MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>
+                                <i>@passportInternationalDTO.DateOfIssue</i>
+                            </MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>Дійсний до:</MudText>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudText>
+                                <i>@passportInternationalDTO.ExpiryDate</i>
+                            </MudText>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
+</MudItem>
+</MudGrid>
+</MudTabPanel>
+<MudTabPanel Text="Замовлення" ToolTip="Замовлення туриста">
+    <MudText> </MudText>
+</MudTabPanel>
+</MudTabs>
+</MudItem>
+</MudGrid>

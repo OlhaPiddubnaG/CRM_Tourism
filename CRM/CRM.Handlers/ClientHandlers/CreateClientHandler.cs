@@ -24,7 +24,8 @@ public class CreateClientHandler : IRequestHandler<CreateClientCommand, CreatedR
     {
         request.Name = request.Name.ToUpper();
         request.Surname = request.Surname.ToUpper();
-
+        request.Patronymic = request.Patronymic.ToUpper();
+        
         var client = _mapper.Map<Client>(request);
 
         if (request.ManagerIds.Any())

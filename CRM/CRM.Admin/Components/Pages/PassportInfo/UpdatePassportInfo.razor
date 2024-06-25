@@ -1,0 +1,89 @@
+@page "/updatePassportInfo/{clientId}"
+
+@if (passportInternalDTO != null && passportInternationalDTO != null)
+{
+    <MudGrid>
+        <MudItem xs="12" md="6">
+            <MudCard Class="passport-card">
+                <MudCardContent>
+                    <MudText Typo="Typo.h6" Align="Align.Center">ВНУТРІШНІЙ ПАСПОРТ</MudText>
+                    <MudGrid Style="margin-top: 16px;">
+                        <MudItem xs="12" md="4">
+                            <MudTextField Variant="Variant.Outlined" Label="Серія паспорту" @bind-Value="passportInternalDTO.RecordNo"/>
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudTextField Variant="Variant.Outlined" Label="Номер паспорта" @bind-Value="passportInternalDTO.DocumentNo"/>
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudDatePicker Variant="Variant.Outlined" DateFormat="yyyy-MM-dd" Label="Дата видачі" @bind-Date="passportInternalIssueDate"/>
+                        </MudItem>
+                        <MudItem xs="12" md="8">
+                            <MudTextField Variant="Variant.Outlined" Label="Ким виданий" @bind-Value="passportInternalDTO.Authority"/>
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudDatePicker Variant="Variant.Outlined" DateFormat="yyyy-MM-dd" Label="Дійсний до" @bind-Date="passportInternalExpiryDate"/>
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudTextField Variant="Variant.Outlined" Label="Національність" @bind-Value="passportInternalDTO.Nationality"/>
+                        </MudItem>
+                        <MudItem xs="12" md="8">
+                            <MudTextField Variant="Variant.Outlined" Label="ІПН" @bind-Value="passportInternalDTO.TaxpayerNo"/>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudTextField Variant="Variant.Outlined" Label="Адреса прописки" @bind-Value="passportInternalDTO.PlaceOfBirth" Lines="2"/>
+                        </MudItem>
+                    </MudGrid>
+                    <MudGrid>
+                        <MudItem>
+                            <MudButton Type="Submit" OnClick="SubmitInternal" Variant="Variant.Filled" Class="buttonBase" StartIcon="@Icons.Material.Filled.Save">ЗБЕРЕГТИ ЗМІНИ</MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
+
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudCard Class="passport-card">
+                <MudCardContent>
+                    <MudText Typo="Typo.h6" Align="Align.Center">ЗАКОРДОННИЙ ПАСПОРТ</MudText>
+                    <MudGrid Style="margin-top: 16px;">
+                        <MudItem xs="12" md="6">
+                            <MudTextField Variant="Variant.Outlined" Label="Ім'я латиницею" @bind-Value="passportInternationalDTO.NameLatinScript"/>
+                        </MudItem>
+                        <MudItem xs="12" md="6">
+                            <MudTextField Variant="Variant.Outlined" Label="Прізвище латиницею" @bind-Value="passportInternationalDTO.SurnameLatinScript"/>
+                        </MudItem>
+                        <MudItem xs="12" md="6">
+                            <MudTextField Variant="Variant.Outlined" Label="Серія" @bind-Value="passportInternationalDTO.RecordNo"/>
+                        </MudItem>
+                        <MudItem xs="12" md="6">
+                            <MudTextField Variant="Variant.Outlined" Label="Номер" @bind-Value="passportInternationalDTO.DocumentNo"/>
+                        </MudItem>
+                        <MudItem xs="12" md="6">
+                            <MudDatePicker Variant="Variant.Outlined" DateFormat="yyyy-MM-dd" Label="Дата видачі" @bind-Date="passportInternationalIssueDate"/>
+                        </MudItem>
+                        <MudItem xs="12" md="6">
+                            <MudDatePicker Variant="Variant.Outlined" DateFormat="yyyy-MM-dd" Label="Дійсний до" @bind-Date="passportInternationalExpiryDate"/>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudTextField Variant="Variant.Outlined" Label="Ким виданий" @bind-Value="passportInternationalDTO.Authority" Lines="2"/>
+                        </MudItem>
+                    </MudGrid>
+                    <MudGrid>
+                        <MudItem>
+                            <MudButton Type="Submit" OnClick="SubmitInternational" Variant="Variant.Filled" Class="buttonBase" StartIcon="@Icons.Material.Filled.Save">ЗБЕРЕГТИ ЗМІНИ</MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+    @if (isSubmissionSuccessful)
+    {
+        <MudGrid>
+            <MudItem>
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowBack" OnClick="NavigateBack">ПОВЕРНУТИСЬ НАЗАД</MudButton>
+            </MudItem>
+        </MudGrid>
+    }
+}
