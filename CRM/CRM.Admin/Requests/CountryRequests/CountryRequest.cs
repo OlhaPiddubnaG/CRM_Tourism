@@ -1,5 +1,5 @@
 using System.Net;
-using CRM.Admin.Data.CountryDTO;
+using CRM.Admin.Data.CountryDto;
 using CRM.Admin.HttpRequests;
 using Newtonsoft.Json;
 
@@ -17,14 +17,14 @@ public class CountryRequest : ICountryRequest
         _logger = logger;
     }
     
-    public async Task<Guid> CreateAsync(CountryCreateDTO countryCreateDTO)
+    public async Task<Guid> CreateAsync(CountryCreateDto countryCreateDto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPostRequestAsync(RequestUri, countryCreateDTO);
+            var response = await _httpCrmApiRequests.SendPostRequestAsync(RequestUri, countryCreateDto);
             _logger.LogInformation("Create country method executed successfully");
 
-            var createdClient = await response.Content.ReadFromJsonAsync<CountryDTO>();
+            var createdClient = await response.Content.ReadFromJsonAsync<CountryDto>();
             return createdClient.Id;
         }
         catch (Exception ex)
@@ -34,7 +34,7 @@ public class CountryRequest : ICountryRequest
         }
     }
     
-    public async Task<List<CountryDTO>> GetAllAsync()
+    public async Task<List<CountryDto>> GetAllAsync()
     {
         try
         {
@@ -43,7 +43,7 @@ public class CountryRequest : ICountryRequest
 
             var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("GetAllAsync method executed successfully");
-            return JsonConvert.DeserializeObject<List<CountryDTO>>(content);
+            return JsonConvert.DeserializeObject<List<CountryDto>>(content);
         }
         catch (Exception ex)
         {
@@ -52,7 +52,7 @@ public class CountryRequest : ICountryRequest
         }
     }
 
-    public async Task<T> GetByIdAsync<T>(Guid id) where T : ICountryDTO
+    public async Task<T> GetByIdAsync<T>(Guid id) where T : ICountryDto
     {
         try
         {
@@ -69,20 +69,42 @@ public class CountryRequest : ICountryRequest
             throw;
         }
     }
-
-    public async Task<bool> UpdateAsync(CountryUpdateDTO countryUpdateDTO)
+    
+    public async Task<CountryDto> GetByNameAsync(string name)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, countryUpdateDTO);
+            var response = await _httpCrmApiRequests.SendGetRequestAsync($"{RequestUri}/name/{name}");
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            _logger.LogInformation($"GetByNameAsync method executed successfully for name: {name}");
+            return JsonConvert.DeserializeObject<CountryDto>(content);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error in GetByNameAsync method for name: {name}");
+            throw;
+        }
+    }
+
+    public async Task<bool> UpdateAsync(CountryUpdateDto countryUpdateDto)
+    {
+        try
+        {
+            var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, countryUpdateDto);
             response.EnsureSuccessStatusCode();
 
-            _logger.LogInformation($"UpdateAsync method executed successfully for country with id: {countryUpdateDTO.Id}");
+            _logger.LogInformation($"UpdateAsync method executed successfully for country with id: {countryUpdateDto.Id}");
             return response.StatusCode == HttpStatusCode.NoContent;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error in UpdateAsync method for country with id: {countryUpdateDTO.Id}");
+            _logger.LogError(ex, $"Error in UpdateAsync method for country with id: {countryUpdateDto.Id}");
             throw;
         }
     }
@@ -100,28 +122,6 @@ public class CountryRequest : ICountryRequest
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error in DeleteAsync method for id: {id}");
-            throw;
-        }
-    }
-    
-    public async Task<CountryDTO> GetByNameAsync(string name)
-    {
-        try
-        {
-            var response = await _httpCrmApiRequests.SendGetRequestAsync($"{RequestUri}/name/{name}");
-            if (response.StatusCode == HttpStatusCode.NotFound)
-            {
-                return null;
-            }
-
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
-            _logger.LogInformation($"GetByNameAsync method executed successfully for name: {name}");
-            return JsonConvert.DeserializeObject<CountryDTO>(content);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error in GetByNameAsync method for name: {name}");
             throw;
         }
     }

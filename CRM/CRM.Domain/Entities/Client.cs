@@ -23,4 +23,5 @@ public class Client : Auditable
     public List<Order> Orders { get; set; } = new();
     public List<ClientPrivateData> ClientPrivateDatas { get; set; } = new();
     public List<ClientStatusHistory> ClientStatusHistory { get; set; } = new(); 
+    public ClientStatus CurrentStatus { get; set; }
 }

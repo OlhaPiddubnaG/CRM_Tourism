@@ -1,4 +1,5 @@
 using CRM.Admin.Data;
+using CRM.Admin.Data.AuthModel;
 using CRM.Admin.HttpRequests;
 using Newtonsoft.Json;
 

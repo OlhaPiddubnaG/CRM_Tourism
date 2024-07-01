@@ -1,12 +1,10 @@
-using CRM.Admin.Data.ClientStatusHistoryDTO;
+using CRM.Admin.Data.ClientStatusHistoryDto;
 
 namespace CRM.Admin.Requests.ClientStatusHistoryRequests;
 
 public interface IClientStatusHistoryRequest
 {
-    Task<Guid> CreateAsync(ClientStatusHistoryCreateDTO clientStatusHistoryCreateDTO);
-    Task<List<ClientStatusHistoryDTO>> GetAllAsync();
-    Task<T> GetByIdAsync<T>(Guid id) where T : IClientStatusHistoryDTO;
-    Task<bool> UpdateAsync(ClientStatusHistoryUpdateDTO clientStatusHistoryUpdateDTO);
-    Task<bool> DeleteAsync(Guid id);
+    Task<Guid> CreateAsync(ClientStatusHistoryCreateDto clientStatusHistoryCreateDTO);
+    Task<List<ClientStatusHistoryDto>> GetAllAsync();
+    Task<T> GetByIdAsync<T>(Guid id) where T : IClientStatusHistoryDto;
 }

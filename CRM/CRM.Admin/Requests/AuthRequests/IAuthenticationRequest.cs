@@ -1,4 +1,5 @@
 using CRM.Admin.Data;
+using CRM.Admin.Data.AuthModel;
 
 namespace CRM.Admin.Requests.AuthRequests;
 

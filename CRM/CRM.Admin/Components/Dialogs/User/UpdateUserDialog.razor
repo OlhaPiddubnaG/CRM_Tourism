@@ -4,9 +4,9 @@
         <MudText Typo="Typo.h6">Редагування</MudText>
     </TitleContent>
     <DialogContent>
-        <MudTextField Class="mb-2" Label="Iм'я" @bind-Value="userUpdateDTO.Name" For="@(() => userUpdateDTO.Name)" Lines="2"/>
-        <MudTextField Class="mb-5" Label="Прізвище" @bind-Value="userUpdateDTO.Surname" For="@(() => userUpdateDTO.Surname)" Lines="2"/>
-        <MudSelect T="RoleType" @bind-SelectedValues="userUpdateDTO.RoleTypes" Label="Роль" MultiSelection="true" Class="mb-5" Lines="2">
+        <MudTextField Class="mb-2" Label="Iм'я" @bind-Value="UserUpdateDto.Name" For="@(() => UserUpdateDto.Name)" Lines="2"/>
+        <MudTextField Class="mb-5" Label="Прізвище" @bind-Value="UserUpdateDto.Surname" For="@(() => UserUpdateDto.Surname)" Lines="2"/>
+        <MudSelect T="RoleType" @bind-SelectedValues="UserUpdateDto.RoleTypes" Label="Роль" MultiSelection="true" Class="mb-5" Lines="2">
             @foreach (RoleType role in Enum.GetValues(typeof(RoleType)).Cast<RoleType>().Where(r => r != RoleType.Admin))
             {
                 <MudSelectItem Value="role">@role.ToString()</MudSelectItem>

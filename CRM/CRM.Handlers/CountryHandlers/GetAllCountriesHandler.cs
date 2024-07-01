@@ -1,7 +1,5 @@
 using AutoMapper;
 using CRM.DataAccess;
-using CRM.Domain.Entities;
-using CRM.Domain.Enums;
 using CRM.Domain.Requests;
 using CRM.Domain.Responses.Сountry;
 using CRM.Handlers.Services.CurrentUser;
@@ -22,24 +20,22 @@ public class GetAllCountriesHandler : IRequestHandler<GetAllRequest<CountryRespo
         _mapper = mapper;
         _currentUser = currentUser;
     }
-    
-    public async Task<List<CountryResponse>> Handle(GetAllRequest<CountryResponse> request, CancellationToken cancellationToken)
+
+    public async Task<List<CountryResponse>> Handle(GetAllRequest<CountryResponse> request,
+        CancellationToken cancellationToken)
     {
-        var countries = await GetCompaniesByRoleAsync(cancellationToken);
+        var companyId = _currentUser.GetCompanyId();
+        var countries = await _context.Countries
+            .Where(c => c.CompanyId == companyId && !c.IsDeleted)
+            .OrderBy(c => c.Name)
+            .ToListAsync(cancellationToken);
+        
+        if (countries == null)
+        {
+            throw new UnauthorizedAccessException("User is not authorized to access this country.");
+        }
 
         var countryResponses = _mapper.Map<List<CountryResponse>>(countries);
         return countryResponses;
-    }
-
-    private async Task<List<Country>> GetCompaniesByRoleAsync(CancellationToken cancellationToken)
-    {
-        var roles = _currentUser.GetRoles();
-        if (roles.Contains(RoleType.Admin))
-        {
-            return await _context.Countries.ToListAsync(cancellationToken);
-        }
-
-        var companyId = _currentUser.GetCompanyId();
-        return await _context.Countries.Where(c => c.Id == companyId).ToListAsync(cancellationToken);
     }
 }

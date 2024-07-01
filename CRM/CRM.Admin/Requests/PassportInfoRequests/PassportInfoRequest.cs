@@ -1,5 +1,5 @@
 using System.Net;
-using CRM.Admin.Data.PassportInfoDTO;
+using CRM.Admin.Data.PassportInfoDto;
 using CRM.Admin.HttpRequests;
 using Newtonsoft.Json;
 
@@ -17,14 +17,14 @@ public class PassportInfoRequest : IPassportInfoRequest
         _logger = logger;
     }
     
-    public async Task<Guid> CreateAsync(PassportInfoCreateDTO passportInfoCreateDTO)
+    public async Task<Guid> CreateAsync(PassportInfoCreateDto passportInfoCreateDto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPostRequestAsync(RequestUri, passportInfoCreateDTO);
+            var response = await _httpCrmApiRequests.SendPostRequestAsync(RequestUri, passportInfoCreateDto);
             _logger.LogInformation("Create client method executed successfully");
            
-            var createdPassportInfo = await response.Content.ReadFromJsonAsync<PassportInfoDTO>();
+            var createdPassportInfo = await response.Content.ReadFromJsonAsync<PassportInfoDto>();
             return createdPassportInfo.Id;
         }
         catch (Exception ex)
@@ -34,7 +34,7 @@ public class PassportInfoRequest : IPassportInfoRequest
         }
     }
     
-    public async Task<List<PassportInfoDTO>> GetAllAsync()
+    public async Task<List<PassportInfoDto>> GetAllAsync()
     {
         try
         {
@@ -43,7 +43,7 @@ public class PassportInfoRequest : IPassportInfoRequest
 
             var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("GetAllAsync method executed successfully");
-            return JsonConvert.DeserializeObject<List<PassportInfoDTO>>(content);
+            return JsonConvert.DeserializeObject<List<PassportInfoDto>>(content);
         }
         catch (Exception ex)
         {
@@ -52,7 +52,7 @@ public class PassportInfoRequest : IPassportInfoRequest
         }
     }
 
-    public async Task<T> GetByIdAsync<T>(Guid id) where T : IPassportInfoDTO
+    public async Task<T> GetByIdAsync<T>(Guid id) where T : IPassportInfoDto
     {
         try
         {
@@ -69,20 +69,38 @@ public class PassportInfoRequest : IPassportInfoRequest
             throw;
         }
     }
-
-    public async Task<bool> UpdateAsync(PassportInfoUpdateDTO passportInfoUpdateDTO)
+    
+    public async Task<List<PassportInfoDto>> GetByClientPrivateDataIdAsync(Guid clientPrivateDataId)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, passportInfoUpdateDTO);
+            var response = await _httpCrmApiRequests.SendGetRequestAsync($"{RequestUri}/by-client-private-data-id/{clientPrivateDataId}");
             response.EnsureSuccessStatusCode();
 
-            _logger.LogInformation($"UpdateAsync method executed successfully for user with id: {passportInfoUpdateDTO.Id}");
+            var content = await response.Content.ReadAsStringAsync();
+            _logger.LogInformation($"GetByClientPrivateDataIdAsync method executed successfully for ClientPrivateDataId: {clientPrivateDataId}");
+            return JsonConvert.DeserializeObject<List<PassportInfoDto>>(content);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error in GetByClientPrivateDataIdAsync method for ClientPrivateDataId: {clientPrivateDataId}");
+            throw;
+        }
+    }
+
+    public async Task<bool> UpdateAsync(PassportInfoUpdateDto passportInfoUpdateDto)
+    {
+        try
+        {
+            var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, passportInfoUpdateDto);
+            response.EnsureSuccessStatusCode();
+
+            _logger.LogInformation($"UpdateAsync method executed successfully for user with id: {passportInfoUpdateDto.Id}");
             return response.StatusCode == HttpStatusCode.NoContent;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error in UpdateAsync method for user with id: {passportInfoUpdateDTO.Id}");
+            _logger.LogError(ex, $"Error in UpdateAsync method for user with id: {passportInfoUpdateDto.Id}");
             throw;
         }
     }

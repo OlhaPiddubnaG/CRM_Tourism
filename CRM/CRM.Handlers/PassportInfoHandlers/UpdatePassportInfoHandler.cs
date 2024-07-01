@@ -2,6 +2,8 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands.PassportInfo;
 using CRM.Domain.Entities;
+using CRM.Domain.Enums;
+using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,20 +12,36 @@ namespace CRM.Handlers.PassportInfoHandlers;
 public class UpdatePassportInfoHandler : IRequestHandler<UpdatePassportInfoCommand, Unit>
 {
     private readonly AppDbContext _context;
+    private readonly ICurrentUser _currentUser;
 
-    public UpdatePassportInfoHandler(AppDbContext context)
+    public UpdatePassportInfoHandler(AppDbContext context, ICurrentUser currentUser)
     {
         _context = context;
+        _currentUser = currentUser;
     }
 
     public async Task<Unit> Handle(UpdatePassportInfoCommand request, CancellationToken cancellationToken)
     {
         var existingPassportInfo = await _context.PassportInfo
+            .Include(pi => pi.ClientPrivateData)
+            .ThenInclude(cpd => cpd.Client)
             .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
 
         if (existingPassportInfo == null)
         {
             throw new NotFoundException(typeof(PassportInfo), request.Id);
+        }
+
+        var currentUserCompanyId = _currentUser.GetCompanyId();
+
+        if (existingPassportInfo.ClientPrivateData?.Client == null)
+        {
+            throw new NotFoundException(typeof(ClientPrivateData), existingPassportInfo.ClientPrivateDataId);
+        }
+
+        if (existingPassportInfo.ClientPrivateData.Client.CompanyId != currentUserCompanyId)
+        {
+            throw new UnauthorizedAccessException("User is not authorized to update passport info for this client.");
         }
 
         existingPassportInfo.ClientPrivateDataId = request.ClientPrivateDataId;
@@ -39,6 +57,7 @@ public class UpdatePassportInfoHandler : IRequestHandler<UpdatePassportInfoComma
         existingPassportInfo.NameLatinScript = request.NameLatinScript;
         existingPassportInfo.SurnameLatinScript = request.SurnameLatinScript;
         existingPassportInfo.UpdatedAt = DateTime.UtcNow;
+        existingPassportInfo.UpdatedUserId = _currentUser.GetUserId();
 
         try
         {

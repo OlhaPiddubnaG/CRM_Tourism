@@ -13,6 +13,7 @@ public partial class AppBar
     [Inject] IDialogService DialogService { get; set; } = default!;
     [Inject] AuthenticationStateProvider AuthenticationStateProvider  { get; set; }
     
+    
     private DialogOptions dialogOptions = new()
     {
         CloseOnEscapeKey = true,

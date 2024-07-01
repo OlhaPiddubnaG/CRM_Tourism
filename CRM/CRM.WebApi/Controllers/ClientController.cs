@@ -8,6 +8,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MudBlazor;
 
 namespace CRM.WebApi.Controllers;
 
@@ -27,6 +28,17 @@ public class ClientController : ControllerBase
     [ProducesResponseType(typeof(CreatedResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Create([FromBody] CreateClientCommand request, CancellationToken token)
+    {
+        var response = await _sender.Send(request, token);
+
+        return Ok(response);
+    }
+    
+    
+    [HttpPost("withRelated")]
+    [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Create([FromBody] CreateClientWithRelatedCommand request, CancellationToken token)
     {
         var response = await _sender.Send(request, token);
 
@@ -52,6 +64,17 @@ public class ClientController : ControllerBase
 
         return Ok(response);
     }
+    
+    [HttpGet("search")]
+    [ProducesResponseType(typeof(TableData<ClientResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetAll(int page, int pageSize, string searchString, string sortLabel, SortDirection sortDirection, CancellationToken token)
+    {
+        var response = await _sender.Send(new GetSortAllRequest<ClientResponse>(page, pageSize, searchString, sortLabel, sortDirection), token);
+
+        return Ok(response);
+    }
+
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

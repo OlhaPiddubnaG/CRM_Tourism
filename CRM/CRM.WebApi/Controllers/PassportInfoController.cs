@@ -42,6 +42,15 @@ public class PassportInfoController : ControllerBase
 
         return Ok(response);
     }
+    
+    [HttpGet("by-client-private-data-id/{clientPrivateDataId:guid}")]
+    [ProducesResponseType(typeof(List<PassportInfoResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetByClientPrivateDataId(Guid clientPrivateDataId, CancellationToken token)
+    {
+        var response = await _sender.Send(new GetByIdReturnListRequest<PassportInfoResponse>(clientPrivateDataId), token);
+        return Ok(response);
+    }
 
     [HttpPost]
     [ProducesResponseType(typeof(CreatedResponse), StatusCodes.Status200OK)]

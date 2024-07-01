@@ -2,6 +2,7 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands;
 using CRM.Domain.Entities;
+using CRM.Domain.Enums;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -21,11 +22,22 @@ public class DeleteClientPrivateDataHandler : IRequestHandler<DeleteCommand<Clie
     
     public async Task<Unit> Handle(DeleteCommand<ClientPrivateData> request, CancellationToken cancellationToken)
     {
-        var clientPrivateData = await _context.ClientPrivateDatas.FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
+        var currentUserCompanyId = _currentUser.GetCompanyId();
+        
+        var clientPrivateData = await _context.ClientPrivateDatas
+            .Include(cpd => cpd.Client)
+            .FirstOrDefaultAsync(cpd => cpd.Id == request.Id, cancellationToken);
+            
         if (clientPrivateData == null)
         {
             throw new NotFoundException(typeof(ClientPrivateData), request.Id);
         }
+        
+        if (currentUserCompanyId != clientPrivateData.Client?.CompanyId)
+        {
+            throw new UnauthorizedAccessException("User is not authorized to delete this client private data.");
+        }
+        
         if (clientPrivateData.IsDeleted)
         {
             throw new InvalidOperationException($"ClientPrivateData with ID {request.Id} is already deleted.");
@@ -35,6 +47,15 @@ public class DeleteClientPrivateDataHandler : IRequestHandler<DeleteCommand<Clie
         clientPrivateData.DeletedAt = DateTime.UtcNow;
         clientPrivateData.DeletedUserId = _currentUser.GetUserId();
         await _context.SaveChangesAsync(cancellationToken);
+
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new SaveDatabaseException(typeof(ClientPrivateData), ex);
+        }
 
         return Unit.Value;
     }

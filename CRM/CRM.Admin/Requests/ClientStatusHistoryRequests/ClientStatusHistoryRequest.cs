@@ -1,5 +1,5 @@
 using System.Net;
-using CRM.Admin.Data.ClientStatusHistoryDTO;
+using CRM.Admin.Data.ClientStatusHistoryDto;
 using CRM.Admin.HttpRequests;
 using Newtonsoft.Json;
 
@@ -18,14 +18,14 @@ public class ClientStatusHistoryRequest : IClientStatusHistoryRequest
         _logger = logger;
     }
 
-    public async Task<Guid> CreateAsync(ClientStatusHistoryCreateDTO clientStatusHistoryCreateDTO)
+    public async Task<Guid> CreateAsync(ClientStatusHistoryCreateDto clientStatusHistoryCreateDto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPostRequestAsync(RequestUri, clientStatusHistoryCreateDTO);
+            var response = await _httpCrmApiRequests.SendPostRequestAsync(RequestUri, clientStatusHistoryCreateDto);
             _logger.LogInformation("Create ClientStatusHistory method executed successfully");
 
-            var createdClientStatusHistory = await response.Content.ReadFromJsonAsync<ClientStatusHistoryDTO>();
+            var createdClientStatusHistory = await response.Content.ReadFromJsonAsync<ClientStatusHistoryDto>();
             return createdClientStatusHistory.Id;
         }
         catch (Exception ex)
@@ -35,7 +35,7 @@ public class ClientStatusHistoryRequest : IClientStatusHistoryRequest
         }
     }
 
-    public async Task<List<ClientStatusHistoryDTO>> GetAllAsync()
+    public async Task<List<ClientStatusHistoryDto>> GetAllAsync()
     {
         try
         {
@@ -44,7 +44,7 @@ public class ClientStatusHistoryRequest : IClientStatusHistoryRequest
 
             var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("GetAllAsync method executed successfully");
-            return JsonConvert.DeserializeObject<List<ClientStatusHistoryDTO>>(content);
+            return JsonConvert.DeserializeObject<List<ClientStatusHistoryDto>>(content);
         }
         catch (Exception ex)
         {
@@ -53,7 +53,7 @@ public class ClientStatusHistoryRequest : IClientStatusHistoryRequest
         }
     }
 
-    public async Task<T> GetByIdAsync<T>(Guid id) where T : IClientStatusHistoryDTO
+    public async Task<T> GetByIdAsync<T>(Guid id) where T : IClientStatusHistoryDto
     {
         try
         {
@@ -67,42 +67,6 @@ public class ClientStatusHistoryRequest : IClientStatusHistoryRequest
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error in GetByIdAsync method for id: {id}");
-            throw;
-        }
-    }
-
-
-    public async Task<bool> UpdateAsync(ClientStatusHistoryUpdateDTO clientStatusHistoryUpdateDTO)
-    {
-        try
-        {
-            var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, clientStatusHistoryUpdateDTO);
-            response.EnsureSuccessStatusCode();
-
-            _logger.LogInformation(
-                $"UpdateAsync method executed successfully for user with id: {clientStatusHistoryUpdateDTO.Id}");
-            return response.StatusCode == HttpStatusCode.NoContent;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error in UpdateAsync method for user with id: {clientStatusHistoryUpdateDTO.Id}");
-            throw;
-        }
-    }
-
-    public async Task<bool> DeleteAsync(Guid id)
-    {
-        try
-        {
-            var response = await _httpCrmApiRequests.SendDeleteRequestAsync($"{RequestUri}/{id}");
-            response.EnsureSuccessStatusCode();
-
-            _logger.LogInformation($"DeleteAsync method executed successfully for id: {id}");
-            return response.StatusCode == HttpStatusCode.NoContent;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error in DeleteAsync method for id: {id}");
             throw;
         }
     }

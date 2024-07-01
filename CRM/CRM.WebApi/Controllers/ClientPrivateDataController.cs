@@ -52,6 +52,16 @@ public class ClientPrivateDataController : ControllerBase
 
         return Ok(response);
     }
+    
+    [HttpGet("by-client-id/{clientId:guid}")]
+    [ProducesResponseType(typeof(ClientPrivateDataResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetByClientId(Guid clientId, CancellationToken token)
+    {
+        var response = await _sender.Send(new GetByIdRequest<ClientPrivateDataResponse>(clientId), token);
+
+        return Ok(response);
+    }
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

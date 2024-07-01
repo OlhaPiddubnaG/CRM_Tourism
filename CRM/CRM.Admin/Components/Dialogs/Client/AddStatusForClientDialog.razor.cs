@@ -1,4 +1,6 @@
-using CRM.Admin.Data.ClientStatusHistoryDTO;
+using CRM.Admin.Data.ClientDto;
+using CRM.Admin.Data.ClientStatusHistoryDto;
+using CRM.Admin.Requests.ClientRequests;
 using CRM.Admin.Requests.ClientStatusHistoryRequests;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -7,20 +9,29 @@ namespace CRM.Admin.Components.Dialogs.Client;
 
 public partial class AddStatusForClientDialog
 {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-    [Inject] IClientStatusHistoryRequest ClientStatusHistoryRequest { get; set; }
-    [Inject] ISnackbar Snackbar { get; set; }
-    private ClientStatusHistoryCreateDTO clientStatusHistoryCreateDTO { get; set; } = new();
+    [Inject] private IClientStatusHistoryRequest ClientStatusHistoryRequest { get; set; } = null!;
+    [Inject] private IClientRequest ClientRequest { get; set; } = null!;
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
+
+    [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
     [Parameter] public Guid Id { get; set; }
-    
-    private async Task Create()
+
+    private ClientStatusHistoryCreateDto ClientStatusHistoryCreateDto { get; set; } = new();
+    private ClientDto ClientDto { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ClientDto = await ClientRequest.GetByIdAsync<ClientDto>(Id);
+    }
+
+    private async Task Update()
     {
         try
         {
-            clientStatusHistoryCreateDTO.ClientId = Id;
-            clientStatusHistoryCreateDTO.DateTime = DateTime.UtcNow;
-            
-            await ClientStatusHistoryRequest.CreateAsync(clientStatusHistoryCreateDTO);
+            ClientStatusHistoryCreateDto.ClientId = Id;
+            ClientStatusHistoryCreateDto.DateTime = DateTime.UtcNow;
+
+            await ClientStatusHistoryRequest.CreateAsync(ClientStatusHistoryCreateDto);
             Snackbar.Add("Статус туриста змінено", Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
         }

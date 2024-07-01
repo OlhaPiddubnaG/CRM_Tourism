@@ -2,7 +2,6 @@ using AutoMapper;
 using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Entities;
-using CRM.Domain.Enums;
 using CRM.Domain.Requests;
 using CRM.Domain.Responses.Client;
 using CRM.Handlers.Services.CurrentUser;
@@ -27,7 +26,12 @@ public class GetClientByIdHandler : IRequestHandler<GetByIdRequest<ClientRespons
     public async Task<ClientResponse> Handle(GetByIdRequest<ClientResponse> request,
         CancellationToken cancellationToken)
     {
-        var client = await GetClientByIdAsync(request.Id, cancellationToken);
+        var companyId = _currentUser.GetCompanyId();
+        
+        var client = await _context.Clients
+            .Include(u => u.Users)
+            .Include(c => c.ClientStatusHistory)
+            .FirstOrDefaultAsync(c => c.CompanyId == companyId && c.Id == request.Id && !c.IsDeleted, cancellationToken);
 
         if (client == null)
         {
@@ -36,18 +40,5 @@ public class GetClientByIdHandler : IRequestHandler<GetByIdRequest<ClientRespons
 
         var clientResponse = _mapper.Map<ClientResponse>(client);
         return clientResponse;
-    }
-
-    private async Task<Client> GetClientByIdAsync(Guid clientId, CancellationToken cancellationToken)
-    {
-        var roles = _currentUser.GetRoles();
-        if (roles.Contains(RoleType.Admin))
-        {
-            return await _context.Clients.FirstOrDefaultAsync(c => c.Id == clientId, cancellationToken);
-        }
-
-        var companyId = _currentUser.GetCompanyId();
-
-        return await _context.Clients.FirstOrDefaultAsync(c => c.CompanyId == companyId && c.Id == clientId, cancellationToken);
     }
 }

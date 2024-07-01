@@ -28,6 +28,7 @@ using CRM.Handlers.PassportInfoHandlers;
 using CRM.Handlers.UserHandlers;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor;
 
 namespace CRM.Handlers;
 
@@ -53,30 +54,36 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<GetAllRequest<UserResponse>, List<UserResponse>>, GetAllUsersHandler>();
         
         services.AddScoped<IRequestHandler<CreateClientCommand, CreatedResponse>, CreateClientHandler>();
+        services
+            .AddScoped<IRequestHandler<CreateClientWithRelatedCommand, ResultBaseResponse>,
+                CreateClientWithRelatedHandler>(); 
         services.AddScoped<IRequestHandler<UpdateClientCommand, Unit>, UpdateClientHandler>();
         services.AddScoped<IRequestHandler<DeleteCommand<Client>, Unit>, DeleteClientHandler>();
         services.AddScoped<IRequestHandler<GetByIdRequest<ClientResponse>, ClientResponse>, GetClientByIdHandler>(); 
         services.AddScoped<IRequestHandler<GetAllRequest<ClientResponse>, List<ClientResponse>>, GetAllClientsHandler>();
-
+        services.AddScoped<IRequestHandler<GetSortAllRequest <ClientResponse>,TableData<ClientResponse>>, GetSortAllClientsHandler>();
+        
         services.AddScoped<IRequestHandler<CreateClientPrivateDataCommand, CreatedResponse>,
                 CreateClientPrivateDataHandler>(); 
         services.AddScoped<IRequestHandler<UpdateClientPrivateDataCommand, Unit>, UpdateClientPrivateDataHandler>();
         services.AddScoped<IRequestHandler<DeleteCommand<ClientPrivateData>, Unit>, DeleteClientPrivateDataHandler>();
         services.AddScoped<IRequestHandler<GetByIdRequest<ClientPrivateDataResponse>, ClientPrivateDataResponse>, GetClientPrivateDataByIdHandler>(); 
-        services.AddScoped<IRequestHandler<GetAllRequest<ClientPrivateDataResponse>, List<ClientPrivateDataResponse>>, GetAllClientPrivateDatasHandler>(); 
+        services.AddScoped<IRequestHandler<GetAllRequest<ClientPrivateDataResponse>, List<ClientPrivateDataResponse>>, GetAllClientPrivateDatasHandler>();
+        services.AddScoped<IRequestHandler<GetByIdRequest<ClientPrivateDataResponse>, ClientPrivateDataResponse>, GetClientPrivateDataByClientIdHandler>(); 
         
         services.AddScoped<IRequestHandler<CreateClientStatusHistoryCommand, CreatedResponse>, CreateClientStatusHistoryHandler>();
-        services.AddScoped<IRequestHandler<UpdateClientStatusHistoryCommand, Unit>, UpdateClientStatusHistoryHandler>();
-        services.AddScoped<IRequestHandler<DeleteCommand<ClientStatusHistory>, Unit>, DeleteClientStatusHistoryHandler>();
         services.AddScoped<IRequestHandler<GetByIdRequest<ClientStatusHistoryResponse>, ClientStatusHistoryResponse>, GetClientStatusHistoryByIdHandler>(); 
-        services.AddScoped<IRequestHandler<GetAllRequest<ClientStatusHistoryResponse>, List<ClientStatusHistoryResponse>>, GetAllClientsStatusHistoryHandler>();
+        services.AddScoped<IRequestHandler<GetByIdReturnListRequest<ClientStatusHistoryResponse>, List<ClientStatusHistoryResponse>>, GetAllClientsStatusHistoryHandler>();
       
         services.AddScoped<IRequestHandler<CreatePassportInfoCommand, CreatedResponse>, CreatePassportInfoHandler>();
         services.AddScoped<IRequestHandler<UpdatePassportInfoCommand, Unit>, UpdatePassportInfoHandler>();
         services.AddScoped<IRequestHandler<DeleteCommand<PassportInfo>, Unit>, DeletePassportInfoHandler>();
         services.AddScoped<IRequestHandler<GetByIdRequest<PassportInfoResponse>, PassportInfoResponse>, GetPassportInfoByIdHandler>(); 
         services.AddScoped<IRequestHandler<GetAllRequest<PassportInfoResponse>, List<PassportInfoResponse>>, GetAllPassportsInfoHandler>();
-        
+        services
+            .AddScoped<IRequestHandler<GetByIdReturnListRequest<PassportInfoResponse>, List<PassportInfoResponse>>,
+                GetByClientPrivateDataIdHandler>();
+            
         services.AddScoped<IRequestHandler<CreateCountryCommand, CreatedResponse>, CreateCountryHandler>();
         services.AddScoped<IRequestHandler<UpdateCountryCommand, Unit>, UpdateCountryHandler>();
         services.AddScoped<IRequestHandler<DeleteCommand<Country>, Unit>, DeleteCountryHandler>();

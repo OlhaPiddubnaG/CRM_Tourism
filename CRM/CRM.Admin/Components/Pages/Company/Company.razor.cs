@@ -1,10 +1,9 @@
 using CRM.Admin.Components.Dialogs.Company;
 using CRM.Admin.Components.Dialogs.User;
-using CRM.Admin.Data.CompanyDTO;
-using CRM.Admin.Data.UserDTO;
+using CRM.Admin.Data.CompanyDto;
+using CRM.Admin.Data.UserDto;
 using CRM.Admin.Requests.CompanyRequests;
 using CRM.Admin.Requests.UserRequests;
-using CRM.Domain.Constants;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -12,12 +11,12 @@ namespace CRM.Admin.Components.Pages.Company;
 
 public partial class Company
 {
-    [Inject] IDialogService DialogService { get; set; } = default!;
-    [Inject] ISnackbar Snackbar { get; set; } = default!;
-    [Inject] ICompanyRequest CompanyRequest { get; set; } = default!;
-    [Inject] IUserRequest UserRequest { get; set; } = default!;
+    [Inject] private IDialogService DialogService { get; set; } = null!;
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    [Inject] private ICompanyRequest CompanyRequest { get; set; } = null!;
+    [Inject] private IUserRequest UserRequest { get; set; } = null!;
     
-    private DialogOptions dialogOptions = new() 
+    private readonly DialogOptions _dialogOptions = new() 
     {   
         CloseOnEscapeKey = true, 
         CloseButton = true, 
@@ -25,14 +24,14 @@ public partial class Company
         MaxWidth = MaxWidth.Small, 
         FullWidth = true 
     };
-    private IEnumerable<CompanyDTO> _companyDTOs = new List<CompanyDTO>();
-    private IEnumerable<UserDTO> _userDTOs = new List<UserDTO>();
-    private IEnumerable<UserDTO> _filteredUserDTOs = new List<UserDTO>();
+    private IEnumerable<CompanyDto> _companyDtos = new List<CompanyDto>();
+    private IEnumerable<UserDto> _userDtos = new List<UserDto>();
+    private IEnumerable<UserDto> _filteredUserDtos = new List<UserDto>();
     private bool _isCreateUserButtonDisabled = true;
     private Guid? _selectedCompanyId;
 
-    private MudTable<CompanyDTO> _tableCompany = default!;
-    private MudDataGrid<UserDTO> _tableUser = default!;
+    private MudTable<CompanyDto> _tableCompany = null!;
+    private MudDataGrid<UserDto> _tableUser = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -41,15 +40,15 @@ public partial class Company
 
     private async Task LoadDataAsync()
     {
-        _userDTOs = (await UserRequest.GetAllAsync()).Where(u => !u.IsDeleted && u.Name != Constants.DefaultAdminUserName).ToList();
-        _companyDTOs = (await CompanyRequest.GetAllAsync()).Where(c => !c.IsDeleted && c.Name != Constants.DefaultCompanyAdminName).ToList();
+        _userDtos = await UserRequest.GetAllAsync();
+        _companyDtos = await CompanyRequest.GetAllAsync();
         StateHasChanged();
     }
 
     private async Task CreateUser()
     {
         var parameters = new DialogParameters { { "Id", _selectedCompanyId } };
-        var dialogReference = await DialogService.ShowAsync<CreateUserDialog>("", parameters, dialogOptions);
+        var dialogReference = await DialogService.ShowAsync<CreateUserDialog>("", parameters, _dialogOptions);
         var dialogResult = await dialogReference.Result;
 
         if (dialogResult.Canceled)
@@ -61,7 +60,7 @@ public partial class Company
 
     private async Task CreateCompany()
     {
-        var dialogReference = await DialogService.ShowAsync<CreateCompanyDialog>("", dialogOptions);
+        var dialogReference = await DialogService.ShowAsync<CreateCompanyDialog>("", _dialogOptions);
         var dialogResult = await dialogReference.Result;
 
         if (dialogResult.Canceled)
@@ -74,7 +73,7 @@ public partial class Company
     private async Task UpdateUser(Guid id)
     {
         var parameters = new DialogParameters { { "Id", id } };
-        var dialogReference = await DialogService.ShowAsync<UpdateUserDialog>("", parameters, dialogOptions);
+        var dialogReference = await DialogService.ShowAsync<UpdateUserDialog>("", parameters, _dialogOptions);
         var dialogResult = await dialogReference.Result;
 
         if (dialogResult.Canceled)
@@ -87,7 +86,7 @@ public partial class Company
     private async Task UpdateCompany(Guid id)
     {
         var parameters = new DialogParameters { { "Id", id } };
-        var dialogReference = await DialogService.ShowAsync<UpdateCompanyDialog>("", parameters, dialogOptions);
+        var dialogReference = await DialogService.ShowAsync<UpdateCompanyDialog>("", parameters, _dialogOptions);
         var dialogResult = await dialogReference.Result;
 
         if (dialogResult.Canceled)
@@ -145,27 +144,27 @@ public partial class Company
         await _tableCompany.ReloadServerData();
     }
 
-    private async Task<GridData<UserDTO>> SetTableDataUserAsync(GridState<UserDTO> state)
+    private async Task<GridData<UserDto>> SetTableDataUserAsync(GridState<UserDto> state)
     {
         if (_selectedCompanyId == null)
         {
-            return new GridData<UserDTO>
+            return new GridData<UserDto>
             {
-                Items = new List<UserDTO>(),
+                Items = new List<UserDto>(),
                 TotalItems = 0
             };
         }
 
-        _filteredUserDTOs = _userDTOs.Where(user => user.CompanyId == _selectedCompanyId.Value).ToList();
-        var pagedData = _filteredUserDTOs.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
-        return new GridData<UserDTO>
+        _filteredUserDtos = _userDtos.Where(user => user.CompanyId == _selectedCompanyId.Value).ToList();
+        var pagedData = _filteredUserDtos.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new GridData<UserDto>
         {
             Items = pagedData,
-            TotalItems = _filteredUserDTOs.Count()
+            TotalItems = _filteredUserDtos.Count()
         };
     }
 
-    private void OnCompanySelected(TableRowClickEventArgs<CompanyDTO> args)
+    private void OnCompanySelected(TableRowClickEventArgs<CompanyDto> args)
     {
         _selectedCompanyId = args.Item.Id;
         _tableUser.ReloadServerData();
@@ -177,7 +176,7 @@ public partial class Company
         _isCreateUserButtonDisabled = _selectedCompanyId == null;
     }
 
-    private string SelectedRowClassFunc(CompanyDTO company, int rowNumber)
+    private string SelectedRowClassFunc(CompanyDto company, int rowNumber)
     {
         return _selectedCompanyId.HasValue && _selectedCompanyId.Value == company.Id ? "selected-row" : string.Empty;
     }

@@ -1,4 +1,4 @@
-namespace CRM.Admin.Data;
+namespace CRM.Admin.Data.AuthModel;
 
 public class LoginUser
 {

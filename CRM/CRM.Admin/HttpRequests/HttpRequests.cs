@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Headers;
+using System.Web;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -22,6 +23,27 @@ public class HttpRequests : IHttpCrmApiRequests
     {
         await AddAuthorizationHeaderAsync();
         var response = await _httpClient.GetAsync(requestUri);
+        CheckResponseStatusCode(response);
+
+        return response;
+    }
+    
+    public async Task<HttpResponseMessage> SendGetRequestAsync(string requestUri, Dictionary<string, string> queryParams)
+    {
+        await AddAuthorizationHeaderAsync();
+
+        var uriBuilder = new UriBuilder(_httpClient.BaseAddress + requestUri);
+        var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+
+        foreach (var param in queryParams)
+        {
+            query[param.Key] = param.Value;
+        }
+
+        uriBuilder.Query = query.ToString();
+        var uri = uriBuilder.ToString();
+
+        var response = await _httpClient.GetAsync(uri);
         CheckResponseStatusCode(response);
 
         return response;

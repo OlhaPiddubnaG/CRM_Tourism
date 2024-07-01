@@ -3,7 +3,7 @@
         <MudText Typo="Typo.h6">Редагування</MudText>
     </TitleContent>
     <DialogContent>
-        <MudTextField Class="mb-2" Label="Назва" @bind-Value="companyUpdateDTO.Name" For="@(() => companyUpdateDTO.Name)" Lines="2"/>
+        <MudTextField Class="mb-2" Label="Назва" @bind-Value="CompanyUpdateDto.Name" For="@(() => CompanyUpdateDto.Name)" Lines="2"/>
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Filled" OnClick="Cancel" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel">ВІДМІНА</MudButton>

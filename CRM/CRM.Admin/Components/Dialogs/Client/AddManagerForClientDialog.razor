@@ -1,10 +1,11 @@
 <MudDialog>
     <TitleContent>
-        <MudText Typo="Typo.h6">Призначити менеджера</MudText>
+        <MudText Typo="Typo.h6">Призначити менеджера для</MudText>
     </TitleContent>
     <DialogContent>
-        <MudSelect Label="Менеджер" @bind-SelectedValues="selectedManagerIds" MultiSelection="true">
-            @foreach (var manager in managers)
+        <MudText Typo="Typo.subtitle1">@ClientUpdateDto.Surname @ClientUpdateDto.Name</MudText>
+        <MudSelect Label="Менеджер" @bind-SelectedValues="_selectedManagerIds" MultiSelection="true">
+            @foreach (var manager in _managers)
             {
                 <MudSelectItem Value="@manager.Id">@($"{manager.Name} {manager.Surname}")</MudSelectItem>
             }

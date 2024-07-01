@@ -3,7 +3,9 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands.Country;
 using CRM.Domain.Entities;
+using CRM.Domain.Enums;
 using CRM.Domain.Responses;
+using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,18 +15,25 @@ public class CreateCountryHandler : IRequestHandler<CreateCountryCommand, Create
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
+    private readonly ICurrentUser _currentUser;
 
-    public CreateCountryHandler(AppDbContext context, IMapper mapper)
+    public CreateCountryHandler(AppDbContext context, IMapper mapper, ICurrentUser currentUser)
     {
         _context = context;
         _mapper = mapper;
+        _currentUser = currentUser;
     }
-
     public async Task<CreatedResponse> Handle(CreateCountryCommand request, CancellationToken cancellationToken)
     {
-        request.Name = request.Name.ToUpper();
-        var existingCountry =
-            await _context.Countries.FirstOrDefaultAsync(c => c.Name == request.Name, cancellationToken);
+        var currentUserCompanyId = _currentUser.GetCompanyId();
+
+        if (currentUserCompanyId != request.CompanyId)
+        {
+            throw new UnauthorizedAccessException("User is not authorized to create a country.");
+        }
+        
+        var existingCountry = await _context.Countries
+            .FirstOrDefaultAsync(c => c.Name.ToUpper() == request.Name.ToUpper() && c.CompanyId == request.CompanyId, cancellationToken);
 
         if (existingCountry != null)
         {

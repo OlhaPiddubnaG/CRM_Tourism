@@ -1,4 +1,4 @@
-using CRM.Admin.Data.UserDTO;
+using CRM.Admin.Data.UserDto;
 using CRM.Admin.Requests.SuperAdminRequests;
 using CRM.Domain.Constants;
 using Microsoft.AspNetCore.Components;
@@ -8,28 +8,30 @@ namespace CRM.Admin.Components.Dialogs.User;
 
 public partial class CreateUserDialog
 {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-    [Inject] ISuperAdminRequest SuperAdminRequest { get; set; }
-    [Inject] ISnackbar Snackbar { get; set; }
-    private UserCreateDTO userCreateDTO { get; set; } = new();
+    [Inject] private ISuperAdminRequest SuperAdminRequest { get; set; } = null!;
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    
+    [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
     [Parameter] public Guid Id { get; set; }
-
+    
+    private UserCreateDto UserCreateDto { get; set; } = new();
+    
     protected override async Task OnInitializedAsync()
     {
-        userCreateDTO.CompanyId = Id;
-        userCreateDTO.Password = Constants.DefaultPassword;
+        UserCreateDto.CompanyId = Id;
+        UserCreateDto.Password = Constants.DefaultPassword;
     }
 
     private async Task Create()
     {
-        if (string.IsNullOrEmpty(userCreateDTO.Name) || string.IsNullOrEmpty(userCreateDTO.Surname) ||
-            string.IsNullOrEmpty(userCreateDTO.Email))
+        if (string.IsNullOrEmpty(UserCreateDto.Name) || string.IsNullOrEmpty(UserCreateDto.Surname) ||
+            string.IsNullOrEmpty(UserCreateDto.Email))
         {
             Snackbar.Add("Будь ласка, заповніть всі поля", Severity.Error);
             return;
         }
 
-        if (userCreateDTO.RoleTypes == null)
+        if (UserCreateDto.RoleTypes == null)
         {
             Snackbar.Add("Будь ласка, виберіть хоча б одну роль", Severity.Error);
             return;
@@ -37,7 +39,7 @@ public partial class CreateUserDialog
 
         try
         {
-            await SuperAdminRequest.CreateUserAsync(userCreateDTO);
+            await SuperAdminRequest.CreateUserAsync(UserCreateDto);
             Snackbar.Add("Створено", Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
         }

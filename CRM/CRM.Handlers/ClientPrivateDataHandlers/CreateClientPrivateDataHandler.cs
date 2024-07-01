@@ -3,7 +3,9 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands.ClientPrivateData;
 using CRM.Domain.Entities;
+using CRM.Domain.Enums;
 using CRM.Domain.Responses;
+using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,18 +15,35 @@ public class CreateClientPrivateDataHandler : IRequestHandler<CreateClientPrivat
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
+    private readonly ICurrentUser _currentUser;
 
-    public CreateClientPrivateDataHandler(AppDbContext context, IMapper mapper)
+    public CreateClientPrivateDataHandler(AppDbContext context, IMapper mapper, ICurrentUser currentUser)
     {
         _context = context;
         _mapper = mapper;
+        _currentUser = currentUser;
     }
 
-    public async Task<CreatedResponse> Handle(CreateClientPrivateDataCommand request, CancellationToken cancellationToken)
+    public async Task<CreatedResponse> Handle(CreateClientPrivateDataCommand request,
+        CancellationToken cancellationToken)
     {
-        var clientPrivateData = _mapper.Map<ClientPrivateData>(request);
+        var companyId = _currentUser.GetCompanyId();
         
+        var client = await _context.Clients
+            .FirstOrDefaultAsync(
+                c => c.Id == request.ClientId && c.CompanyId == companyId && !c.IsDeleted,
+                cancellationToken);
+
+        if (client == null)
+        {
+            throw new UnauthorizedAccessException(
+                "User is not authorized to create private data for a client from a different company.");
+        }
+        
+        var clientPrivateData = _mapper.Map<ClientPrivateData>(request);
+
         clientPrivateData.CreatedAt = DateTime.UtcNow;
+        clientPrivateData.CreatedUserId = _currentUser.GetUserId();
         _context.ClientPrivateDatas.Add(clientPrivateData);
 
         try

@@ -1,3 +1,4 @@
+using CRM.Domain.Commands.PassportInfo;
 using CRM.Domain.Enums;
 using CRM.Domain.Responses;
 using MediatR;
@@ -19,4 +20,5 @@ public class CreateClientCommand : IRequest<CreatedResponse>
     public string? Comment { get; set; } 
     public SourceOfEngagement SourceOfEngagement { get; set; } 
     public List<Guid> ManagerIds { get; set; } = new();
+    public ClientStatus LatestStatus { get; set; }
 }

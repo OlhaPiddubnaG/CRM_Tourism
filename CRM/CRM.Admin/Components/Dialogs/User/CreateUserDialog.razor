@@ -4,10 +4,10 @@
         <MudText Typo="Typo.h6">Створення користувача</MudText>
     </TitleContent>
     <DialogContent>
-        <MudTextField Class="mb-2" Label="Iм'я" @bind-Value="userCreateDTO.Name" For="@(() => userCreateDTO.Name)" Lines="2"/>
-        <MudTextField Class="mb-5" Label="Прізвище" @bind-Value="userCreateDTO.Surname" For="@(() => userCreateDTO.Surname)" Lines="2"/>
-        <MudTextField Class="mb-5" Label="Eлектронна пошта" @bind-Value="userCreateDTO.Email" For="@(() => userCreateDTO.Email)" Lines="2"/>
-        <MudSelect T="RoleType" @bind-SelectedValues="userCreateDTO.RoleTypes" Label="Роль" MultiSelection="true" Class="mb-5" Lines="2">
+        <MudTextField Class="mb-2" Label="Iм'я" @bind-Value="UserCreateDto.Name" For="@(() => UserCreateDto.Name)" Lines="2"/>
+        <MudTextField Class="mb-5" Label="Прізвище" @bind-Value="UserCreateDto.Surname" For="@(() => UserCreateDto.Surname)" Lines="2"/>
+        <MudTextField Class="mb-5" Label="Eлектронна пошта" @bind-Value="UserCreateDto.Email" For="@(() => UserCreateDto.Email)" Lines="2"/>
+        <MudSelect T="RoleType" @bind-SelectedValues="UserCreateDto.RoleTypes" Label="Роль" MultiSelection="true" Class="mb-5" Lines="2">
             @foreach (RoleType role in Enum.GetValues(typeof(RoleType)).Cast<RoleType>().Where(r => r != RoleType.Admin))
             {
                 <MudSelectItem Value="role">@role.ToString()</MudSelectItem>

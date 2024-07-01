@@ -1,6 +1,8 @@
 using System.Net;
-using CRM.Admin.Data.ClientDTO;
+using CRM.Admin.Data;
+using CRM.Admin.Data.ClientDto;
 using CRM.Admin.HttpRequests;
+using MudBlazor;
 using Newtonsoft.Json;
 
 namespace CRM.Admin.Requests.ClientRequests;
@@ -16,15 +18,15 @@ public class ClientRequest : IClientRequest
         _httpCrmApiRequests = httpCrmApiRequests;
         _logger = logger;
     }
-    
-    public async Task<Guid> CreateAsync(ClientCreateDTO clientCreateDTO)
+
+    public async Task<Guid> CreateAsync(ClientCreateDto clientCreateDto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPostRequestAsync(RequestUri, clientCreateDTO);
+            var response = await _httpCrmApiRequests.SendPostRequestAsync(RequestUri, clientCreateDto);
             _logger.LogInformation("Create client method executed successfully");
 
-            var createdClient = await response.Content.ReadFromJsonAsync<ClientDTO>();
+            var createdClient = await response.Content.ReadFromJsonAsync<ClientDto>();
             return createdClient.Id;
         }
         catch (Exception ex)
@@ -33,8 +35,40 @@ public class ClientRequest : IClientRequest
             throw;
         }
     }
-    
-    public async Task<List<ClientDTO>> GetAllAsync()
+
+    public async Task<ResultModel> CreateClientWithRelatedAsync(ClientCreateDto clientCreateDto)
+    {
+        try
+        {
+            var clientResponse =
+                await _httpCrmApiRequests.SendPostRequestAsync($"{RequestUri}/withRelated", clientCreateDto);
+            await clientResponse.Content.ReadAsStringAsync();
+
+            if (clientResponse.IsSuccessStatusCode)
+            {
+                return new ResultModel
+                {
+                    Success = true,
+                    Message = "Create successfully."
+                };
+            }
+            else
+            {
+                return new ResultModel
+                {
+                    Success = false,
+                    Message = "An error occurred while processing your request."
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in CreateClientWithRelatedAsync method");
+            throw;
+        }
+    }
+
+    public async Task<List<ClientDto>> GetAllAsync()
     {
         try
         {
@@ -43,7 +77,7 @@ public class ClientRequest : IClientRequest
 
             var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("GetAllAsync method executed successfully");
-            return JsonConvert.DeserializeObject<List<ClientDTO>>(content);
+            return JsonConvert.DeserializeObject<List<ClientDto>>(content);
         }
         catch (Exception ex)
         {
@@ -52,7 +86,24 @@ public class ClientRequest : IClientRequest
         }
     }
 
-    public async Task<T> GetByIdAsync<T>(Guid id) where T : IClientDTO
+    public async Task<TableData<ClientDto>> GetFilteredAndSortedAsync(int page, int pageSize, string searchString, string sortLabel, SortDirection sortDirection)
+    {
+        try
+        {
+            var response = await _httpCrmApiRequests.SendGetRequestAsync($"{RequestUri}/search?page={page}&pageSize={pageSize}&searchString={searchString}&sortLabel={sortLabel}&sortDirection={sortDirection}");
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<TableData<ClientDto>>(content);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetFilteredAndSortedAsync method");
+            throw;
+        }
+    }
+
+    public async Task<T> GetByIdAsync<T>(Guid id) where T : IClientDto
     {
         try
         {
@@ -70,19 +121,19 @@ public class ClientRequest : IClientRequest
         }
     }
 
-    public async Task<bool> UpdateAsync(ClientUpdateDTO clientUpdateDTO)
+    public async Task<bool> UpdateAsync(ClientUpdateDto clientUpdateDto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, clientUpdateDTO);
+            var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, clientUpdateDto);
             response.EnsureSuccessStatusCode();
 
-            _logger.LogInformation($"UpdateAsync method executed successfully for user with id: {clientUpdateDTO.Id}");
+            _logger.LogInformation($"UpdateAsync method executed successfully for user with id: {clientUpdateDto.Id}");
             return response.StatusCode == HttpStatusCode.NoContent;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error in UpdateAsync method for user with id: {clientUpdateDTO.Id}");
+            _logger.LogError(ex, $"Error in UpdateAsync method for user with id: {clientUpdateDto.Id}");
             throw;
         }
     }

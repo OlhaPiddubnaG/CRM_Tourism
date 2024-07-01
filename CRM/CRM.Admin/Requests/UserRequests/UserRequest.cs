@@ -1,5 +1,5 @@
 using System.Net;
-using CRM.Admin.Data.UserDTO;
+using CRM.Admin.Data.UserDto;
 using CRM.Admin.HttpRequests;
 using Newtonsoft.Json;
 
@@ -16,8 +16,22 @@ public class UserRequest : IUserRequest
         _httpCrmApiRequests = httpCrmApiRequests;
         _logger = logger;
     }
+    
+    public async Task CreateAsync(UserCreateDto userCreateDto)
+    {
+        try
+        {
+            await _httpCrmApiRequests.SendPostRequestAsync(RequestUri, userCreateDto);
+            _logger.LogInformation("CreateUser method executed successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in CreateUser method");
+            throw;
+        }
+    }
 
-    public async Task<List<UserDTO>> GetAllAsync()
+    public async Task<List<UserDto>> GetAllAsync()
     {
         try
         {
@@ -26,7 +40,7 @@ public class UserRequest : IUserRequest
 
             var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("GetAllAsync method executed successfully");
-            return JsonConvert.DeserializeObject<List<UserDTO>>(content);
+            return JsonConvert.DeserializeObject<List<UserDto>>(content);
         }
         catch (Exception ex)
         {
@@ -35,7 +49,7 @@ public class UserRequest : IUserRequest
         }
     }
 
-    public async Task<T> GetByIdAsync<T>(Guid id) where T : IUserDTO
+    public async Task<T> GetByIdAsync<T>(Guid id) where T : IUserDto
     {
         try
         {
@@ -52,34 +66,20 @@ public class UserRequest : IUserRequest
             throw;
         }
     }
-    
-    public async Task CreateAsync(UserCreateDTO userCreateDTO)
-    {
-        try
-        {
-            await _httpCrmApiRequests.SendPostRequestAsync(RequestUri, userCreateDTO);
-            _logger.LogInformation("CreateUser method executed successfully");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error in CreateUser method");
-            throw;
-        }
-    }
 
-    public async Task<bool> UpdateAsync(UserUpdateDTO userUpdateDTO)
+    public async Task<bool> UpdateAsync(UserUpdateDto userUpdateDto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, userUpdateDTO);
+            var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, userUpdateDto);
             response.EnsureSuccessStatusCode();
 
-            _logger.LogInformation($"UpdateAsync method executed successfully for user with id: {userUpdateDTO.Id}");
+            _logger.LogInformation($"UpdateAsync method executed successfully for user with id: {userUpdateDto.Id}");
             return response.StatusCode == HttpStatusCode.NoContent;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error in UpdateAsync method for user with id: {userUpdateDTO.Id}");
+            _logger.LogError(ex, $"Error in UpdateAsync method for user with id: {userUpdateDto.Id}");
             throw;
         }
     }

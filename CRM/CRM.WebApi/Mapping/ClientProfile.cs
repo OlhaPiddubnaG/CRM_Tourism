@@ -10,6 +10,7 @@ public class ClientProfile : Profile
     public ClientProfile()
     {
         CreateMap<CreateClientCommand, Client>();
+        CreateMap<CreateClientWithRelatedCommand, Client>();
         CreateMap<UpdateClientCommand, Client>();
         CreateMap<Client, ClientResponse>();
     }

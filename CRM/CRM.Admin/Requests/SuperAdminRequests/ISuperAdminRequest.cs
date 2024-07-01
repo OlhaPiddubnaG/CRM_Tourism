@@ -1,10 +1,10 @@
-using CRM.Admin.Data.CompanyDTO;
-using CRM.Admin.Data.UserDTO;
+using CRM.Admin.Data.CompanyDto;
+using CRM.Admin.Data.UserDto;
 
 namespace CRM.Admin.Requests.SuperAdminRequests;
 
 public interface ISuperAdminRequest
 {
-    Task CreateCompanyAsync(CompanyCreateDTO categoryCreateDTO);
-    Task CreateUserAsync(UserCreateDTO userCreateDTO);
+    Task CreateCompanyAsync(CompanyCreateDto categoryCreateDTO);
+    Task CreateUserAsync(UserCreateDto userCreateDTO);
 }

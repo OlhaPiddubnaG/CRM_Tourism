@@ -1,6 +1,4 @@
-using CRM.Domain.Commands;
 using CRM.Domain.Commands.ClientStatusHistory;
-using CRM.Domain.Entities;
 using CRM.Domain.Requests;
 using CRM.Domain.Responses;
 using CRM.Domain.Responses.ClientStatusHistory;
@@ -43,31 +41,13 @@ public class ClientStatusHistoryController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet]
+    [HttpGet("client/{clientId:guid}")]
     [ProducesResponseType(typeof(List<ClientStatusHistoryResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAll(CancellationToken token)
+    public async Task<IActionResult> GetAllByClientId(Guid clientId, CancellationToken token)
     {
-        var response = await _sender.Send(new GetAllRequest<ClientStatusHistoryResponse>(), token);
+        var response = await _sender.Send(new GetByIdReturnListRequest<ClientStatusHistoryResponse>(clientId), token);
 
         return Ok(response);
-    }
-
-    [HttpDelete("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken token)
-    {
-        await _sender.Send(new DeleteCommand<ClientStatusHistory>(id), token);
-
-        return NoContent();
-    }
-
-    [HttpPut]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> Update(UpdateClientStatusHistoryCommand request, CancellationToken token)
-    {
-        await _sender.Send(request, token);
-
-        return NoContent();
     }
 }

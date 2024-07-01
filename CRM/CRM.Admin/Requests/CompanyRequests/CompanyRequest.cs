@@ -1,5 +1,5 @@
 using System.Net;
-using CRM.Admin.Data.CompanyDTO;
+using CRM.Admin.Data.CompanyDto;
 using CRM.Admin.HttpRequests;
 using Newtonsoft.Json;
 
@@ -17,7 +17,7 @@ public class CompanyRequest : ICompanyRequest
         _logger = logger;
     }
 
-    public async Task<List<CompanyDTO>> GetAllAsync()
+    public async Task<List<CompanyDto>> GetAllAsync()
     {
         try
         {
@@ -26,7 +26,7 @@ public class CompanyRequest : ICompanyRequest
 
             var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("GetAllAsync method executed successfully");
-            return JsonConvert.DeserializeObject<List<CompanyDTO>>(content);
+            return JsonConvert.DeserializeObject<List<CompanyDto>>(content);
         }
         catch (Exception ex)
         {
@@ -35,7 +35,7 @@ public class CompanyRequest : ICompanyRequest
         }
     }
 
-    public async Task<T> GetByIdAsync<T>(Guid id) where T : ICompanyDTO
+    public async Task<T> GetByIdAsync<T>(Guid id) where T : ICompanyDto
     {
         try
         {
@@ -53,20 +53,20 @@ public class CompanyRequest : ICompanyRequest
         }
     }
 
-    public async Task<bool> UpdateAsync(CompanyUpdateDTO companyUpdateDTO)
+    public async Task<bool> UpdateAsync(CompanyUpdateDto companyUpdateDto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, companyUpdateDTO);
+            var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, companyUpdateDto);
             response.EnsureSuccessStatusCode();
 
             _logger.LogInformation(
-                $"UpdateAsync method executed successfully for company with id: {companyUpdateDTO.Id}");
+                $"UpdateAsync method executed successfully for company with id: {companyUpdateDto.Id}");
             return response.StatusCode == HttpStatusCode.NoContent;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error in UpdateAsync method for company with id: {companyUpdateDTO.Id}");
+            _logger.LogError(ex, $"Error in UpdateAsync method for company with id: {companyUpdateDto.Id}");
             throw;
         }
     }

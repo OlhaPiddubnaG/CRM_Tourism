@@ -74,6 +74,9 @@ namespace CRM.DataAccess.Migrations
                     b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("CurrentStatus")
+                        .HasColumnType("integer");
+
                     b.Property<DateOnly?>("DateOfBirth")
                         .HasColumnType("date");
 

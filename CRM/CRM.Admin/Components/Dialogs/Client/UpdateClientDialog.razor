@@ -6,13 +6,13 @@
     <DialogContent>
         <MudGrid>
             <MudItem xs="12" md="4">
-                <MudTextField Variant="Variant.Outlined" Label="Ім`я" @bind-Value="clientUpdateDTO.Name" For="@(() => clientUpdateDTO.Name)"/>
+                <MudTextField Variant="Variant.Outlined" Label="Ім`я" @bind-Value="ClientUpdateDto.Name" For="@(() => ClientUpdateDto.Name)"/>
             </MudItem>
             <MudItem xs="12" md="5">
-                <MudTextField Variant="Variant.Outlined" Label="Прізвище" @bind-Value="clientUpdateDTO.Surname" For="@(() => clientUpdateDTO.Surname)"/>
+                <MudTextField Variant="Variant.Outlined" Label="Прізвище" @bind-Value="ClientUpdateDto.Surname" For="@(() => ClientUpdateDto.Surname)"/>
             </MudItem>
             <MudItem xs="12" md="3">
-                <MudSelect T="Gender" @bind-Value="clientUpdateDTO.Gender">
+                <MudSelect T="Gender" @bind-Value="ClientUpdateDto.Gender">
                     @foreach (Gender gender in Enum.GetValues(typeof(Gender)))
                     {
                         <MudSelectItem Value="gender">@gender.ToString()</MudSelectItem>
@@ -20,19 +20,19 @@
                 </MudSelect>
             </MudItem>
             <MudItem xs="12" md="7">
-                <MudTextField Variant="Variant.Outlined" Label="По-батькові" @bind-Value="clientUpdateDTO.Patronymic" For="@(() => clientUpdateDTO.Patronymic)"/>
+                <MudTextField Variant="Variant.Outlined" Label="По-батькові" @bind-Value="ClientUpdateDto.Patronymic" For="@(() => ClientUpdateDto.Patronymic)"/>
             </MudItem>
             <MudItem xs="12" md="5">
-                <MudDatePicker @bind-Date="dateOfBirth" DateFormat="yyyy-MM-dd"/>
+                <MudDatePicker @bind-Date="_dateOfBirth" DateFormat="yyyy-MM-dd"/>
             </MudItem>
             <MudItem xs="12" md="6">
-                <MudTextField Variant="Variant.Outlined" Label="Номер телефону" @bind-Value="clientUpdateDTO.Phone" For="@(() => clientUpdateDTO.Phone)"/>
+                <MudTextField Variant="Variant.Outlined" Label="Номер телефону" @bind-Value="ClientUpdateDto.Phone" For="@(() => ClientUpdateDto.Phone)"/>
             </MudItem>
             <MudItem xs="12" md="6">
-                <MudTextField Variant="Variant.Outlined" Label="Електронна пошта" @bind-Value="clientUpdateDTO.Email" For="@(() => clientUpdateDTO.Email)"/>
+                <MudTextField Variant="Variant.Outlined" Label="Електронна пошта" @bind-Value="ClientUpdateDto.Email" For="@(() => ClientUpdateDto.Email)"/>
             </MudItem>
             <MudItem xs="12" md="6">
-                <MudSelect T="SourceOfEngagement" @bind-SelectedValue="clientUpdateDTO.SourceOfEngagement">
+                <MudSelect T="SourceOfEngagement" @bind-SelectedValue="ClientUpdateDto.SourceOfEngagement">
                     @foreach (SourceOfEngagement engagement in Enum.GetValues(typeof(SourceOfEngagement)))
                     {
                         <MudSelectItem Value="engagement">@engagement.ToString()</MudSelectItem>
@@ -40,7 +40,7 @@
                 </MudSelect>
             </MudItem>
             <MudItem xs="12">
-                <MudTextField Variant="Variant.Outlined" Label="Адреса" @bind-Value="clientUpdateDTO.Address" For="@(() => clientUpdateDTO.Address)" Lines="1"/>
+                <MudTextField Variant="Variant.Outlined" Label="Адреса" @bind-Value="ClientUpdateDto.Address" For="@(() => ClientUpdateDto.Address)" Lines="1"/>
             </MudItem>
         </MudGrid>
     </DialogContent>

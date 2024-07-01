@@ -1,12 +1,13 @@
-using CRM.Admin.Data.PassportInfoDTO;
+using CRM.Admin.Data.PassportInfoDto;
 
 namespace CRM.Admin.Requests.PassportInfoRequests;
 
 public interface IPassportInfoRequest
 {
-    Task<Guid> CreateAsync(PassportInfoCreateDTO passportInfoCreateDTO);
-    Task<List<PassportInfoDTO>> GetAllAsync();
-    Task<T> GetByIdAsync<T>(Guid id) where T : IPassportInfoDTO;
-    Task<bool> UpdateAsync(PassportInfoUpdateDTO passportInfoUpdateDTO);
+    Task<Guid> CreateAsync(PassportInfoCreateDto passportInfoCreateDTO);
+    Task<List<PassportInfoDto>> GetAllAsync();
+    Task<T> GetByIdAsync<T>(Guid id) where T : IPassportInfoDto;
+    Task<List<PassportInfoDto>> GetByClientPrivateDataIdAsync(Guid clientPrivateDataId);
+    Task<bool> UpdateAsync(PassportInfoUpdateDto passportInfoUpdateDTO);
     Task<bool> DeleteAsync(Guid id);
 }

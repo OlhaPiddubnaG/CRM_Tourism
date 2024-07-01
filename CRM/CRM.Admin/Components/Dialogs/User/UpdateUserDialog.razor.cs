@@ -1,4 +1,4 @@
-using CRM.Admin.Data.UserDTO;
+using CRM.Admin.Data.UserDto;
 using CRM.Admin.Requests.UserRequests;
 using CRM.Domain.Enums;
 using Microsoft.AspNetCore.Components;
@@ -8,17 +8,19 @@ namespace CRM.Admin.Components.Dialogs.User;
 
 public partial class UpdateUserDialog
 {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Inject] private IUserRequest UserRequest { get; set; } = null!;
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    
+    [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
     [Parameter] public Guid Id { get; set; }
-    [Inject] IUserRequest UserRequest { get; set; }
-    [Inject] ISnackbar Snackbar { get; set; }
-    private UserUpdateDTO userUpdateDTO { get; set; } = new();
+    
+    private UserUpdateDto UserUpdateDto { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            userUpdateDTO = await UserRequest.GetByIdAsync<UserUpdateDTO>(Id);
+            UserUpdateDto = await UserRequest.GetByIdAsync<UserUpdateDto>(Id);
         }
         catch (Exception ex)
         {
@@ -30,8 +32,8 @@ public partial class UpdateUserDialog
     {
         try
         {
-            userUpdateDTO.RoleTypes ??= new List<RoleType>();
-            await UserRequest.UpdateAsync(userUpdateDTO);
+            UserUpdateDto.RoleTypes ??= new List<RoleType>();
+            await UserRequest.UpdateAsync(UserUpdateDto);
             Snackbar.Add("Внесено зміни", Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
         }

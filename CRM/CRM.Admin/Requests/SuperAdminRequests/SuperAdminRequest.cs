@@ -1,5 +1,5 @@
-using CRM.Admin.Data.CompanyDTO;
-using CRM.Admin.Data.UserDTO;
+using CRM.Admin.Data.CompanyDto;
+using CRM.Admin.Data.UserDto;
 using CRM.Admin.HttpRequests;
 
 namespace CRM.Admin.Requests.SuperAdminRequests;
@@ -16,11 +16,11 @@ public class SuperAdminRequest : ISuperAdminRequest
         _logger = logger;
     }
 
-    public async Task CreateCompanyAsync(CompanyCreateDTO categoryCreateDTO)
+    public async Task CreateCompanyAsync(CompanyCreateDto categoryCreateDto)
     {
         try
         {
-            await _httpCrmApiRequests.SendPostRequestAsync($"{RequestUri}/company", categoryCreateDTO);
+            await _httpCrmApiRequests.SendPostRequestAsync($"{RequestUri}/company", categoryCreateDto);
             _logger.LogInformation("CreateCompany method executed successfully");
         }
         catch (Exception ex)
@@ -30,11 +30,11 @@ public class SuperAdminRequest : ISuperAdminRequest
         }
     }
 
-    public async Task CreateUserAsync(UserCreateDTO userCreateDTO)
+    public async Task CreateUserAsync(UserCreateDto userCreateDto)
     {
         try
         {
-            await _httpCrmApiRequests.SendPostRequestAsync($"{RequestUri}/companyAdmin", userCreateDTO);
+            await _httpCrmApiRequests.SendPostRequestAsync($"{RequestUri}/companyAdmin", userCreateDto);
             _logger.LogInformation("CreateUser method executed successfully");
         }
         catch (Exception ex)
