@@ -69,6 +69,11 @@ namespace CRM.Handlers.ClientHandlers
                         ? query.OrderBy(c => c.Users.FirstOrDefault().Name)
                         : query.OrderByDescending(c => c.Users.FirstOrDefault().Name);
                     break;
+                case "Status":
+                    query = request.SortDirection == SortDirection.Ascending
+                        ? query.OrderBy(c => c.ClientStatusHistory.OrderByDescending(h => h.ClientStatus).FirstOrDefault().ClientStatus)
+                        : query.OrderByDescending(c => c.ClientStatusHistory.OrderByDescending(h => h.ClientStatus).FirstOrDefault().ClientStatus);
+                    break;
                 default:
                     query = query.OrderBy(c => c.Name);
                     break;
