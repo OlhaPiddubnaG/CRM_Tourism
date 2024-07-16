@@ -10,7 +10,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.ClientPrivateDataHandlers;
 
-public class GetClientPrivateDataByIdHandler : IRequestHandler<GetByIdRequest<ClientPrivateDataResponse>, ClientPrivateDataResponse>
+public class
+    GetClientPrivateDataByIdHandler : IRequestHandler<GetByIdRequest<ClientPrivateDataResponse>,
+    ClientPrivateDataResponse>
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
@@ -22,15 +24,17 @@ public class GetClientPrivateDataByIdHandler : IRequestHandler<GetByIdRequest<Cl
         _mapper = mapper;
         _currentUser = currentUser;
     }
-    
+
     public async Task<ClientPrivateDataResponse> Handle(GetByIdRequest<ClientPrivateDataResponse> request,
         CancellationToken cancellationToken)
     {
         var companyId = _currentUser.GetCompanyId();
-        
+
         var clientPrivateData = await _context.ClientPrivateDatas
             .Include(cpd => cpd.Client)
-            .FirstOrDefaultAsync(cpd => cpd.Id == request.Id && cpd.Client.CompanyId == companyId && !cpd.IsDeleted, cancellationToken);
+            .FirstOrDefaultAsync(cpd => cpd.Id == request.Id &&
+                                        cpd.Client.CompanyId == companyId &&
+                                        !cpd.IsDeleted, cancellationToken);
 
         if (clientPrivateData == null)
         {

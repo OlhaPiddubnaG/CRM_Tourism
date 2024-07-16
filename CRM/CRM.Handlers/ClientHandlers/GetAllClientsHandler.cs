@@ -28,7 +28,8 @@ public class GetAllClientsHandler : IRequestHandler<GetAllRequest<ClientResponse
         var clients = await _context.Clients
             .Include(u => u.Users)
             .Include(c => c.ClientStatusHistory)
-            .Where(c => c.CompanyId == companyId && !c.IsDeleted)
+            .Where(c => c.CompanyId == companyId &&
+                        !c.IsDeleted)
             .ToListAsync(cancellationToken);
 
         if (clients == null)
@@ -37,7 +38,7 @@ public class GetAllClientsHandler : IRequestHandler<GetAllRequest<ClientResponse
         }
 
         var clientResponses = _mapper.Map<List<ClientResponse>>(clients);
-        
+
         foreach (var clientResponse in clientResponses)
         {
             var client = clients.FirstOrDefault(c => c.Id == clientResponse.Id);
@@ -54,4 +55,3 @@ public class GetAllClientsHandler : IRequestHandler<GetAllRequest<ClientResponse
         return clientResponses;
     }
 }
-

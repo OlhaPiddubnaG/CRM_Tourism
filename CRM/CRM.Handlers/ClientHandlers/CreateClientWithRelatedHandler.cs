@@ -19,7 +19,8 @@ namespace CRM.Handlers.ClientHandlers
         private readonly ICurrentUser _currentUser;
         private readonly ILogger<CreateClientWithRelatedHandler> _logger;
 
-        public CreateClientWithRelatedHandler(AppDbContext context, IMapper mapper, ICurrentUser currentUser, ILogger<CreateClientWithRelatedHandler> logger)
+        public CreateClientWithRelatedHandler(AppDbContext context, IMapper mapper, ICurrentUser currentUser,
+            ILogger<CreateClientWithRelatedHandler> logger)
         {
             _context = context;
             _mapper = mapper;
@@ -27,7 +28,8 @@ namespace CRM.Handlers.ClientHandlers
             _logger = logger;
         }
 
-        public async Task<ResultBaseResponse> Handle(CreateClientWithRelatedCommand request, CancellationToken cancellationToken)
+        public async Task<ResultBaseResponse> Handle(CreateClientWithRelatedCommand request,
+            CancellationToken cancellationToken)
         {
             try
             {
@@ -93,9 +95,12 @@ namespace CRM.Handlers.ClientHandlers
             if (managerIds.Any())
             {
                 var currentUserCompanyId = _currentUser.GetCompanyId();
-                var users = _context.Users.Where(u => managerIds.Contains(u.Id) && u.CompanyId == currentUserCompanyId).ToList();
+                var users = _context.Users.Where(u => managerIds.Contains(u.Id) &&
+                                                      u.CompanyId == currentUserCompanyId)
+                    .ToList();
                 client.Users.AddRange(users);
             }
+
             _context.Clients.Add(client);
         }
 
@@ -113,7 +118,8 @@ namespace CRM.Handlers.ClientHandlers
             await SaveChangesAsync();
         }
 
-        private async Task AddClientPrivateDataAsync(Client client, CreatePassportInfoCommand[] passportsCreateDtos, CancellationToken cancellationToken)
+        private async Task AddClientPrivateDataAsync(Client client, CreatePassportInfoCommand[] passportsCreateDtos,
+            CancellationToken cancellationToken)
         {
             var clientPrivateDataCommand = new ClientPrivateData { ClientId = client.Id };
             var clientPrivateData = _mapper.Map<ClientPrivateData>(clientPrivateDataCommand);
@@ -132,6 +138,7 @@ namespace CRM.Handlers.ClientHandlers
                 passportInfo.CreatedUserId = _currentUser.GetUserId();
                 _context.PassportInfo.Add(passportInfo);
             }
+
             await SaveChangesAsync(cancellationToken);
         }
 

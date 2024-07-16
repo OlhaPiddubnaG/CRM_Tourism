@@ -26,18 +26,18 @@ public partial class AddStatusForClientDialog
 
     private async Task Update()
     {
-        try
-        {
-            ClientStatusHistoryCreateDto.ClientId = Id;
-            ClientStatusHistoryCreateDto.DateTime = DateTime.UtcNow;
+        ClientStatusHistoryCreateDto.ClientId = Id;
+        ClientStatusHistoryCreateDto.DateTime = DateTime.UtcNow;
 
-            await ClientStatusHistoryRequest.CreateAsync(ClientStatusHistoryCreateDto);
+        var result = await ClientStatusHistoryRequest.CreateAsync(ClientStatusHistoryCreateDto);
+        if (result != Guid.Empty)
+        {
             Snackbar.Add("Статус туриста змінено", Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add($"Помилка: {ex.Message}", Severity.Error);
+            Snackbar.Add("Помилка при зміні статусу туриста", Severity.Error);
         }
     }
 

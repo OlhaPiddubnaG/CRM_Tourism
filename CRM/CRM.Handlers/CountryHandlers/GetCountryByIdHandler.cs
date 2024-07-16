@@ -29,8 +29,10 @@ public class GetCountryByIdHandler : IRequestHandler<GetByIdRequest<CountryRespo
         var companyId = _currentUser.GetCompanyId();
 
         var country = await _context.Countries.FirstOrDefaultAsync(
-            c => c.Id == request.Id && c.CompanyId == companyId && !c.IsDeleted, cancellationToken);
-      
+            c => c.Id == request.Id &&
+                 c.CompanyId == companyId &&
+                 !c.IsDeleted, cancellationToken);
+
         if (country == null)
         {
             throw new UnauthorizedAccessException("User is not authorized to access this country.");

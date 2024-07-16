@@ -25,7 +25,8 @@ public class DeleteUserHandler : IRequestHandler<DeleteCommand<User>, Unit>
         var currentUserRoles = _currentUser.GetRoles();
         var currentUserCompanyId = _currentUser.GetCompanyId();
 
-        var user = await _context.Users.FirstOrDefaultAsync(c => c.Id == request.Id && !c.IsDeleted, cancellationToken);
+        var user = await _context.Users.FirstOrDefaultAsync(c => c.Id == request.Id &&
+                                                                 !c.IsDeleted, cancellationToken);
         if (user == null)
         {
             throw new NotFoundException(typeof(User), request.Id);

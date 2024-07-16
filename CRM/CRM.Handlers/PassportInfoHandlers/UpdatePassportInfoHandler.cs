@@ -2,7 +2,6 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands.PassportInfo;
 using CRM.Domain.Entities;
-using CRM.Domain.Enums;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

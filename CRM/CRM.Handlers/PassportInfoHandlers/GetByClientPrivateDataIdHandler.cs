@@ -10,7 +10,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.PassportInfoHandlers;
 
-public class GetByClientPrivateDataIdHandler : IRequestHandler<GetByIdReturnListRequest<PassportInfoResponse>, List<PassportInfoResponse>>
+public class GetByClientPrivateDataIdHandler : IRequestHandler<GetByIdReturnListRequest<PassportInfoResponse>,
+    List<PassportInfoResponse>>
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
@@ -22,14 +23,17 @@ public class GetByClientPrivateDataIdHandler : IRequestHandler<GetByIdReturnList
         _mapper = mapper;
         _currentUser = currentUser;
     }
-        
-    public async Task<List<PassportInfoResponse>> Handle(GetByIdReturnListRequest<PassportInfoResponse> request, CancellationToken cancellationToken)
+
+    public async Task<List<PassportInfoResponse>> Handle(GetByIdReturnListRequest<PassportInfoResponse> request,
+        CancellationToken cancellationToken)
     {
         var companyId = _currentUser.GetCompanyId();
         var passportInfoList = await _context.PassportInfo
             .Include(pi => pi.ClientPrivateData)
             .ThenInclude(cpd => cpd.Client)
-            .Where(pi => pi.ClientPrivateDataId == request.Id && pi.ClientPrivateData.Client.CompanyId == companyId && !pi.IsDeleted)
+            .Where(pi => pi.ClientPrivateDataId == request.Id &&
+                         pi.ClientPrivateData.Client.CompanyId == companyId &&
+                         !pi.IsDeleted)
             .ToListAsync(cancellationToken);
 
         if (passportInfoList == null || !passportInfoList.Any())

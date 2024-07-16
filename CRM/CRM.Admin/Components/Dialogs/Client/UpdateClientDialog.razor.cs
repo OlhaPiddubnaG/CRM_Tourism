@@ -13,36 +13,33 @@ public partial class UpdateClientDialog
     [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
     [Parameter] public Guid Id { get; set; }
 
-    private ClientUpdateDto ClientUpdateDto { get; set; } = new();
+    private ClientUpdateDto _сlientUpdateDto { get; set; } = new();
     private DateTime? _dateOfBirth;
 
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            ClientUpdateDto = await ClientRequest.GetByIdAsync<ClientUpdateDto>(Id);
-            _dateOfBirth = ClientUpdateDto.DateOfBirth?.ToDateTime(TimeOnly.MinValue);
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Помилка завантаження користувача: {ex.Message}", Severity.Error);
-        }
+        _сlientUpdateDto = await ClientRequest.GetByIdAsync<ClientUpdateDto>(Id);
+        _dateOfBirth = _сlientUpdateDto.DateOfBirth?.ToDateTime(TimeOnly.MinValue);
     }
 
     private async Task UpdateClientAsync()
     {
-        try
+        _сlientUpdateDto.DateOfBirth = _dateOfBirth.HasValue
+            ? DateOnly.FromDateTime(_dateOfBirth.Value)
+            : _сlientUpdateDto.DateOfBirth;
+        _сlientUpdateDto.DateOfBirth = _dateOfBirth.HasValue
+            ? DateOnly.FromDateTime(_dateOfBirth.Value)
+            : _сlientUpdateDto.DateOfBirth;
+        var result = await ClientRequest.UpdateAsync(_сlientUpdateDto);
+
+        if (result)
         {
-            ClientUpdateDto.DateOfBirth = _dateOfBirth.HasValue
-                ? DateOnly.FromDateTime(_dateOfBirth.Value)
-                : ClientUpdateDto.DateOfBirth;
-            await ClientRequest.UpdateAsync(ClientUpdateDto);
-            Snackbar.Add("Внесено зміни", Severity.Success);
+            Snackbar.Add("Дані клієнта успішно оновлені");
             MudDialog.Close(DialogResult.Ok(true));
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add($"Помилка: {ex.Message}", Severity.Error);
+            Snackbar.Add("Помилка оновлення клієнта");
         }
     }
 

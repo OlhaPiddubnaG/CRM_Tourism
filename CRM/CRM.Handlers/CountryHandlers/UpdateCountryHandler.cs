@@ -2,14 +2,13 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands.Country;
 using CRM.Domain.Entities;
-using CRM.Domain.Enums;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.CountryHandlers;
 
-public class UpdateCountryHandler: IRequestHandler<UpdateCountryCommand, Unit>
+public class UpdateCountryHandler : IRequestHandler<UpdateCountryCommand, Unit>
 {
     private readonly AppDbContext _context;
     private readonly ICurrentUser _currentUser;
@@ -23,7 +22,8 @@ public class UpdateCountryHandler: IRequestHandler<UpdateCountryCommand, Unit>
     public async Task<Unit> Handle(UpdateCountryCommand request, CancellationToken cancellationToken)
     {
         var existingCountry = await _context.Countries
-            .FirstOrDefaultAsync(c => c.Id == request.Id && c.CompanyId == request.CompanyId, cancellationToken);
+            .FirstOrDefaultAsync(c => c.Id == request.Id &&
+                                      c.CompanyId == request.CompanyId, cancellationToken);
 
         if (existingCountry == null)
         {
@@ -38,7 +38,7 @@ public class UpdateCountryHandler: IRequestHandler<UpdateCountryCommand, Unit>
         }
 
         existingCountry.Name = request.Name;
-        
+
         try
         {
             await _context.SaveChangesAsync(cancellationToken);

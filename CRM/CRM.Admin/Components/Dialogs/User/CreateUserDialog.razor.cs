@@ -10,42 +10,42 @@ public partial class CreateUserDialog
 {
     [Inject] private ISuperAdminRequest SuperAdminRequest { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
-    
+
     [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
     [Parameter] public Guid Id { get; set; }
-    
-    private UserCreateDto UserCreateDto { get; set; } = new();
-    
+
+    private UserCreateDto _userCreateDto { get; set; } = new();
+
     protected override async Task OnInitializedAsync()
     {
-        UserCreateDto.CompanyId = Id;
-        UserCreateDto.Password = Constants.DefaultPassword;
+        _userCreateDto.CompanyId = Id;
+        _userCreateDto.Password = Constants.DefaultPassword;
     }
 
     private async Task Create()
     {
-        if (string.IsNullOrEmpty(UserCreateDto.Name) || string.IsNullOrEmpty(UserCreateDto.Surname) ||
-            string.IsNullOrEmpty(UserCreateDto.Email))
+        if (string.IsNullOrEmpty(_userCreateDto.Name) || string.IsNullOrEmpty(_userCreateDto.Surname) ||
+            string.IsNullOrEmpty(_userCreateDto.Email))
         {
             Snackbar.Add("Будь ласка, заповніть всі поля", Severity.Error);
             return;
         }
 
-        if (UserCreateDto.RoleTypes == null)
+        if (_userCreateDto.RoleTypes == null)
         {
             Snackbar.Add("Будь ласка, виберіть хоча б одну роль", Severity.Error);
             return;
         }
 
-        try
+        var result = await SuperAdminRequest.CreateUserAsync(_userCreateDto);
+        if (result != Guid.Empty)
         {
-            await SuperAdminRequest.CreateUserAsync(UserCreateDto);
-            Snackbar.Add("Створено", Severity.Success);
+            Snackbar.Add("Створено користувача", Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add($"Помилка: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Помилка при створенні користувача", Severity.Error);
         }
     }
 

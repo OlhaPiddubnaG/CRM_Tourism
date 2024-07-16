@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.ClientStatusHistoryHandlers;
 
-public class GetAllClientsStatusHistoryHandler : IRequestHandler<GetByIdReturnListRequest<ClientStatusHistoryResponse>, List<ClientStatusHistoryResponse>>
+public class GetAllClientsStatusHistoryHandler : IRequestHandler<GetByIdReturnListRequest<ClientStatusHistoryResponse>,
+    List<ClientStatusHistoryResponse>>
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
@@ -21,14 +22,16 @@ public class GetAllClientsStatusHistoryHandler : IRequestHandler<GetByIdReturnLi
         _currentUser = currentUser;
     }
 
-    public async Task<List<ClientStatusHistoryResponse>> Handle(GetByIdReturnListRequest<ClientStatusHistoryResponse> request, CancellationToken cancellationToken)
+    public async Task<List<ClientStatusHistoryResponse>> Handle(
+        GetByIdReturnListRequest<ClientStatusHistoryResponse> request, CancellationToken cancellationToken)
     {
         var companyId = _currentUser.GetCompanyId();
-        var clientId = request.Id; 
+        var clientId = request.Id;
 
         var clientsStatusHistory = await _context.ClientStatusHistory
             .Include(csh => csh.Client)
-            .Where(csh => csh.ClientId == clientId && csh.Client.CompanyId == companyId)
+            .Where(csh => csh.ClientId == clientId &&
+                          csh.Client.CompanyId == companyId)
             .ToListAsync(cancellationToken);
 
         var clientStatusHistoryResponses = _mapper.Map<List<ClientStatusHistoryResponse>>(clientsStatusHistory);

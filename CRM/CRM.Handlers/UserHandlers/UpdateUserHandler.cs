@@ -24,21 +24,22 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Unit>
     {
         var currentUserRoles = _currentUser.GetRoles();
         var currentUserCompanyId = _currentUser.GetCompanyId();
-        
+
         var existingUser = await _context.Users
-            .Include(u => u.UserRoles) 
+            .Include(u => u.UserRoles)
             .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
 
         if (existingUser == null)
         {
             throw new NotFoundException(typeof(User), request.Id);
         }
-        
-        if (!currentUserRoles.Contains(RoleType.Admin) && currentUserCompanyId != existingUser.CompanyId)
+
+        if (!currentUserRoles.Contains(RoleType.Admin) &&
+            currentUserCompanyId != existingUser.CompanyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to update this user.");
         }
-        
+
         existingUser.Name = request.Name;
         existingUser.Surname = request.Surname;
         existingUser.UpdatedAt = DateTime.UtcNow;
@@ -60,7 +61,7 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Unit>
                 _context.UserRoles.Remove(userRole);
             }
         }
-        
+
         try
         {
             await _context.SaveChangesAsync(cancellationToken);

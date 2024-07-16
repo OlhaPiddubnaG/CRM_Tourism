@@ -8,7 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.ClientPrivateDataHandlers;
 
-public class GetAllClientPrivateDatasHandler : IRequestHandler<GetAllRequest<ClientPrivateDataResponse>, List<ClientPrivateDataResponse>>
+public class
+    GetAllClientPrivateDatasHandler : IRequestHandler<GetAllRequest<ClientPrivateDataResponse>,
+    List<ClientPrivateDataResponse>>
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
@@ -27,7 +29,8 @@ public class GetAllClientPrivateDatasHandler : IRequestHandler<GetAllRequest<Cli
         var companyId = _currentUser.GetCompanyId();
         var clientPrivateDatas = await _context.ClientPrivateDatas
             .Include(cpd => cpd.Client)
-            .Where(cpd => !cpd.IsDeleted && cpd.Client.CompanyId == companyId)
+            .Where(cpd => !cpd.IsDeleted &&
+                          cpd.Client.CompanyId == companyId)
             .ToListAsync(cancellationToken);
 
         if (clientPrivateDatas == null)

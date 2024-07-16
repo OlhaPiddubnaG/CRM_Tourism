@@ -24,7 +24,6 @@ public partial class CreateClientDialog
 
     private List<UserDto> _managers = new();
     private readonly ClientCreateDto _clientCreateDto = InitializeClientCreateDto();
-    private CountryCreateDto CountryCreateDto { get; set; } = new();
     private DateTime? _dateOfBirth = DateTime.UtcNow;
     private DateTime? _passportInternalExpiryDate = DateTime.UtcNow;
     private DateTime? _passportInternalIssueDate = DateTime.UtcNow;
@@ -45,16 +44,17 @@ public partial class CreateClientDialog
             return;
         }
 
-        try
+        await PrepareClientDataAsync();
+        var result = await ClientRequest.CreateClientWithRelatedAsync(_clientCreateDto);
+
+        if (result.Success)
         {
-            await PrepareClientDataAsync();
-            await ClientRequest.CreateClientWithRelatedAsync(_clientCreateDto);
-            Snackbar.Add("Cтворено клієнта", Severity.Success);
+            Snackbar.Add("Клієнта створено", Severity.Success);
             NavigateToClientPage();
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add($"Помилка: {ex.Message}", Severity.Error);
+            Snackbar.Add("Помилка при створенні клієнта", Severity.Error);
         }
     }
 
@@ -72,11 +72,14 @@ public partial class CreateClientDialog
 
     private async Task PrepareClientDataAsync()
     {
-        _clientCreateDto.CompanyId = Id;
-        CountryCreateDto.CompanyId = Id;
-        CountryCreateDto.Name = "Україна";
-        _clientCreateDto.CountryId = await GetOrCreateCountryAsync();
+        var countryCreateDto = new CountryCreateDto
+        {
+            CompanyId = Id,
+            Name = "Україна"
+        };
 
+        _clientCreateDto.CompanyId = Id;
+        _clientCreateDto.CountryId = await GetOrCreateCountryAsync(countryCreateDto);
         _clientCreateDto.DateOfBirth =
             _dateOfBirth.HasValue ? DateOnly.FromDateTime(_dateOfBirth.Value) : (DateOnly?)null;
 
@@ -97,11 +100,12 @@ public partial class CreateClientDialog
         _clientCreateDto.PassportsCreateDtos[1].PassportType = PassportType.International;
     }
 
-    private async Task<Guid> GetOrCreateCountryAsync()
+    private async Task<Guid> GetOrCreateCountryAsync(CountryCreateDto countryCreateDto)
     {
-        var existingCountry = await CountryRequest.GetByNameAsync(CountryCreateDto.Name);
-        return existingCountry?.Id ?? await CountryRequest.CreateAsync(CountryCreateDto);
+        var existingCountry = await CountryRequest.GetByNameAsync(countryCreateDto.Name);
+        return existingCountry?.Id ?? await CountryRequest.CreateAsync(countryCreateDto);
     }
+
 
     private void NavigateToClientPage()
     {

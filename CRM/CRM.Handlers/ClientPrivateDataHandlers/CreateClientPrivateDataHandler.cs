@@ -3,7 +3,6 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands.ClientPrivateData;
 using CRM.Domain.Entities;
-using CRM.Domain.Enums;
 using CRM.Domain.Responses;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
@@ -28,18 +27,19 @@ public class CreateClientPrivateDataHandler : IRequestHandler<CreateClientPrivat
         CancellationToken cancellationToken)
     {
         var companyId = _currentUser.GetCompanyId();
-        
+
         var client = await _context.Clients
             .FirstOrDefaultAsync(
-                c => c.Id == request.ClientId && c.CompanyId == companyId && !c.IsDeleted,
-                cancellationToken);
+                c => c.Id == request.ClientId &&
+                     c.CompanyId == companyId &&
+                     !c.IsDeleted, cancellationToken);
 
         if (client == null)
         {
             throw new UnauthorizedAccessException(
                 "User is not authorized to create private data for a client from a different company.");
         }
-        
+
         var clientPrivateData = _mapper.Map<ClientPrivateData>(request);
 
         clientPrivateData.CreatedAt = DateTime.UtcNow;

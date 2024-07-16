@@ -6,7 +6,7 @@ public interface IUserRequest
 {
     Task<List<UserDto>> GetAllAsync();
     Task<T> GetByIdAsync<T>(Guid id) where T : IUserDto;
-    Task CreateAsync(UserCreateDto userCreateDTO);
+    Task<Guid> CreateAsync(UserCreateDto userCreateDTO);
     Task<bool> UpdateAsync(UserUpdateDto userUpdateDTO);
     Task<bool> DeleteAsync(Guid id);
 }

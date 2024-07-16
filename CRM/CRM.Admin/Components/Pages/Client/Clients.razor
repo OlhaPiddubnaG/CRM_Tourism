@@ -1,8 +1,8 @@
-@page "/client"
-@using CRM.Admin.Data.ClientDTO
+@page "/clients"
+@using CRM.Admin.Data.ClientDto
 @using CRM.Domain.Enums
-<MudTable ServerData="@(new Func<TableState, Task<TableData<ClientDTO>>>(ServerReload))"
-          Dense="true" Hover="true" @ref="table">
+<MudTable ServerData="@(new Func<TableState, Task<TableData<ClientDto>>>(ServerReload))"
+          Dense="true" Hover="true" @ref="_table">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Туристи</MudText>
         <MudSpacer/>
@@ -12,19 +12,19 @@
     </ToolBarContent>
     <HeaderContent>
         <MudTh>
-            <MudTableSortLabel SortLabel="name_field" T="ClientDTO">Ім`я та прізвище</MudTableSortLabel>
+            <MudTableSortLabel SortLabel="Name" T="ClientDto">Ім`я та прізвище</MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortLabel="phone_field" T="ClientDTO">Телефон</MudTableSortLabel>
+            <MudTableSortLabel SortLabel="Phone" T="ClientDto">Телефон</MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortLabel="manager_field" T="ClientDTO">Менеджер</MudTableSortLabel>
+            <MudTableSortLabel SortLabel="Manager" T="ClientDto">Менеджер</MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortLabel="status_field" T="ClientDTO">Статус</MudTableSortLabel>
+            <MudTableSortLabel SortLabel="Status" T="ClientDto">Статус</MudTableSortLabel>
         </MudTh>
         <MudTh Class="d-flex justify-end">
-            <MudTableSortLabel SortLabel="tools_field" T="ClientDTO">Інструменти</MudTableSortLabel>
+            <MudTableSortLabel SortLabel="Tools" T="ClientDto">Інструменти</MudTableSortLabel>
         </MudTh>
     </HeaderContent>
     <RowTemplate>
@@ -37,7 +37,7 @@
         <MudTd DataLabel="Менеджери">
             @foreach (var managerName in context.ManagerNames)
             {
-                <div>@managerName</div>
+            <div>@managerName</div>
             }
         </MudTd>
         <MudTd DataLabel="Статус">@context.LatestStatus?.ToString()</MudTd>

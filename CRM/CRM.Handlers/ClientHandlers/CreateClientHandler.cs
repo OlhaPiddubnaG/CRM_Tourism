@@ -26,11 +26,11 @@ public class CreateClientHandler : IRequestHandler<CreateClientCommand, CreatedR
     public async Task<CreatedResponse> Handle(CreateClientCommand request, CancellationToken cancellationToken)
     {
         var currentUserCompanyId = _currentUser.GetCompanyId();
-        
+
         request.Name = request.Name.ToUpper();
         request.Surname = request.Surname.ToUpper();
         request.Patronymic = request.Patronymic.ToUpper();
-        
+
         var client = _mapper.Map<Client>(request);
 
         if (currentUserCompanyId != request.CompanyId)
@@ -41,7 +41,8 @@ public class CreateClientHandler : IRequestHandler<CreateClientCommand, CreatedR
         if (request.ManagerIds.Any())
         {
             var users = await _context.Users
-                .Where(u => request.ManagerIds.Contains(u.Id) && u.CompanyId == currentUserCompanyId)
+                .Where(u => request.ManagerIds.Contains(u.Id) &&
+                            u.CompanyId == currentUserCompanyId)
                 .ToListAsync(cancellationToken);
 
             if (users.Count != request.ManagerIds.Count)
@@ -55,7 +56,7 @@ public class CreateClientHandler : IRequestHandler<CreateClientCommand, CreatedR
         client.CreatedAt = DateTime.UtcNow;
         client.CreatedUserId = _currentUser.GetUserId();
         client.CurrentStatus = request.LatestStatus;
-        
+
         var clientStatusHistory = new ClientStatusHistory
         {
             ClientId = client.Id,

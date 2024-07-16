@@ -2,10 +2,8 @@ using AutoMapper;
 using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Entities;
-using CRM.Domain.Enums;
 using CRM.Domain.Requests;
 using CRM.Domain.Responses.Сountry;
-using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,18 +13,19 @@ public class GetCountryByNameHandler : IRequestHandler<GetByNameRequest<CountryR
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
-    private readonly ICurrentUser _currentUser;
 
-    public GetCountryByNameHandler(AppDbContext context, IMapper mapper, ICurrentUser currentUser)
+    public GetCountryByNameHandler(AppDbContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
-        _currentUser = currentUser;
     }
 
-    public async Task<CountryResponse> Handle(GetByNameRequest<CountryResponse> request, CancellationToken cancellationToken)
+    public async Task<CountryResponse> Handle(GetByNameRequest<CountryResponse> request,
+        CancellationToken cancellationToken)
     {
-        var country = await _context.Countries.FirstOrDefaultAsync(c => c.Name.ToUpper() == request.Name.ToUpper() && !c.IsDeleted, cancellationToken);
+        var country = await _context.Countries
+            .FirstOrDefaultAsync(c => c.Name.ToUpper() == request.Name.ToUpper() &&
+                                      !c.IsDeleted, cancellationToken);
 
         if (country == null)
         {

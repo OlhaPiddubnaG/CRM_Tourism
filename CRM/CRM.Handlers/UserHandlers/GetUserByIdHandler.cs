@@ -44,13 +44,15 @@ public class GetUserByIdHandler : IRequestHandler<GetByIdRequest<UserResponse>, 
         {
             return await _context.Users
                 .Include(u => u.UserRoles)
-                .FirstOrDefaultAsync(u => u.Id == userId && !u.IsDeleted, cancellationToken);
+                .FirstOrDefaultAsync(u => u.Id == userId &&
+                                          !u.IsDeleted, cancellationToken);
         }
 
         var companyId = _currentUser.GetCompanyId();
         return await _context.Users
             .Include(u => u.UserRoles)
-            .FirstOrDefaultAsync(u => u.CompanyId == companyId && u.Id == userId && !u.IsDeleted,
-            cancellationToken);
+            .FirstOrDefaultAsync(u => u.CompanyId == companyId &&
+                                      u.Id == userId &&
+                                      !u.IsDeleted, cancellationToken);
     }
 }

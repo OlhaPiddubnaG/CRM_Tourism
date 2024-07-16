@@ -10,36 +10,37 @@ public partial class UpdateUserDialog
 {
     [Inject] private IUserRequest UserRequest { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
-    
+
     [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
     [Parameter] public Guid Id { get; set; }
-    
-    private UserUpdateDto UserUpdateDto { get; set; } = new();
+
+    private UserUpdateDto _userUpdateDto { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        try
+        var result = _userUpdateDto = await UserRequest.GetByIdAsync<UserUpdateDto>(Id);
+        if (result.Id != Guid.Empty)
         {
-            UserUpdateDto = await UserRequest.GetByIdAsync<UserUpdateDto>(Id);
+            Snackbar.Add("Дані користувача завантажено", Severity.Success);
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add($"Помилка завантаження користувача: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Помилка завантаження користувача", Severity.Error);
         }
     }
 
     private async Task Update()
     {
-        try
+        _userUpdateDto.RoleTypes ??= new List<RoleType>();
+        var result = await UserRequest.UpdateAsync(_userUpdateDto);
+        if (result)
         {
-            UserUpdateDto.RoleTypes ??= new List<RoleType>();
-            await UserRequest.UpdateAsync(UserUpdateDto);
-            Snackbar.Add("Внесено зміни", Severity.Success);
+            Snackbar.Add("Внесено зміни до даних користувача", Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add($"Помилка: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Помилка при внесенні змінних до даних користувача", Severity.Error);
         }
     }
 

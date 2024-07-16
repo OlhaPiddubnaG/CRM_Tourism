@@ -9,28 +9,36 @@ public partial class UpdateCompanyDialog
 {
     [Inject] private ICompanyRequest CompanyRequest { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
-    
+
     [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
     [Parameter] public Guid Id { get; set; }
-    
-    private CompanyUpdateDto CompanyUpdateDto { get; set; } = new();
+
+    private CompanyUpdateDto _сompanyUpdateDto { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        CompanyUpdateDto = await CompanyRequest.GetByIdAsync<CompanyUpdateDto>(Id);
+        var result = _сompanyUpdateDto = await CompanyRequest.GetByIdAsync<CompanyUpdateDto>(Id);
+        if (result.Id != Guid.Empty)
+        {
+            Snackbar.Add("Дані компанії завантажено", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add($"Помилка завантаження користувача", Severity.Error);
+        }
     }
 
     private async Task Update()
     {
-        try
+        var result = await CompanyRequest.UpdateAsync(_сompanyUpdateDto);
+        if (result)
         {
-            await CompanyRequest.UpdateAsync(CompanyUpdateDto);
-            Snackbar.Add("Внесено зміни", Severity.Success);
+            Snackbar.Add("Назву компанії змінено", Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add($"Помилка: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Помилка при внесенні змін в назву компанії", Severity.Error);
         }
     }
 

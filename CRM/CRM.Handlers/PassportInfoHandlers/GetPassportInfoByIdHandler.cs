@@ -22,7 +22,7 @@ public class GetPassportInfoByIdHandler : IRequestHandler<GetByIdRequest<Passpor
         _mapper = mapper;
         _currentUser = currentUser;
     }
-        
+
     public async Task<PassportInfoResponse> Handle(GetByIdRequest<PassportInfoResponse> request,
         CancellationToken cancellationToken)
     {
@@ -30,7 +30,9 @@ public class GetPassportInfoByIdHandler : IRequestHandler<GetByIdRequest<Passpor
         var passportInfo = await _context.PassportInfo
             .Include(pi => pi.ClientPrivateData)
             .ThenInclude(cpd => cpd.Client)
-            .FirstOrDefaultAsync(pi => pi.Id == request.Id && pi.ClientPrivateData.Client.CompanyId == companyId && !pi.IsDeleted, cancellationToken);
+            .FirstOrDefaultAsync(pi => pi.Id == request.Id &&
+                                       pi.ClientPrivateData.Client.CompanyId == companyId &&
+                                       !pi.IsDeleted, cancellationToken);
 
         if (passportInfo == null)
         {

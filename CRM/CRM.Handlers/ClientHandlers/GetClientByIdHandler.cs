@@ -27,11 +27,13 @@ public class GetClientByIdHandler : IRequestHandler<GetByIdRequest<ClientRespons
         CancellationToken cancellationToken)
     {
         var companyId = _currentUser.GetCompanyId();
-        
+
         var client = await _context.Clients
             .Include(u => u.Users)
             .Include(c => c.ClientStatusHistory)
-            .FirstOrDefaultAsync(c => c.CompanyId == companyId && c.Id == request.Id && !c.IsDeleted, cancellationToken);
+            .FirstOrDefaultAsync(c => c.CompanyId == companyId &&
+                                      c.Id == request.Id &&
+                                      !c.IsDeleted, cancellationToken);
 
         if (client == null)
         {

@@ -24,7 +24,8 @@ public class GetAllUsersHandler : IRequestHandler<GetAllRequest<UserResponse>, L
         _currentUser = currentUser;
     }
 
-    public async Task<List<UserResponse>> Handle(GetAllRequest<UserResponse> request, CancellationToken cancellationToken)
+    public async Task<List<UserResponse>> Handle(GetAllRequest<UserResponse> request,
+        CancellationToken cancellationToken)
     {
         var users = await GetUsersByRoleAsync(cancellationToken);
 
@@ -39,16 +40,17 @@ public class GetAllUsersHandler : IRequestHandler<GetAllRequest<UserResponse>, L
         {
             return await _context.Users
                 .Include(u => u.UserRoles)
-             //   .ThenInclude(u => u.RoleType)
-                .Where(u => !u.IsDeleted && u.Name != Constants.DefaultAdminUserName)
+                .Where(u => !u.IsDeleted &&
+                            u.Name != Constants.DefaultAdminUserName)
                 .ToListAsync(cancellationToken);
         }
 
         var companyId = _currentUser.GetCompanyId();
         var users = await _context.Users
             .Include(u => u.UserRoles)
-            //.ThenInclude(u => u.RoleType)
-            .Where(u => u.CompanyId == companyId && !u.IsDeleted && u.Name != Constants.DefaultAdminUserName)
+            .Where(u => u.CompanyId == companyId &&
+                        !u.IsDeleted &&
+                        u.Name != Constants.DefaultAdminUserName)
             .ToListAsync(cancellationToken);
 
         if (users == null)

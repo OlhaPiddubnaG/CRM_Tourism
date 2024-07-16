@@ -61,7 +61,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<DeleteCommand<Client>, Unit>, DeleteClientHandler>();
         services.AddScoped<IRequestHandler<GetByIdRequest<ClientResponse>, ClientResponse>, GetClientByIdHandler>(); 
         services.AddScoped<IRequestHandler<GetAllRequest<ClientResponse>, List<ClientResponse>>, GetAllClientsHandler>();
-        services.AddScoped<IRequestHandler<GetSortAllRequest <ClientResponse>,TableData<ClientResponse>>, GetSortAllClientsHandler>();
+        services.AddScoped<IRequestHandler<GetFilteredAndSortAllRequest <ClientResponse>,TableData<ClientResponse>>, GetSortAllClientsHandler>();
         
         services.AddScoped<IRequestHandler<CreateClientPrivateDataCommand, CreatedResponse>,
                 CreateClientPrivateDataHandler>(); 

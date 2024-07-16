@@ -2,7 +2,6 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands;
 using CRM.Domain.Entities;
-using CRM.Domain.Enums;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +24,8 @@ public class DeleteCountryHandler : IRequestHandler<DeleteCommand<Country>, Unit
         var currentUserCompanyId = _currentUser.GetCompanyId();
 
         var country = await _context.Countries
-            .FirstOrDefaultAsync(c => c.Id == request.Id && !c.IsDeleted, cancellationToken);
+            .FirstOrDefaultAsync(c => c.Id == request.Id &&
+                                      !c.IsDeleted, cancellationToken);
 
         if (country == null)
         {

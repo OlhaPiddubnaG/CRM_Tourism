@@ -26,10 +26,11 @@ public class GetAllCountriesHandler : IRequestHandler<GetAllRequest<CountryRespo
     {
         var companyId = _currentUser.GetCompanyId();
         var countries = await _context.Countries
-            .Where(c => c.CompanyId == companyId && !c.IsDeleted)
+            .Where(c => c.CompanyId == companyId &&
+                        !c.IsDeleted)
             .OrderBy(c => c.Name)
             .ToListAsync(cancellationToken);
-        
+
         if (countries == null)
         {
             throw new UnauthorizedAccessException("User is not authorized to access this country.");

@@ -3,8 +3,8 @@
         <MudText Typo="Typo.h6">Коментар по туристу</MudText>
     </TitleContent>
     <DialogContent>
-        <MudText Typo="Typo.subtitle1">@ClientUpdateDto.Surname @ClientUpdateDto.Name</MudText>
-        <MudTextField Class="mb-2" Label="Коментар" @bind-Value="ClientUpdateDto.Comment" For="@(() => ClientUpdateDto.Comment)" Lines="2"/>
+        <MudText Typo="Typo.subtitle1">@_сlientUpdateDto.Surname @_сlientUpdateDto.Name</MudText>
+        <MudTextField Class="mb-2" Label="Коментар" @bind-Value="_сlientUpdateDto.Comment" For="@(() => _сlientUpdateDto.Comment)" Lines="2"/>
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Filled" OnClick="Cancel" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel">ВІДМІНА</MudButton>

@@ -1,6 +1,7 @@
 using System.Net;
 using CRM.Admin.Data.CompanyDto;
 using CRM.Admin.HttpRequests;
+using MudBlazor;
 using Newtonsoft.Json;
 
 namespace CRM.Admin.Requests.CompanyRequests;
@@ -9,12 +10,14 @@ public class CompanyRequest : ICompanyRequest
 {
     private readonly IHttpCrmApiRequests _httpCrmApiRequests;
     private readonly ILogger<CompanyRequest> _logger;
+    private readonly ISnackbar _snackbar;
     private const string RequestUri = "api/Company";
 
-    public CompanyRequest(IHttpCrmApiRequests httpCrmApiRequests, ILogger<CompanyRequest> logger)
+    public CompanyRequest(IHttpCrmApiRequests httpCrmApiRequests, ILogger<CompanyRequest> logger, ISnackbar snackbar)
     {
         _httpCrmApiRequests = httpCrmApiRequests;
         _logger = logger;
+        _snackbar = snackbar;
     }
 
     public async Task<List<CompanyDto>> GetAllAsync()
@@ -26,11 +29,13 @@ public class CompanyRequest : ICompanyRequest
 
             var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("GetAllAsync method executed successfully");
+            _snackbar.Add("Дані всіх компаній успішно завантажено", Severity.Success);
             return JsonConvert.DeserializeObject<List<CompanyDto>>(content);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in GetAllAsync method");
+            _snackbar.Add($"Помилка при завантаженні даних компаній: {ex.Message}", Severity.Error);
             throw;
         }
     }
@@ -44,11 +49,13 @@ public class CompanyRequest : ICompanyRequest
 
             var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation($"GetByIdAsync method executed successfully for id: {id}");
+            _snackbar.Add("Дані компанії успішно завантажено", Severity.Success);
             return JsonConvert.DeserializeObject<T>(content);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error in GetByIdAsync method for id: {id}");
+            _snackbar.Add($"Помилка при завантаженні даних компанії: {ex.Message}", Severity.Error);
             throw;
         }
     }
@@ -62,11 +69,13 @@ public class CompanyRequest : ICompanyRequest
 
             _logger.LogInformation(
                 $"UpdateAsync method executed successfully for company with id: {companyUpdateDto.Id}");
+            _snackbar.Add("Компанію успішно оновлено", Severity.Success);
             return response.StatusCode == HttpStatusCode.NoContent;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error in UpdateAsync method for company with id: {companyUpdateDto.Id}");
+            _snackbar.Add($"Помилка при оновленні компанії: {ex.Message}", Severity.Error);
             throw;
         }
     }
@@ -79,11 +88,13 @@ public class CompanyRequest : ICompanyRequest
             response.EnsureSuccessStatusCode();
 
             _logger.LogInformation($"DeleteAsync method executed successfully for id: {id}");
+            _snackbar.Add("Компанію успішно видалено", Severity.Success);
             return response.StatusCode == HttpStatusCode.NoContent;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error in DeleteAsync method for id: {id}");
+            _snackbar.Add($"Помилка при видаленні компанії: {ex.Message}", Severity.Error);
             throw;
         }
     }

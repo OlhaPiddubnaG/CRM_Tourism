@@ -23,8 +23,9 @@ public class GetAllCompaniesHandler : IRequestHandler<GetAllRequest<CompanyRespo
         _mapper = mapper;
         _currentUser = currentUser;
     }
-    
-    public async Task<List<CompanyResponse>> Handle(GetAllRequest<CompanyResponse> request, CancellationToken cancellationToken)
+
+    public async Task<List<CompanyResponse>> Handle(GetAllRequest<CompanyResponse> request,
+        CancellationToken cancellationToken)
     {
         var companies = await GetCompaniesByRoleAsync(cancellationToken);
 
@@ -38,13 +39,16 @@ public class GetAllCompaniesHandler : IRequestHandler<GetAllRequest<CompanyRespo
         if (roles.Contains(RoleType.Admin))
         {
             return await _context.Companies
-                .Where(c => !c.IsDeleted && c.Name != Constants.DefaultCompanyAdminName) 
+                .Where(c => !c.IsDeleted &&
+                            c.Name != Constants.DefaultCompanyAdminName)
                 .ToListAsync(cancellationToken);
         }
 
         var companyId = _currentUser.GetCompanyId();
         return await _context.Companies
-            .Where(c => c.Id == companyId && !c.IsDeleted && c.Name != Constants.DefaultCompanyAdminName)
+            .Where(c => c.Id == companyId &&
+                        !c.IsDeleted &&
+                        c.Name != Constants.DefaultCompanyAdminName)
             .ToListAsync(cancellationToken);
     }
 }

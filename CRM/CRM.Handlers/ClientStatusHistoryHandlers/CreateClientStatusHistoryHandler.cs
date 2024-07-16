@@ -29,8 +29,9 @@ public class CreateClientStatusHistoryHandler : IRequestHandler<CreateClientStat
         var companyId = _currentUser.GetCompanyId();
 
         var client = await _context.Clients
-            .FirstOrDefaultAsync(c => c.Id == request.ClientId && c.CompanyId == companyId && !c.IsDeleted,
-                cancellationToken);
+            .FirstOrDefaultAsync(c => c.Id == request.ClientId &&
+                                      c.CompanyId == companyId &&
+                                      !c.IsDeleted, cancellationToken);
 
         if (client == null)
         {

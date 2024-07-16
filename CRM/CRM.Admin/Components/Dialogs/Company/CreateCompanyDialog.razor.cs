@@ -9,27 +9,28 @@ public partial class CreateCompanyDialog
 {
     [Inject] private ISuperAdminRequest SuperAdminRequest { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
-    
+
     [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
-    
-    private CompanyCreateDto CompanyCreateDto { get; set; } = new();
+
+    private CompanyCreateDto _сompanyCreateDto { get; set; } = new();
 
     private async Task Create()
     {
-        if (string.IsNullOrEmpty(CompanyCreateDto.Name))
+        if (string.IsNullOrEmpty(_сompanyCreateDto.Name))
         {
             Snackbar.Add("Назва компанії не може бути порожньою", Severity.Error);
             return;
         }
-        try
+
+        var result = await SuperAdminRequest.CreateCompanyAsync(_сompanyCreateDto);
+        if (result != Guid.Empty)
         {
-            await SuperAdminRequest.CreateCompanyAsync(CompanyCreateDto);
-            Snackbar.Add("Створено", Severity.Success);
+            Snackbar.Add("Компанію створено", Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add($"Помилка: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Помилка при створенні компанії", Severity.Error);
         }
     }
 

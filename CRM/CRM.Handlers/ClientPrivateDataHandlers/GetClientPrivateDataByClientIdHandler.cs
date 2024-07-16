@@ -30,8 +30,9 @@ public class GetClientPrivateDataByClientIdHandler : IRequestHandler<GetByIdRequ
         var companyId = _currentUser.GetCompanyId();
         var clientPrivateData = await _context.ClientPrivateDatas
             .Include(cpd => cpd.Client)
-            .FirstOrDefaultAsync(cpd => cpd.ClientId == request.Id && !cpd.IsDeleted && cpd.Client.CompanyId == companyId,
-                cancellationToken);
+            .FirstOrDefaultAsync(cpd => cpd.ClientId == request.Id &&
+                                        !cpd.IsDeleted &&
+                                        cpd.Client.CompanyId == companyId, cancellationToken);
 
         if (clientPrivateData == null)
         {

@@ -1,18 +1,18 @@
 using System.Net;
 using System.Net.Http.Headers;
-using System.Web;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 namespace CRM.Admin.HttpRequests;
 
 public class HttpRequests : IHttpCrmApiRequests
-{ 
+{
     private readonly HttpClient _httpClient;
     private readonly IJSRuntime _jsRuntime;
     private readonly NavigationManager _navManager;
 
-    public HttpRequests(IHttpClientFactory factory, NavigationManager navManager, IJSRuntime jsRuntime, string clientName)
+    public HttpRequests(IHttpClientFactory factory, NavigationManager navManager, IJSRuntime jsRuntime,
+        string clientName)
     {
         _httpClient = factory.CreateClient(clientName);
         _navManager = navManager;
@@ -23,27 +23,6 @@ public class HttpRequests : IHttpCrmApiRequests
     {
         await AddAuthorizationHeaderAsync();
         var response = await _httpClient.GetAsync(requestUri);
-        CheckResponseStatusCode(response);
-
-        return response;
-    }
-    
-    public async Task<HttpResponseMessage> SendGetRequestAsync(string requestUri, Dictionary<string, string> queryParams)
-    {
-        await AddAuthorizationHeaderAsync();
-
-        var uriBuilder = new UriBuilder(_httpClient.BaseAddress + requestUri);
-        var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-
-        foreach (var param in queryParams)
-        {
-            query[param.Key] = param.Value;
-        }
-
-        uriBuilder.Query = query.ToString();
-        var uri = uriBuilder.ToString();
-
-        var response = await _httpClient.GetAsync(uri);
         CheckResponseStatusCode(response);
 
         return response;
@@ -75,7 +54,7 @@ public class HttpRequests : IHttpCrmApiRequests
 
         return response;
     }
-    
+
     private async Task AddAuthorizationHeaderAsync()
     {
         var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");

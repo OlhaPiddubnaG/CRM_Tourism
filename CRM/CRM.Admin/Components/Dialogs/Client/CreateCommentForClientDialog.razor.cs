@@ -13,24 +13,24 @@ public partial class CreateCommentForClientDialog
     [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
     [Parameter] public Guid Id { get; set; }
 
-    private ClientUpdateDto ClientUpdateDto { get; set; } = new();
+    private ClientUpdateDto _сlientUpdateDto { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        ClientUpdateDto = await ClientRequest.GetByIdAsync<ClientUpdateDto>(Id);
+        _сlientUpdateDto = await ClientRequest.GetByIdAsync<ClientUpdateDto>(Id);
     }
 
     private async Task Create()
     {
-        try
+        var result = await ClientRequest.UpdateAsync(_сlientUpdateDto);
+        if (result)
         {
-            await ClientRequest.UpdateAsync(ClientUpdateDto);
-            Snackbar.Add("Додано", Severity.Success);
+            Snackbar.Add("Додано коментар", Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add($"Помилка: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Помилка при додаванні коментаря", Severity.Error);
         }
     }
 
