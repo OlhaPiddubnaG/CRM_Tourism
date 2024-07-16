@@ -67,7 +67,7 @@ public class ClientController : ControllerBase
     [HttpPost("paged")]
     [ProducesResponseType(typeof(TableData<ClientResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadRequestResult), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetAll(
+    public async Task<IActionResult> GetPagedFilteredAndSorted(
         [FromQuery] string? searchString,
         [FromQuery] string? sortLabel,
         [FromQuery] SortDirection sortDirection,
@@ -75,46 +75,16 @@ public class ClientController : ControllerBase
         [FromQuery] int pageSize,
         CancellationToken token)
     {
-        if (string.IsNullOrWhiteSpace(searchString))
-        {
-            var allClients = await _sender.Send(new GetAllRequest<ClientResponse>(), token);
-            var sortedClients = SortClients(allClients, sortLabel, sortDirection);
-            var pagedClients = sortedClients.Skip(page * pageSize).Take(pageSize).ToList();
+        var request = new GetFilteredAndSortAllRequest<ClientResponse>(
+            searchString,
+            sortLabel,
+            sortDirection,
+            page,
+            pageSize);
 
-            return Ok(new TableData<ClientResponse>
-            {
-                TotalItems = allClients.Count(),
-                Items = pagedClients
-            });
-        }
-        else
-        {
-            var request = new GetFilteredAndSortAllRequest<ClientResponse>(
-                searchString,
-                sortLabel,
-                sortDirection,
-                page,
-                pageSize);
+        var response = await _sender.Send(request, token);
 
-            var response = await _sender.Send(request, token);
-
-            return Ok(response);
-        }
-    }
-
-    private IEnumerable<ClientResponse> SortClients(IEnumerable<ClientResponse> clients, string sortLabel,
-        SortDirection sortDirection)
-    {
-        return sortLabel switch
-        {
-            "Name" => sortDirection == SortDirection.Ascending
-                ? clients.OrderBy(c => c.Name)
-                : clients.OrderByDescending(c => c.Name),
-            "Surname" => sortDirection == SortDirection.Ascending
-                ? clients.OrderBy(c => c.Surname)
-                : clients.OrderByDescending(c => c.Surname),
-            _ => clients
-        };
+        return Ok(response);
     }
 
     [HttpDelete("{id:guid}")]

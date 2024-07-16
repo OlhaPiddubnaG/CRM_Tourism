@@ -28,16 +28,16 @@ public partial class AddManagerForClientDialog
 
     private async Task Create()
     {
-        try
+        ClientUpdateDto.ManagerIds = _selectedManagerIds;
+        var result = await ClientRequest.UpdateAsync(ClientUpdateDto);
+        if (result)
         {
-            ClientUpdateDto.ManagerIds = _selectedManagerIds;
-            await ClientRequest.UpdateAsync(ClientUpdateDto);
             Snackbar.Add("Додано менеджера", Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add($"Помилка: {ex.Message}", Severity.Error);
+            Snackbar.Add("Помилка при додаванні менеджера");
         }
     }
 

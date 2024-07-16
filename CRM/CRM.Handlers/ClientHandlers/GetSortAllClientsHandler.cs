@@ -10,8 +10,7 @@ using MudBlazor;
 
 namespace CRM.Handlers.ClientHandlers
 {
-    public class
-        GetSortAllClientsHandler : IRequestHandler<GetFilteredAndSortAllRequest<ClientResponse>,
+    public class GetSortAllClientsHandler : IRequestHandler<GetFilteredAndSortAllRequest<ClientResponse>,
         TableData<ClientResponse>>
     {
         private readonly AppDbContext _context;
@@ -33,7 +32,8 @@ namespace CRM.Handlers.ClientHandlers
             IQueryable<Client> query = _context.Clients
                 .Include(u => u.Users)
                 .Include(c => c.ClientStatusHistory)
-                .Where(c => c.CompanyId == companyId && !c.IsDeleted);
+                .Where(c => c.CompanyId == companyId &&
+                            !c.IsDeleted);
 
             if (!string.IsNullOrWhiteSpace(request.SearchString))
             {
@@ -41,21 +41,33 @@ namespace CRM.Handlers.ClientHandlers
                 query = query.Where(c =>
                     c.Name.ToLower().Contains(searchString) ||
                     c.Email.ToLower().Contains(searchString) ||
-                    c.Surname.ToLower().Contains(searchString)
+                    c.Surname.ToLower().Contains(searchString) ||
+                    c.Phone.ToLower().Contains(searchString) ||
+                    c.Users.Any(u => u.Name.ToLower().Contains(searchString))
                 );
             }
 
             switch (request.SortLabel)
             {
-                case "name":
+                case "Name":
                     query = request.SortDirection == SortDirection.Ascending
                         ? query.OrderBy(c => c.Name)
                         : query.OrderByDescending(c => c.Name);
                     break;
-                case "surname":
+                case "Surname":
                     query = request.SortDirection == SortDirection.Ascending
                         ? query.OrderBy(c => c.Surname)
                         : query.OrderByDescending(c => c.Surname);
+                    break;
+                case "Phone":
+                    query = request.SortDirection == SortDirection.Ascending
+                        ? query.OrderBy(c => c.Phone)
+                        : query.OrderByDescending(c => c.Phone);
+                    break;
+                case "Manager":
+                    query = request.SortDirection == SortDirection.Ascending
+                        ? query.OrderBy(c => c.Users.FirstOrDefault().Name)
+                        : query.OrderByDescending(c => c.Users.FirstOrDefault().Name);
                     break;
                 default:
                     query = query.OrderBy(c => c.Name);

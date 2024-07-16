@@ -12,6 +12,12 @@ public class ClientProfile : Profile
         CreateMap<CreateClientCommand, Client>();
         CreateMap<CreateClientWithRelatedCommand, Client>();
         CreateMap<UpdateClientCommand, Client>();
-        CreateMap<Client, ClientResponse>();
+        CreateMap<Client, ClientResponse>()
+            .ForMember(d => d.ManagerNames, 
+                opt => opt.MapFrom(src => src.Users.Select(u => u.Name).ToList()))
+            .ForMember(dest => dest.LatestStatus,
+                opt => opt.MapFrom(src =>
+                    src.ClientStatusHistory.OrderByDescending(h => h.ClientStatus).FirstOrDefault().ClientStatus
+                        .ToString()));
     }
 }
