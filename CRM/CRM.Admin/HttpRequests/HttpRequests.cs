@@ -6,12 +6,13 @@ using Microsoft.JSInterop;
 namespace CRM.Admin.HttpRequests;
 
 public class HttpRequests : IHttpCrmApiRequests
-{ 
+{
     private readonly HttpClient _httpClient;
     private readonly IJSRuntime _jsRuntime;
     private readonly NavigationManager _navManager;
 
-    public HttpRequests(IHttpClientFactory factory, NavigationManager navManager, IJSRuntime jsRuntime, string clientName)
+    public HttpRequests(IHttpClientFactory factory, NavigationManager navManager, IJSRuntime jsRuntime,
+        string clientName)
     {
         _httpClient = factory.CreateClient(clientName);
         _navManager = navManager;
@@ -53,7 +54,7 @@ public class HttpRequests : IHttpCrmApiRequests
 
         return response;
     }
-    
+
     private async Task AddAuthorizationHeaderAsync()
     {
         var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");

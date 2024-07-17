@@ -37,16 +37,22 @@ public class GetUserByIdHandler : IRequestHandler<GetByIdRequest<UserResponse>, 
         return userResponse;
     }
 
-    private async Task<User> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
+    private async Task<User?> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
     {
         var roles = _currentUser.GetRoles();
         if (roles.Contains(RoleType.Admin))
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+            return await _context.Users
+                .Include(u => u.UserRoles)
+                .FirstOrDefaultAsync(u => u.Id == userId &&
+                                          !u.IsDeleted, cancellationToken);
         }
 
         var companyId = _currentUser.GetCompanyId();
-        return await _context.Users.FirstOrDefaultAsync(u => u.CompanyId == companyId && u.Id == userId,
-            cancellationToken);
+        return await _context.Users
+            .Include(u => u.UserRoles)
+            .FirstOrDefaultAsync(u => u.CompanyId == companyId &&
+                                      u.Id == userId &&
+                                      !u.IsDeleted, cancellationToken);
     }
 }

@@ -1,11 +1,12 @@
-using CRM.Admin.Data.UserDTO;
+using CRM.Admin.Data.UserDto;
 
 namespace CRM.Admin.Requests.UserRequests;
 
 public interface IUserRequest
 {
-    Task<List<UserDTO>> GetAllAsync();
-    Task<T> GetByIdAsync<T>(Guid id) where T : IUserDTO;
-    Task<bool> UpdateAsync(UserUpdateDTO userUpdateDTO);
+    Task<List<UserDto>> GetAllAsync();
+    Task<T> GetByIdAsync<T>(Guid id) where T : IUserDto;
+    Task<Guid> CreateAsync(UserCreateDto userCreateDTO);
+    Task<bool> UpdateAsync(UserUpdateDto userUpdateDTO);
     Task<bool> DeleteAsync(Guid id);
 }

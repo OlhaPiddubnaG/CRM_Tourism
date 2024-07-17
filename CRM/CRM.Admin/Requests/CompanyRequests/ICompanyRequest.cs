@@ -1,11 +1,11 @@
-using CRM.Admin.Data.CompanyDTO;
+using CRM.Admin.Data.CompanyDto;
 
 namespace CRM.Admin.Requests.CompanyRequests;
 
 public interface ICompanyRequest
 {
-    Task<List<CompanyDTO>> GetAllAsync();
-    Task<T> GetByIdAsync<T>(Guid id) where T : ICompanyDTO;
-    Task<bool> UpdateAsync(CompanyUpdateDTO categotyUpdateDTO);
+    Task<List<CompanyDto>> GetAllAsync();
+    Task<T> GetByIdAsync<T>(Guid id) where T : ICompanyDto;
+    Task<bool> UpdateAsync(CompanyUpdateDto categotyUpdateDTO);
     Task<bool> DeleteAsync(Guid id);
 }

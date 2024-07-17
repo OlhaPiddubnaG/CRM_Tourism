@@ -1,4 +1,4 @@
-using CRM.Admin.Data.CompanyDTO;
+using CRM.Admin.Data.CompanyDto;
 using CRM.Admin.Requests.SuperAdminRequests;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -7,27 +7,30 @@ namespace CRM.Admin.Components.Dialogs.Company;
 
 public partial class CreateCompanyDialog
 {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-    [Inject] ISuperAdminRequest SuperAdminRequest { get; set; }
-    [Inject] ISnackbar Snackbar { get; set; }
-    private CompanyCreateDTO companyCreateDTO { get; set; } = new();
+    [Inject] private ISuperAdminRequest SuperAdminRequest { get; set; } = null!;
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
+
+    [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
+
+    private CompanyCreateDto _сompanyCreateDto { get; set; } = new();
 
     private async Task Create()
     {
-        if (string.IsNullOrEmpty(companyCreateDTO.Name))
+        if (string.IsNullOrEmpty(_сompanyCreateDto.Name))
         {
             Snackbar.Add("Назва компанії не може бути порожньою", Severity.Error);
             return;
         }
-        try
+
+        var result = await SuperAdminRequest.CreateCompanyAsync(_сompanyCreateDto);
+        if (result != Guid.Empty)
         {
-            await SuperAdminRequest.CreateCompany(companyCreateDTO);
-            Snackbar.Add("Створено", Severity.Success);
+            Snackbar.Add("Компанію створено", Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add($"Помилка: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Помилка при створенні компанії", Severity.Error);
         }
     }
 

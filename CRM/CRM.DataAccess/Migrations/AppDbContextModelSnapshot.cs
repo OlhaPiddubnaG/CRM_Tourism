@@ -74,6 +74,9 @@ namespace CRM.DataAccess.Migrations
                     b.Property<Guid>("CreatedUserId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("CurrentStatus")
+                        .HasColumnType("integer");
+
                     b.Property<DateOnly?>("DateOfBirth")
                         .HasColumnType("date");
 
@@ -118,8 +121,7 @@ namespace CRM.DataAccess.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.HasIndex("CountryId")
-                        .IsUnique();
+                    b.HasIndex("CountryId");
 
                     b.ToTable("Clients");
                 });
@@ -159,6 +161,49 @@ namespace CRM.DataAccess.Migrations
                     b.HasIndex("ClientId");
 
                     b.ToTable("ClientPrivateDatas");
+                });
+
+            modelBuilder.Entity("CRM.Domain.Entities.ClientStatusHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ClientStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreatedUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("DeletedUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UpdatedUserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("ClientStatusHistory");
                 });
 
             modelBuilder.Entity("CRM.Domain.Entities.Company", b =>
@@ -720,6 +765,21 @@ namespace CRM.DataAccess.Migrations
                     b.ToTable("UserTasks");
                 });
 
+            modelBuilder.Entity("ClientUser", b =>
+                {
+                    b.Property<Guid>("ClientsId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UsersId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ClientsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("ClientUser");
+                });
+
             modelBuilder.Entity("CRM.Domain.Entities.City", b =>
                 {
                     b.HasOne("CRM.Domain.Entities.Company", "Company")
@@ -762,6 +822,17 @@ namespace CRM.DataAccess.Migrations
                 {
                     b.HasOne("CRM.Domain.Entities.Client", "Client")
                         .WithMany("ClientPrivateDatas")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("CRM.Domain.Entities.ClientStatusHistory", b =>
+                {
+                    b.HasOne("CRM.Domain.Entities.Client", "Client")
+                        .WithMany("ClientStatusHistory")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -929,9 +1000,26 @@ namespace CRM.DataAccess.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ClientUser", b =>
+                {
+                    b.HasOne("CRM.Domain.Entities.Client", null)
+                        .WithMany()
+                        .HasForeignKey("ClientsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CRM.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CRM.Domain.Entities.Client", b =>
                 {
                     b.Navigation("ClientPrivateDatas");
+
+                    b.Navigation("ClientStatusHistory");
 
                     b.Navigation("Orders");
                 });

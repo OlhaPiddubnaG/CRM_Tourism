@@ -1,4 +1,4 @@
-using CRM.Admin.Data.UserDTO;
+using CRM.Admin.Data.UserDto;
 using CRM.Admin.Requests.UserRequests;
 using CRM.Domain.Enums;
 using Microsoft.AspNetCore.Components;
@@ -8,36 +8,39 @@ namespace CRM.Admin.Components.Dialogs.User;
 
 public partial class UpdateUserDialog
 {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Inject] private IUserRequest UserRequest { get; set; } = null!;
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
+
+    [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
     [Parameter] public Guid Id { get; set; }
-    [Inject] IUserRequest UserRequest { get; set; }
-    [Inject] ISnackbar Snackbar { get; set; }
-    private UserUpdateDTO userUpdateDTO { get; set; } = new();
+
+    private UserUpdateDto _userUpdateDto { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        try
+        var result = _userUpdateDto = await UserRequest.GetByIdAsync<UserUpdateDto>(Id);
+        if (result.Id != Guid.Empty)
         {
-            userUpdateDTO = await UserRequest.GetByIdAsync<UserUpdateDTO>(Id);
+            Snackbar.Add("Дані користувача завантажено", Severity.Success);
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add($"Помилка завантаження користувача: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Помилка завантаження користувача", Severity.Error);
         }
     }
 
     private async Task Update()
     {
-        try
+        _userUpdateDto.RoleTypes ??= new List<RoleType>();
+        var result = await UserRequest.UpdateAsync(_userUpdateDto);
+        if (result)
         {
-            userUpdateDTO.RoleTypes ??= new List<RoleType>();
-            await UserRequest.UpdateAsync(userUpdateDTO);
-            Snackbar.Add("Внесено зміни", Severity.Success);
+            Snackbar.Add("Внесено зміни до даних користувача", Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add($"Помилка: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Помилка при внесенні змінних до даних користувача", Severity.Error);
         }
     }
 

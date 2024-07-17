@@ -16,11 +16,17 @@
 
     <ItemGroup>
       <Compile Remove="Components\Pages\Login.razor.cs" />
+      <Compile Remove="Extensions\JSRuntimeExtensions.cs" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\CRM.Domain\CRM.Domain.csproj" />
       <ProjectReference Include="..\CRM.Helper\CRM.Helper.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Components\Dialogs\PassportInfo\CreateInternalPassportInfoDialog.razor" />
+      <_ContentIncludedByDefault Remove="Components\Dialogs\PassportInfo\CreateInternationalPassportInfoDialog.razor" />
     </ItemGroup>
 
 </Project>

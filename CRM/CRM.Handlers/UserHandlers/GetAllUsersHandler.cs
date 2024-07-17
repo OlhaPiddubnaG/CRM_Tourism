@@ -1,5 +1,6 @@
 using AutoMapper;
 using CRM.DataAccess;
+using CRM.Domain.Constants;
 using CRM.Domain.Entities;
 using CRM.Domain.Enums;
 using CRM.Domain.Requests;
@@ -23,7 +24,8 @@ public class GetAllUsersHandler : IRequestHandler<GetAllRequest<UserResponse>, L
         _currentUser = currentUser;
     }
 
-    public async Task<List<UserResponse>> Handle(GetAllRequest<UserResponse> request, CancellationToken cancellationToken)
+    public async Task<List<UserResponse>> Handle(GetAllRequest<UserResponse> request,
+        CancellationToken cancellationToken)
     {
         var users = await GetUsersByRoleAsync(cancellationToken);
 
@@ -36,10 +38,26 @@ public class GetAllUsersHandler : IRequestHandler<GetAllRequest<UserResponse>, L
         var roles = _currentUser.GetRoles();
         if (roles.Contains(RoleType.Admin))
         {
-            return await _context.Users.ToListAsync(cancellationToken);
+            return await _context.Users
+                .Include(u => u.UserRoles)
+                .Where(u => !u.IsDeleted &&
+                            u.Name != Constants.DefaultAdminUserName)
+                .ToListAsync(cancellationToken);
         }
 
         var companyId = _currentUser.GetCompanyId();
-        return await _context.Users.Where(u => u.CompanyId == companyId).ToListAsync(cancellationToken);
+        var users = await _context.Users
+            .Include(u => u.UserRoles)
+            .Where(u => u.CompanyId == companyId &&
+                        !u.IsDeleted &&
+                        u.Name != Constants.DefaultAdminUserName)
+            .ToListAsync(cancellationToken);
+
+        if (users == null)
+        {
+            throw new UnauthorizedAccessException("User is not authorized to access user data.");
+        }
+
+        return users;
     }
 }

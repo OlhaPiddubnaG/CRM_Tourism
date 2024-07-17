@@ -1,0 +1,19 @@
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Призначити менеджера для</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText Typo="Typo.subtitle1">@ClientUpdateDto.Surname @ClientUpdateDto.Name</MudText>
+        <MudSelect Label="Менеджер" @bind-SelectedValues="_selectedManagerIds" MultiSelection="true">
+            @foreach (var manager in _managers)
+            {
+                <MudSelectItem Value="@manager.Id">@($"{manager.Name} {manager.Surname}")</MudSelectItem>
+            }
+        </MudSelect>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" OnClick="Cancel" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel">ВІДМІНА</MudButton>
+        <MudSpacer/>
+        <MudButton OnClick="Create" Variant="Variant.Filled" Class="buttonBase" StartIcon="@Icons.Material.Filled.Save">ЗБЕРЕГТИ</MudButton>
+    </DialogActions>
+</MudDialog>

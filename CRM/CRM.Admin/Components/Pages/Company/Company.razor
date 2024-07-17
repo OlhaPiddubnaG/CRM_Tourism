@@ -1,6 +1,6 @@
 @page "/company"
-@using CRM.Admin.Data.CompanyDTO
-@using CRM.Admin.Data.UserDTO
+@using CRM.Admin.Data.CompanyDto
+@using CRM.Admin.Data.UserDto
 @attribute [Authorize(Roles = "Admin")]
 
 <MudGrid>
@@ -28,7 +28,7 @@
             Style="margin: 10px;">
         </MudButton>
 
-        <MudTable T="CompanyDTO" Items="_companyDTOs" Hover="true" Breakpoint="Breakpoint.Sm" @ref="_tableCompany"
+        <MudTable T="CompanyDto" Items="_companyDtos" Hover="true" Breakpoint="Breakpoint.Sm" @ref="_tableCompany"
                   RowClass="cursor-pointer" RowClassFunc="SelectedRowClassFunc" OnRowClick="OnCompanySelected">
             <HeaderContent>
                 <MudTh>Компанії</MudTh>
@@ -50,8 +50,8 @@
             СТВОРИТИ КОРИСТУВАЧА
         </MudButton>
 
-        <MudDataGrid ServerData="@(new Func<GridState<UserDTO>, Task<GridData<UserDTO>>>(SetTableDataUserAsync))" Elevation="3"
-                     T="UserDTO" ColumnResizeMode="ResizeMode.Column" RowsPerPage="5" @ref="_tableUser" >
+        <MudDataGrid ServerData="@(new Func<GridState<UserDto>, Task<GridData<UserDto>>>(SetTableDataUserAsync))" Elevation="3"
+                     T="UserDto" ColumnResizeMode="ResizeMode.Column" RowsPerPage="5" @ref="_tableUser" >
             <Columns>
                 <PropertyColumn Property="x => x.Name" Title="Ім'я"/>
                 <PropertyColumn Property="x => x.Surname" Title="Прізвище"/>
@@ -64,7 +64,7 @@
                 </TemplateColumn>
             </Columns>
             <PagerContent>
-                <MudDataGridPager T="UserDTO" PageSizeOptions=@(new int[] { 5, 10, 20 })/>
+                <MudDataGridPager T="UserDto" PageSizeOptions=@(new int[] { 5, 10, 20 })/>
             </PagerContent>
         </MudDataGrid>
     </MudItem>

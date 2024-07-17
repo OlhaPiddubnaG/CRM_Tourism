@@ -1,4 +1,4 @@
-using CRM.Admin.Data;
+using CRM.Admin.Data.AuthModel;
 using CRM.Admin.Requests.AuthRequests;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -7,10 +7,11 @@ namespace CRM.Admin.Components.Pages.Login;
 
 public partial class ForgotPassword
 {
-    [Inject] IAuthenticationRequest AuthenticationRequest { get; set; }
-    [Inject] NavigationManager NavigationManager { get; set; }
-    private string _email;
-    private string _message;
+    [Inject] private IAuthenticationRequest AuthenticationRequest { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+
+    private string _email = null!;
+    private string _message = null!;
     private Severity _alertSeverity;
 
     private async Task ResetPassword()

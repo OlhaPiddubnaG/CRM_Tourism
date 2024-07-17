@@ -31,3 +31,14 @@
     background-color: #0a5702;!important;
 }
 
+.passport-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.client-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}

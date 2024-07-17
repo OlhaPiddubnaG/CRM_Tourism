@@ -1,5 +1,5 @@
 using CRM.Admin.Auth;
-using CRM.Admin.Data;
+using CRM.Admin.Data.AuthModel;
 using CRM.Admin.Requests.AuthRequests;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -9,25 +9,24 @@ namespace CRM.Admin.Components.Pages.Login;
 
 public partial class Login
 {
-    [Inject] IAuthenticationRequest AuthenticationRequest { get; set; }
-    [Inject] CustomAuthenticationStateProvider CustomAuthStateProvider { get; set; }
-    [Inject] NavigationManager NavigationManager { get; set; }
-    [Inject] IJSRuntime JSRuntime { get; set; }
+    [Inject] private IAuthenticationRequest AuthenticationRequest { get; set; } = null!;
+    [Inject] private CustomAuthenticationStateProvider CustomAuthStateProvider { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
 
-    private string _email;
-    private string _password;
-    private string _accessToken;
-    private string _message;
+    private string _email = null!;
+    private string _password = null!;
+    private string _accessToken = null!;
+    private string _message = null!;
     private Severity _alertSeverity;
-
- 
+    
     public async Task LogIn()
     {
         var response = await AuthenticationRequest.Login(new LoginModel { Email = _email, Password = _password });
 
         if (response.AccessToken != null)
         {
-            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", response.AccessToken);
+            await JsRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", response.AccessToken);
             CustomAuthStateProvider.NotifyUserAuthentication(response.AccessToken);
             NavigationManager.NavigateTo("/home");
         }

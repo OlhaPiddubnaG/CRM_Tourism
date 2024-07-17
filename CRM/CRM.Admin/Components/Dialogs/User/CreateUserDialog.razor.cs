@@ -1,5 +1,6 @@
-using CRM.Admin.Data.UserDTO;
+using CRM.Admin.Data.UserDto;
 using CRM.Admin.Requests.SuperAdminRequests;
+using CRM.Domain.Constants;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -7,42 +8,44 @@ namespace CRM.Admin.Components.Dialogs.User;
 
 public partial class CreateUserDialog
 {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-    [Inject] ISuperAdminRequest SuperAdminRequest { get; set; }
-    [Inject] ISnackbar Snackbar { get; set; }
-    private UserCreateDTO userCreateDTO { get; set; } = new();
+    [Inject] private ISuperAdminRequest SuperAdminRequest { get; set; } = null!;
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
+
+    [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
     [Parameter] public Guid Id { get; set; }
+
+    private UserCreateDto _userCreateDto { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        userCreateDTO.CompanyId = Id;
-        userCreateDTO.Password = "123456789Qaz";
+        _userCreateDto.CompanyId = Id;
+        _userCreateDto.Password = Constants.DefaultPassword;
     }
 
     private async Task Create()
     {
-        if (string.IsNullOrEmpty(userCreateDTO.Name) || string.IsNullOrEmpty(userCreateDTO.Surname) ||
-            string.IsNullOrEmpty(userCreateDTO.Email))
+        if (string.IsNullOrEmpty(_userCreateDto.Name) || string.IsNullOrEmpty(_userCreateDto.Surname) ||
+            string.IsNullOrEmpty(_userCreateDto.Email))
         {
             Snackbar.Add("Будь ласка, заповніть всі поля", Severity.Error);
             return;
         }
 
-        if (userCreateDTO.RoleTypes == null)
+        if (_userCreateDto.RoleTypes == null)
         {
             Snackbar.Add("Будь ласка, виберіть хоча б одну роль", Severity.Error);
             return;
         }
 
-        try
+        var result = await SuperAdminRequest.CreateUserAsync(_userCreateDto);
+        if (result != Guid.Empty)
         {
-            await SuperAdminRequest.CreateUser(userCreateDTO);
-            Snackbar.Add("Створено", Severity.Success);
+            Snackbar.Add("Створено користувача", Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
         }
-        catch (Exception ex)
+        else
         {
-            Snackbar.Add($"Помилка: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Помилка при створенні користувача", Severity.Error);
         }
     }
 

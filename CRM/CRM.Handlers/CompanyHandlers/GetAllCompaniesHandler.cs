@@ -1,5 +1,6 @@
 using AutoMapper;
 using CRM.DataAccess;
+using CRM.Domain.Constants;
 using CRM.Domain.Entities;
 using CRM.Domain.Enums;
 using CRM.Domain.Requests;
@@ -22,8 +23,9 @@ public class GetAllCompaniesHandler : IRequestHandler<GetAllRequest<CompanyRespo
         _mapper = mapper;
         _currentUser = currentUser;
     }
-    
-    public async Task<List<CompanyResponse>> Handle(GetAllRequest<CompanyResponse> request, CancellationToken cancellationToken)
+
+    public async Task<List<CompanyResponse>> Handle(GetAllRequest<CompanyResponse> request,
+        CancellationToken cancellationToken)
     {
         var companies = await GetCompaniesByRoleAsync(cancellationToken);
 
@@ -36,10 +38,17 @@ public class GetAllCompaniesHandler : IRequestHandler<GetAllRequest<CompanyRespo
         var roles = _currentUser.GetRoles();
         if (roles.Contains(RoleType.Admin))
         {
-            return await _context.Companies.ToListAsync(cancellationToken);
+            return await _context.Companies
+                .Where(c => !c.IsDeleted &&
+                            c.Name != Constants.DefaultCompanyAdminName)
+                .ToListAsync(cancellationToken);
         }
 
         var companyId = _currentUser.GetCompanyId();
-        return await _context.Companies.Where(c => c.Id == companyId).ToListAsync(cancellationToken);
+        return await _context.Companies
+            .Where(c => c.Id == companyId &&
+                        !c.IsDeleted &&
+                        c.Name != Constants.DefaultCompanyAdminName)
+            .ToListAsync(cancellationToken);
     }
 }

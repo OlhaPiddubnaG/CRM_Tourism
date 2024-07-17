@@ -1,4 +1,4 @@
-using CRM.Admin.Data;
+using CRM.Admin.Data.AuthModel;
 using CRM.Admin.Requests.AuthRequests;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
@@ -8,12 +8,13 @@ namespace CRM.Admin.Components.Pages.Login;
 
 public partial class ResetPassword
 {
-    [Inject] IAuthenticationRequest AuthenticationRequest { get; set; }
-    [Inject] NavigationManager NavigationManager { get; set; }
-    private string _newPassword;
-    private string _confirmPassword;
-    private string _token;
-    private string _message;
+    [Inject] private IAuthenticationRequest AuthenticationRequest { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    
+    private string _newPassword = null!;
+    private string _confirmPassword = null!;
+    private string _token = null!;
+    private string _message = null!;
     private Severity _alertSeverity;
 
     protected override void OnInitialized()

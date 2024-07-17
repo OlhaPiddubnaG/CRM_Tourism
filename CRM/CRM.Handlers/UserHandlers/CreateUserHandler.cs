@@ -5,6 +5,7 @@ using CRM.Domain.Commands.User;
 using CRM.Domain.Entities;
 using CRM.Domain.Enums;
 using CRM.Domain.Responses;
+using CRM.Handlers.Services.CurrentUser;
 using CRM.Helper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -15,11 +16,13 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, CreatedRespo
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
+    private readonly ICurrentUser _currentUser;
 
-    public CreateUserHandler(AppDbContext context, IMapper mapper)
+    public CreateUserHandler(AppDbContext context, IMapper mapper, ICurrentUser currentUser)
     {
         _context = context;
         _mapper = mapper;
+        _currentUser = currentUser;
     }
 
     public async Task<CreatedResponse> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -36,6 +39,8 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, CreatedRespo
         var user = _mapper.Map<User>(request);
         user.Password = hashedPassword;
         user.CreatedAt = DateTime.UtcNow;
+        user.CreatedUserId = _currentUser.GetUserId();
+        
         _context.Users.Add(user);
 
         foreach (var roleType in request.RoleTypes)
@@ -61,7 +66,7 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, CreatedRespo
         }
         catch (DbUpdateException ex)
         {
-            throw new SaveDatabaseException(typeof(Company), ex);
+            throw new SaveDatabaseException(typeof(User), ex);
         }
 
         return new CreatedResponse(user.Id);

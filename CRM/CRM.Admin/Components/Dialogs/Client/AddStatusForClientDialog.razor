@@ -1,0 +1,20 @@
+@using CRM.Domain.Enums
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Змінити статус для </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText Typo="Typo.subtitle1">@ClientDto.Surname @ClientDto.Name</MudText>
+        <MudSelect T="ClientStatus" @bind-Value="ClientStatusHistoryCreateDto.ClientStatus" Label="Статус">
+            @foreach (ClientStatus clientStatus in Enum.GetValues(typeof(ClientStatus)))
+            {
+                <MudSelectItem Value="clientStatus">@clientStatus.ToString()</MudSelectItem>
+            }
+        </MudSelect>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" OnClick="Cancel" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel">ВІДМІНА</MudButton>
+        <MudSpacer/>
+        <MudButton OnClick="Update" Variant="Variant.Filled" Class="buttonBase" StartIcon="@Icons.Material.Filled.Save">ЗБЕРЕГТИ</MudButton>
+    </DialogActions>
+</MudDialog>

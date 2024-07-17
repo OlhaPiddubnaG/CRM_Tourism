@@ -1,10 +1,7 @@
 using CRM.Admin.Auth;
 using CRM.Admin.Components;
+using CRM.Admin.Extensions;
 using CRM.Admin.HttpRequests;
-using CRM.Admin.Requests.AuthRequests;
-using CRM.Admin.Requests.CompanyRequests;
-using CRM.Admin.Requests.SuperAdminRequests;
-using CRM.Admin.Requests.UserRequests;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -30,10 +27,7 @@ builder.Services.AddScoped<IHttpCrmApiRequests, HttpRequests>(
         jsRuntime: serviceProvider.GetRequiredService<IJSRuntime>(),
         clientName: "CRMApi")
 );
-builder.Services.AddTransient<IAuthenticationRequest, AuthenticationRequest>();
-builder.Services.AddTransient<ISuperAdminRequest, SuperAdminRequest>();
-builder.Services.AddTransient<ICompanyRequest, CompanyRequest>();
-builder.Services.AddTransient<IUserRequest, UserRequest>();
+builder.Services.AddCustomServices();
 
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<CustomAuthenticationStateProvider>();
