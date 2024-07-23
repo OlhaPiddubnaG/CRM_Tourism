@@ -21,7 +21,7 @@ public class UpdateClientHandler : IRequestHandler<UpdateClientCommand, Unit>
 
     public async Task<Unit> Handle(UpdateClientCommand request, CancellationToken cancellationToken)
     {
-        var currentUserCompanyId = _currentUser.GetCompanyId();
+        var companyId = _currentUser.GetCompanyId();
         
         var existingClient = await _context.Clients
             .Include(c => c.Users) 
@@ -32,7 +32,7 @@ public class UpdateClientHandler : IRequestHandler<UpdateClientCommand, Unit>
             throw new NotFoundException(typeof(Client), request.Id);
         }
         
-        if (currentUserCompanyId != existingClient.CompanyId)
+        if (companyId != existingClient.CompanyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to update this client.");
         }

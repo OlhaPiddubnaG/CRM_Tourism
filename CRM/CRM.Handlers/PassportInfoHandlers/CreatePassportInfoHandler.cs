@@ -25,7 +25,7 @@ public class CreatePassportInfoHandler : IRequestHandler<CreatePassportInfoComma
 
     public async Task<CreatedResponse> Handle(CreatePassportInfoCommand request, CancellationToken cancellationToken)
     {
-        var currentUserCompanyId = _currentUser.GetCompanyId();
+        var companyId = _currentUser.GetCompanyId();
 
         var clientPrivateData = await _context.ClientPrivateDatas
             .Include(cpd => cpd.Client)
@@ -36,7 +36,7 @@ public class CreatePassportInfoHandler : IRequestHandler<CreatePassportInfoComma
             throw new NotFoundException(typeof(ClientPrivateData), request.ClientPrivateDataId);
         }
 
-        if (clientPrivateData.Client.CompanyId != currentUserCompanyId)
+        if (clientPrivateData.Client.CompanyId != companyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to create passport info for this client.");
         }

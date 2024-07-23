@@ -31,14 +31,14 @@ public class DeletePassportInfoHandler : IRequestHandler<DeleteCommand<PassportI
             throw new NotFoundException(typeof(PassportInfo), request.Id);
         }
 
-        var currentUserCompanyId = _currentUser.GetCompanyId();
+        var companyId = _currentUser.GetCompanyId();
 
         if (passportInfo.ClientPrivateData?.Client == null)
         {
             throw new NotFoundException(typeof(ClientPrivateData), passportInfo.ClientPrivateDataId);
         }
 
-        if (passportInfo.ClientPrivateData.Client.CompanyId != currentUserCompanyId)
+        if (passportInfo.ClientPrivateData.Client.CompanyId != companyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to delete passport info for this client.");
         }

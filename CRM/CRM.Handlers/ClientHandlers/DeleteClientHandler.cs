@@ -21,7 +21,7 @@ public class DeleteClientHandler : IRequestHandler<DeleteCommand<Client>, Unit>
 
     public async Task<Unit> Handle(DeleteCommand<Client> request, CancellationToken cancellationToken)
     {
-        var currentUserCompanyId = _currentUser.GetCompanyId();
+        var companyId = _currentUser.GetCompanyId();
 
         var client = await _context.Clients.FirstOrDefaultAsync(c => c.Id == request.Id &&
                                                                      !c.IsDeleted, cancellationToken);
@@ -30,7 +30,7 @@ public class DeleteClientHandler : IRequestHandler<DeleteCommand<Client>, Unit>
             throw new NotFoundException(typeof(Client), request.Id);
         }
 
-        if (currentUserCompanyId != client.CompanyId)
+        if (companyId != client.CompanyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to delete this client.");
         }

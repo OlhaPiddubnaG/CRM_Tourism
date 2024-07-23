@@ -21,7 +21,7 @@ public class DeleteClientPrivateDataHandler : IRequestHandler<DeleteCommand<Clie
     
     public async Task<Unit> Handle(DeleteCommand<ClientPrivateData> request, CancellationToken cancellationToken)
     {
-        var currentUserCompanyId = _currentUser.GetCompanyId();
+        var companyId = _currentUser.GetCompanyId();
         
         var clientPrivateData = await _context.ClientPrivateDatas
             .Include(cpd => cpd.Client)
@@ -32,7 +32,7 @@ public class DeleteClientPrivateDataHandler : IRequestHandler<DeleteCommand<Clie
             throw new NotFoundException(typeof(ClientPrivateData), request.Id);
         }
         
-        if (currentUserCompanyId != clientPrivateData.Client?.CompanyId)
+        if (companyId != clientPrivateData.Client?.CompanyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to delete this client private data.");
         }
@@ -45,7 +45,6 @@ public class DeleteClientPrivateDataHandler : IRequestHandler<DeleteCommand<Clie
         clientPrivateData.IsDeleted = true;
         clientPrivateData.DeletedAt = DateTime.UtcNow;
         clientPrivateData.DeletedUserId = _currentUser.GetUserId();
-        await _context.SaveChangesAsync(cancellationToken);
 
         try
         {

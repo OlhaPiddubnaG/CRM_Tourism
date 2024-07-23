@@ -30,9 +30,9 @@ public class UpdateCountryHandler : IRequestHandler<UpdateCountryCommand, Unit>
             throw new NotFoundException(typeof(Country), request.Id);
         }
 
-        var currentUserCompanyId = _currentUser.GetCompanyId();
+        var companyId = _currentUser.GetCompanyId();
 
-        if (currentUserCompanyId != existingCountry.CompanyId)
+        if (companyId != existingCountry.CompanyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to update this country.");
         }

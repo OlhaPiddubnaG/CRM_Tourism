@@ -25,7 +25,7 @@ public class CreateClientHandler : IRequestHandler<CreateClientCommand, CreatedR
 
     public async Task<CreatedResponse> Handle(CreateClientCommand request, CancellationToken cancellationToken)
     {
-        var currentUserCompanyId = _currentUser.GetCompanyId();
+        var companyId = _currentUser.GetCompanyId();
 
         request.Name = request.Name.ToUpper();
         request.Surname = request.Surname.ToUpper();
@@ -33,7 +33,7 @@ public class CreateClientHandler : IRequestHandler<CreateClientCommand, CreatedR
 
         var client = _mapper.Map<Client>(request);
 
-        if (currentUserCompanyId != request.CompanyId)
+        if (companyId != request.CompanyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to create this client.");
         }
@@ -42,7 +42,7 @@ public class CreateClientHandler : IRequestHandler<CreateClientCommand, CreatedR
         {
             var users = await _context.Users
                 .Where(u => request.ManagerIds.Contains(u.Id) &&
-                            u.CompanyId == currentUserCompanyId)
+                            u.CompanyId == companyId)
                 .ToListAsync(cancellationToken);
 
             if (users.Count != request.ManagerIds.Count)

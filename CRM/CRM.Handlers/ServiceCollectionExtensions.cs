@@ -5,7 +5,9 @@ using CRM.Domain.Commands.ClientPrivateData;
 using CRM.Domain.Commands.ClientStatusHistory;
 using CRM.Domain.Commands.Company;
 using CRM.Domain.Commands.Country;
+using CRM.Domain.Commands.Order;
 using CRM.Domain.Commands.PassportInfo;
+using CRM.Domain.Commands.Touroperator;
 using CRM.Domain.Commands.User;
 using CRM.Domain.Entities;
 using CRM.Domain.Requests;
@@ -15,7 +17,9 @@ using CRM.Domain.Responses.Client;
 using CRM.Domain.Responses.ClientPrivateData;
 using CRM.Domain.Responses.ClientStatusHistory;
 using CRM.Domain.Responses.Company;
+using CRM.Domain.Responses.Order;
 using CRM.Domain.Responses.PassportInfo;
+using CRM.Domain.Responses.Touroperator;
 using CRM.Domain.Responses.User;
 using CRM.Domain.Responses.Сountry;
 using CRM.Handlers.AuthenticationHandlers;
@@ -24,7 +28,9 @@ using CRM.Handlers.ClientPrivateDataHandlers;
 using CRM.Handlers.ClientStatusHistoryHandlers;
 using CRM.Handlers.CompanyHandlers;
 using CRM.Handlers.CountryHandlers;
+using CRM.Handlers.OrderHandlers;
 using CRM.Handlers.PassportInfoHandlers;
+using CRM.Handlers.TouroperatorHandlers;
 using CRM.Handlers.UserHandlers;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -90,6 +96,18 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<GetByIdRequest<CountryResponse>, CountryResponse>, GetCountryByIdHandler>(); 
         services.AddScoped<IRequestHandler<GetAllRequest<CountryResponse>, List<CountryResponse>>, GetAllCountriesHandler>(); 
         services.AddScoped<IRequestHandler<GetByNameRequest<CountryResponse>, CountryResponse>, GetCountryByNameHandler> (); 
+        
+        services.AddScoped<IRequestHandler<CreateOrderCommand, CreatedResponse>, CreateOrderHandler>();
+        services.AddScoped<IRequestHandler<UpdateOrderCommand, Unit>, UpdateOrderHandler>();
+        services.AddScoped<IRequestHandler<DeleteCommand<Order>, Unit>, DeleteOrderHandler>();
+        services.AddScoped<IRequestHandler<GetByIdRequest<OrderResponse>, OrderResponse>, GetOrderByIdHandler>(); 
+        services.AddScoped<IRequestHandler<GetAllRequest<OrderResponse>, List<OrderResponse>>, GetAllOrdersHandler>();
+        
+        services.AddScoped<IRequestHandler<CreateTouroperatorCommand, CreatedResponse>, CreateTouroperatorHandler>();
+        services.AddScoped<IRequestHandler<UpdateTouroperatorCommand, Unit>, UpdateTouroperatorHandler>();
+        services.AddScoped<IRequestHandler<DeleteCommand<Touroperator>, Unit>, DeleteTouroperatorHandler>();
+        services.AddScoped<IRequestHandler<GetByIdRequest<Domain.Responses.Touroperator.TouroperatorResponse>, Domain.Responses.Touroperator.TouroperatorResponse>, GetTouroperatorByIdHandler>(); 
+        services.AddScoped<IRequestHandler<GetAllRequest<Domain.Responses.Touroperator.TouroperatorResponse>, List<Domain.Responses.Touroperator.TouroperatorResponse>>, GetAllTouroperatorsHandler>(); 
 
         return services;
     }

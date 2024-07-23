@@ -11,31 +11,29 @@ namespace CRM.Admin.Components.Layout;
 public partial class AppBar
 {
     [Inject] IDialogService DialogService { get; set; } = default!;
-    [Inject] AuthenticationStateProvider AuthenticationStateProvider  { get; set; }
+    [Inject] private AuthenticationStateProvider AuthenticationStateProvider  { get; set; } = null!;
     
-    
-    private DialogOptions dialogOptions = new()
+    private DialogOptions _dialogOptions = new()
     {
         CloseOnEscapeKey = true,
         CloseButton = true,
         DisableBackdropClick = true,
-        MaxWidth = MaxWidth.Small,
         FullWidth = true
     };
-    private ClaimsPrincipal user;
-    private Guid companyId;
-    bool disabled = false;
+    private ClaimsPrincipal _user;
+    private Guid _companyId;
+    bool _disabled = false;
     
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        user = authState.User;
-        companyId = GetCompanyId();
+        _user = authState.User;
+        _companyId = GetCompanyId();
     }
 
     private Guid GetCompanyId()
     {
-        var companyIdClaim = user.FindFirst(CustomClaimTypes.CompanyId)?.Value;
+        var companyIdClaim = _user.FindFirst(CustomClaimTypes.CompanyId)?.Value;
         if (Guid.TryParse(companyIdClaim, out Guid companyId))
         {
             return companyId;
@@ -46,8 +44,9 @@ public partial class AppBar
 
     private async Task NewClient()
     {
-        var parameters = new DialogParameters { { "Id", companyId } };
-        var dialogReference = await DialogService.ShowAsync<CreateClientDialog>("",parameters, dialogOptions);
+        var parameters = new DialogParameters { { "Id", _companyId } };
+        _dialogOptions.MaxWidth = MaxWidth.Small;
+        var dialogReference = await DialogService.ShowAsync<CreateClientDialog>("",parameters, _dialogOptions);
         var dialogResult = await dialogReference.Result;
 
         if (dialogResult.Canceled)
@@ -56,7 +55,9 @@ public partial class AppBar
 
     private async Task NewOrder()
     {
-        var dialogReference = await DialogService.ShowAsync<CreateOrderDialog>("", dialogOptions);
+        var parameters = new DialogParameters { { "Id", _companyId } };
+        _dialogOptions.MaxWidth = MaxWidth.ExtraSmall;
+        var dialogReference = await DialogService.ShowAsync<CreateOrderDialog>("", parameters, _dialogOptions);
         var dialogResult = await dialogReference.Result;
 
         if (dialogResult.Canceled)

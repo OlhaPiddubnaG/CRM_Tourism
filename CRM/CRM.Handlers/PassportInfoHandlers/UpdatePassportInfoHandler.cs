@@ -31,14 +31,14 @@ public class UpdatePassportInfoHandler : IRequestHandler<UpdatePassportInfoComma
             throw new NotFoundException(typeof(PassportInfo), request.Id);
         }
 
-        var currentUserCompanyId = _currentUser.GetCompanyId();
+        var companyId = _currentUser.GetCompanyId();
 
         if (existingPassportInfo.ClientPrivateData?.Client == null)
         {
             throw new NotFoundException(typeof(ClientPrivateData), existingPassportInfo.ClientPrivateDataId);
         }
 
-        if (existingPassportInfo.ClientPrivateData.Client.CompanyId != currentUserCompanyId)
+        if (existingPassportInfo.ClientPrivateData.Client.CompanyId != companyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to update passport info for this client.");
         }

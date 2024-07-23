@@ -4,7 +4,7 @@ namespace CRM.Domain.Entities;
 
 public class Touroperator : BaseEntity
 {
-    public Guid OrderId { get; set; } 
-    public Order? Order { get; set; } 
+    public Guid? CompanyId { get; set; }
+    public Company? Company { get; set; }
     public string Name { get; set; } = null!;
 }

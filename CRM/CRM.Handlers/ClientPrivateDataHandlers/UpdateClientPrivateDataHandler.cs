@@ -22,7 +22,7 @@ public class UpdateClientPrivateDataHandler : IRequestHandler<UpdateClientPrivat
 
     public async Task<Unit> Handle(UpdateClientPrivateDataCommand request, CancellationToken cancellationToken)
     {
-        var currentUserCompanyId = _currentUser.GetCompanyId();
+        var companyId = _currentUser.GetCompanyId();
         
         var existingClientPrivateData = await _context.ClientPrivateDatas
             .Include(cpd => cpd.Client)
@@ -33,7 +33,7 @@ public class UpdateClientPrivateDataHandler : IRequestHandler<UpdateClientPrivat
             throw new NotFoundException(typeof(ClientPrivateData), request.Id);
         }
         
-        if (currentUserCompanyId != existingClientPrivateData.Client?.CompanyId)
+        if (companyId != existingClientPrivateData.Client?.CompanyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to update this client private data.");
         }

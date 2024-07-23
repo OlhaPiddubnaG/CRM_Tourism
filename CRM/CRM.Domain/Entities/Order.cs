@@ -10,11 +10,12 @@ public class Order : Auditable
     public User? User { get; set; } 
     public Guid ClientId { get; set; } 
     public Client? Client { get; set; } 
+    public Guid? TouroperatorId { get; set; } 
     public Touroperator? Touroperator { get; set; } 
     public DateTime DateFrom { get; set; } 
     public DateTime DateTo { get; set; } 
-    public Country? CountryFrom { get; set; } 
-    public Country? CountryTo { get; set; } 
+    public Country? CountryFrom { get; set; }
+    public Country? CountryTo { get; set; }
     public int NumberOfNights { get; set; } 
     public decimal Amount { get; set; }
     public string Comment { get; set; }

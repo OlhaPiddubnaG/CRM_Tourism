@@ -10,4 +10,5 @@ public class Company : Auditable
     public List<Client> Clients { get; set; } = new();
     public List<Country> Countries { get; set; } = new();
     public List<City> Cities { get; set; } = new();
+    public List<Touroperator> Touroperators { get; set; } = new();
 }

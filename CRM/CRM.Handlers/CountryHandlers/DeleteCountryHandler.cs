@@ -21,7 +21,7 @@ public class DeleteCountryHandler : IRequestHandler<DeleteCommand<Country>, Unit
 
     public async Task<Unit> Handle(DeleteCommand<Country> request, CancellationToken cancellationToken)
     {
-        var currentUserCompanyId = _currentUser.GetCompanyId();
+        var companyId = _currentUser.GetCompanyId();
 
         var country = await _context.Countries
             .FirstOrDefaultAsync(c => c.Id == request.Id &&
@@ -32,7 +32,7 @@ public class DeleteCountryHandler : IRequestHandler<DeleteCommand<Country>, Unit
             throw new NotFoundException(typeof(Country), request.Id);
         }
 
-        if (currentUserCompanyId != country.CompanyId)
+        if (companyId != country.CompanyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to delete this country.");
         }
