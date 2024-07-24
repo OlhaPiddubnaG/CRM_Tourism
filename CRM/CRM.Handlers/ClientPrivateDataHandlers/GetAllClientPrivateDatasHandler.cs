@@ -33,9 +33,9 @@ public class
                           cpd.Client.CompanyId == companyId)
             .ToListAsync(cancellationToken);
 
-        if (clientPrivateDatas == null)
+        if (!clientPrivateDatas.Any())
         {
-            throw new UnauthorizedAccessException("User is not authorized to access client private data.");
+            return new List<ClientPrivateDataResponse>();
         }
 
         var clientPrivateDataResponses = _mapper.Map<List<ClientPrivateDataResponse>>(clientPrivateDatas);

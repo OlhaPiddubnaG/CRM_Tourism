@@ -26,6 +26,7 @@ public static class ServiceExtensions
         services.AddTransient<IPassportInfoRequest, PassportInfoRequest>();
         services.AddTransient<IOrderRequest, OrderRequest>();
         services.AddTransient<ITouroperatorRequest, TouroperatorRequest>();
+        services.AddTransient<ICountryRequest, CountryRequest>();
         
         return services;
     }

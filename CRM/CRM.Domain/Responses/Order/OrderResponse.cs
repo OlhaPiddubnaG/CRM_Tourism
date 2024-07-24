@@ -14,4 +14,5 @@ public class OrderResponse
     public int NumberOfNights { get; set; }
     public decimal Amount { get; set; }
     public string Comment { get; set; }
+    public bool IsDeleted { get; set; } 
 }

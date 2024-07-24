@@ -33,11 +33,11 @@ public class GetAllOrdersHandler : IRequestHandler<GetAllRequest<OrderResponse>,
                         !o.IsDeleted)
             .ToListAsync(cancellationToken);
 
-        if (orders == null)
+        if (!orders.Any())
         {
-            throw new UnauthorizedAccessException("User is not authorized to access order.");
+            return new List<OrderResponse>();
         }
-
+        
         var orderResponses = _mapper.Map<List<OrderResponse>>(orders);
 
         return orderResponses;

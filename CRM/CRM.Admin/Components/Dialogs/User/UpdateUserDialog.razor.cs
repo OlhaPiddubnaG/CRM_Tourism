@@ -18,7 +18,7 @@ public partial class UpdateUserDialog
 
     protected override async Task OnInitializedAsync()
     {
-        var result = _userUpdateDto = await UserRequest.GetByIdAsync<UserUpdateDto>(Id);
+        var result = _userUpdateDto = await UserRequest.GetByIdAsync(Id);
         if (result.Id != Guid.Empty)
         {
             Snackbar.Add("Дані користувача завантажено", Severity.Success);

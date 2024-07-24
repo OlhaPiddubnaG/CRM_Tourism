@@ -32,9 +32,9 @@ public class GetAllClientsHandler : IRequestHandler<GetAllRequest<ClientResponse
                         !c.IsDeleted)
             .ToListAsync(cancellationToken);
 
-        if (clients == null)
+        if (!clients.Any())
         {
-            throw new UnauthorizedAccessException("User is not authorized to access client data.");
+            return new List<ClientResponse>();
         }
 
         var clientResponses = _mapper.Map<List<ClientResponse>>(clients);

@@ -1,5 +1,7 @@
 using AutoMapper;
+using CRM.Core.Exceptions;
 using CRM.DataAccess;
+using CRM.Domain.Entities;
 using CRM.Domain.Requests;
 using CRM.Domain.Responses.Order;
 using CRM.Handlers.Services.CurrentUser;
@@ -35,7 +37,7 @@ public class GetOrderByIdHandler : IRequestHandler<GetByIdRequest<OrderResponse>
 
         if (order == null)
         {
-            throw new UnauthorizedAccessException("User is not authorized to access order.");
+            throw new NotFoundException(typeof(Order), request.Id);
         }
 
         var orderResponse = _mapper.Map<OrderResponse>(order);

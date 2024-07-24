@@ -30,10 +30,10 @@ public class
             .Where(t => t.CompanyId == companyId &&
                         !t.IsDeleted)
             .ToListAsync(cancellationToken);
-
-        if (touroperators == null)
+        
+        if (!touroperators.Any())
         {
-            throw new UnauthorizedAccessException("User is not authorized to access touroperators.");
+            return new List<TouroperatorResponse>();
         }
 
         var touroperatorResponses = _mapper.Map<List<TouroperatorResponse>>(touroperators);

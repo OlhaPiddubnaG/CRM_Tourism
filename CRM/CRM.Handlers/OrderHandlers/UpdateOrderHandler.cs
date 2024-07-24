@@ -41,6 +41,11 @@ public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, Unit>
 
         var countryFrom = await _context.Countries.FindAsync(request.CountryFromId);
         var countryTo = await _context.Countries.FindAsync(request.CountryToId);
+        
+        if (countryFrom == null || countryTo == null)
+        {
+            throw new KeyNotFoundException("Country not found.");
+        }
 
         existingOrder.DateFrom = request.DateFrom;
         existingOrder.DateTo = request.DateTo;

@@ -24,7 +24,7 @@ public class CompanyController : ControllerBase
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(CompanyResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken token)
+    public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken token)
     {
         var response = await _sender.Send(new GetByIdRequest<CompanyResponse>(id), token);
 
@@ -44,7 +44,7 @@ public class CompanyController : ControllerBase
     [HttpDelete("{id:guid}")]
     [Authorize(Policy = "Admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken token)
+    public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken token)
     {
         await _sender.Send(new DeleteCommand<Company>(id), token);
 

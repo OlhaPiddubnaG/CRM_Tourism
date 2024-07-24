@@ -40,7 +40,8 @@ public class DeleteTouroperatorHandler : IRequestHandler<DeleteCommand<Touropera
         }
 
         touroperator.IsDeleted = true;
-
+        touroperator.DeletedAt = DateTime.UtcNow;
+        touroperator.DeletedUserId = _currentUser.GetUserId();
         try
         {
             await _context.SaveChangesAsync(cancellationToken);

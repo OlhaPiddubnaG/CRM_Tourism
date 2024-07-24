@@ -17,7 +17,7 @@ public partial class CreateCommentForClientDialog
 
     protected override async Task OnInitializedAsync()
     {
-        _сlientUpdateDto = await ClientRequest.GetByIdAsync<ClientUpdateDto>(Id);
+        _сlientUpdateDto = await ClientRequest.GetByIdAsync(Id);
     }
 
     private async Task Create()

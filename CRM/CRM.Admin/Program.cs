@@ -20,7 +20,7 @@ var baseUri = new Uri(builder.Configuration["BaseAddresses:ApiBaseUrl"] ??
 builder.Services
     .AddHttpClient("CRMApi", client => client.BaseAddress = baseUri);
 
-builder.Services.AddScoped<IHttpCrmApiRequests, HttpRequests>(
+builder.Services.AddScoped<IHttpRequests, HttpRequests>(
     serviceProvider => new HttpRequests(
         factory: serviceProvider.GetRequiredService<IHttpClientFactory>(),
         navManager: serviceProvider.GetRequiredService<NavigationManager>(),

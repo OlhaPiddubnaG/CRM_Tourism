@@ -32,7 +32,9 @@ public class CreateTouroperatorHandler : IRequestHandler<CreateTouroperatorComma
         }
 
         var touroperator = _mapper.Map<Touroperator>(request);
-
+        
+        touroperator.CreatedAt = DateTime.UtcNow;
+        touroperator.CreatedUserId = _currentUser.GetUserId();
         _context.Touroperators.Add(touroperator);
 
         try

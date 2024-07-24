@@ -36,7 +36,7 @@ public class ClientPrivateDataController : ControllerBase
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ClientPrivateDataResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken token)
+    public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken token)
     {
         var response = await _sender.Send(new GetByIdRequest<ClientPrivateDataResponse>(id), token);
 
@@ -56,7 +56,7 @@ public class ClientPrivateDataController : ControllerBase
     [HttpGet("by-client-id/{clientId:guid}")]
     [ProducesResponseType(typeof(ClientPrivateDataResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetByClientId(Guid clientId, CancellationToken token)
+    public async Task<IActionResult> GetByClientId([FromRoute] Guid clientId, CancellationToken token)
     {
         var response = await _sender.Send(new GetByIdRequest<ClientPrivateDataResponse>(clientId), token);
 
@@ -65,7 +65,7 @@ public class ClientPrivateDataController : ControllerBase
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken token)
+    public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken token)
     {
         await _sender.Send(new DeleteCommand<ClientPrivateData>(id), token);
 

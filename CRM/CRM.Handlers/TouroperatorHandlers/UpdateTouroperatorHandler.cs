@@ -37,6 +37,8 @@ public class UpdateTouroperatorHandler : IRequestHandler<UpdateTouroperatorComma
         }
 
         existingTouroperator.Name = request.Name;
+        existingTouroperator.UpdatedAt = DateTime.UtcNow;
+        existingTouroperator.UpdatedUserId = _currentUser.GetUserId();
 
         try
         {

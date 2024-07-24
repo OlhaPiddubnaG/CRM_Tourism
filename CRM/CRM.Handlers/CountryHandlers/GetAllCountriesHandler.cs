@@ -31,12 +31,13 @@ public class GetAllCountriesHandler : IRequestHandler<GetAllRequest<CountryRespo
             .OrderBy(c => c.Name)
             .ToListAsync(cancellationToken);
 
-        if (countries == null)
+        if (!countries.Any())
         {
-            throw new UnauthorizedAccessException("User is not authorized to access this country.");
+            return new List<CountryResponse>();
         }
-
+        
         var countryResponses = _mapper.Map<List<CountryResponse>>(countries);
+        
         return countryResponses;
     }
 }

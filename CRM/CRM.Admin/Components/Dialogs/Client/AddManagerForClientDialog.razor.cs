@@ -23,7 +23,7 @@ public partial class AddManagerForClientDialog
     protected override async Task OnInitializedAsync()
     {
         _managers = await UserRequest.GetAllAsync();
-        ClientUpdateDto = await ClientRequest.GetByIdAsync<ClientUpdateDto>(Id);
+        ClientUpdateDto = await ClientRequest.GetByIdAsync(Id);
     }
 
     private async Task Create()

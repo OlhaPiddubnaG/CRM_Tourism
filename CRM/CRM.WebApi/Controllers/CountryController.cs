@@ -26,7 +26,7 @@ public class CountryController : ControllerBase
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(CountryResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken token)
+    public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken token)
     {
         var response = await _sender.Send(new GetByIdRequest<CountryResponse>(id), token);
 
@@ -46,7 +46,7 @@ public class CountryController : ControllerBase
     [HttpGet("name/{name}")]
     [ProducesResponseType(typeof(CountryResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetByName(string name, CancellationToken token)
+    public async Task<IActionResult> GetByName([FromRoute] string name, CancellationToken token)
     {
         var response = await _sender.Send(new GetByNameRequest<CountryResponse>(name), token);
 
@@ -65,7 +65,7 @@ public class CountryController : ControllerBase
     
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken token)
+    public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken token)
     {
         await _sender.Send(new DeleteCommand<Country>(id), token);
 

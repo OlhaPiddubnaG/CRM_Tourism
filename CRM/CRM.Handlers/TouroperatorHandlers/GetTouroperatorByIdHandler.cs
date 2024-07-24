@@ -1,5 +1,7 @@
 using AutoMapper;
+using CRM.Core.Exceptions;
 using CRM.DataAccess;
+using CRM.Domain.Entities;
 using CRM.Domain.Requests;
 using CRM.Domain.Responses.Touroperator;
 using CRM.Handlers.Services.CurrentUser;
@@ -32,7 +34,7 @@ public class GetTouroperatorByIdHandler : IRequestHandler<GetByIdRequest<Tourope
 
         if (touroperator == null)
         {
-            throw new UnauthorizedAccessException("User is not authorized to access touroperator.");
+            throw new NotFoundException(typeof(Touroperator), request.Id);
         }
 
         var touroperatorResponse = _mapper.Map<TouroperatorResponse>(touroperator);
