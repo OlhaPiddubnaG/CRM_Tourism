@@ -22,7 +22,7 @@ public class CountryController : ControllerBase
     {
         _sender = sender;
     }
-    
+
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(CountryResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
@@ -42,7 +42,7 @@ public class CountryController : ControllerBase
 
         return Ok(response);
     }
-    
+
     [HttpGet("name/{name}")]
     [ProducesResponseType(typeof(CountryResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
@@ -52,7 +52,7 @@ public class CountryController : ControllerBase
 
         return Ok(response);
     }
-    
+
     [HttpPost]
     [ProducesResponseType(typeof(CreatedResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
@@ -62,22 +62,24 @@ public class CountryController : ControllerBase
 
         return Ok(response);
     }
-    
+
     [HttpDelete("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken token)
     {
-        await _sender.Send(new DeleteCommand<Country>(id), token);
+        var response = await _sender.Send(new DeleteCommand<Country>(id), token);
 
-        return NoContent();
+        return Ok(response);
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(UpdateCountryCommand request, CancellationToken token)
     {
-        await _sender.Send(request, token);
+        var response = await _sender.Send(request, token);
 
-        return NoContent();
+        return Ok(response);
     }
 }

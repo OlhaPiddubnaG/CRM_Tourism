@@ -7,26 +7,25 @@ namespace CRM.Admin.Requests.SuperAdminRequests;
 
 public class SuperAdminRequest : ISuperAdminRequest
 {
-    private readonly IHttpCrmApiRequests _httpCrmApiRequests;
+    private readonly IHttpRequests _httpRequests;
     private readonly ILogger<SuperAdminRequest> _logger;
     private readonly ISnackbar _snackbar;
     private const string RequestUri = "api/SuperAdmin";
 
-    public SuperAdminRequest(IHttpCrmApiRequests httpCrmApiRequests, ILogger<SuperAdminRequest> logger,
+    public SuperAdminRequest(IHttpRequests httpRequests, ILogger<SuperAdminRequest> logger,
         ISnackbar snackbar)
     {
-        _httpCrmApiRequests = httpCrmApiRequests;
+        _httpRequests = httpRequests;
         _logger = logger;
         _snackbar = snackbar;
     }
 
-    public async Task<Guid> CreateCompanyAsync(CompanyCreateDto companyCreateDto)
+    public async Task<Guid> CreateCompanyAsync(CompanyCreateDto dto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPostRequestAsync($"{RequestUri}/company", companyCreateDto);
+            var createdCompany = await _httpRequests.SendPostRequestAsync<CompanyDto>($"{RequestUri}/company", dto);
             _logger.LogInformation("CreateCompany method executed successfully");
-            var createdCompany = await response.Content.ReadFromJsonAsync<CompanyDto>();
             _snackbar.Add("Компанія успішно створена", Severity.Success);
             return createdCompany.Id;
         }
@@ -38,13 +37,12 @@ public class SuperAdminRequest : ISuperAdminRequest
         }
     }
 
-    public async Task<Guid> CreateUserAsync(UserCreateDto userCreateDto)
+    public async Task<Guid> CreateUserAsync(UserCreateDto dto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPostRequestAsync($"{RequestUri}/companyAdmin", userCreateDto);
+            var createdUser = await _httpRequests.SendPostRequestAsync<UserDto>($"{RequestUri}/companyAdmin", dto);
             _logger.LogInformation("CreateUser method executed successfully");
-            var createdUser = await response.Content.ReadFromJsonAsync<UserDto>();
             _snackbar.Add("Користувач успішно створений", Severity.Success);
             return createdUser.Id;
         }

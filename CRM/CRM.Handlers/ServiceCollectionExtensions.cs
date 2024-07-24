@@ -43,71 +43,103 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddRequestHandlers(this IServiceCollection services)
     {
         services.AddScoped<IRequestHandler<LoginUserCommand, LoginUserResponse>, LoginHandler>();
-        services.AddScoped<IRequestHandler<ForgotPasswordCommand,ResultBaseResponse>, ForgotPasswordHandler>();
-        services.AddScoped<IRequestHandler<ResetPasswordCommand,ResultBaseResponse>, ResetPasswordHandler> (); 
+        services.AddScoped<IRequestHandler<ForgotPasswordCommand, ResultBaseResponse>, ForgotPasswordHandler>();
+        services.AddScoped<IRequestHandler<ResetPasswordCommand, ResultBaseResponse>, ResetPasswordHandler>();
 
         services.AddScoped<IRequestHandler<CreateCompanyCommand, CreatedResponse>, CreateCompanyHandler>();
-        services.AddScoped<IRequestHandler<UpdateCompanyCommand, Unit>, UpdateCompanyHandler>();
-        services.AddScoped<IRequestHandler<DeleteCommand<Company>, Unit>, DeleteCompanyHandler>();
+        services.AddScoped<IRequestHandler<UpdateCompanyCommand, ResultBaseResponse>, UpdateCompanyHandler>();
+        services.AddScoped<IRequestHandler<DeleteCommand<Company>, ResultBaseResponse>, DeleteCompanyHandler>();
         services.AddScoped<IRequestHandler<GetByIdRequest<CompanyResponse>, CompanyResponse>, GetCompanyByIdHandler>();
         services.AddScoped<IRequestHandler<GetAllRequest<CompanyResponse>, List<CompanyResponse>>,
             GetAllCompaniesHandler>();
-        
+
         services.AddScoped<IRequestHandler<CreateUserCommand, CreatedResponse>, CreateUserHandler>();
-        services.AddScoped<IRequestHandler<UpdateUserCommand, Unit>, UpdateUserHandler>();
-        services.AddScoped<IRequestHandler<DeleteCommand<User>, Unit>, DeleteUserHandler>();
+        services.AddScoped<IRequestHandler<UpdateUserCommand, ResultBaseResponse>, UpdateUserHandler>();
+        services.AddScoped<IRequestHandler<DeleteCommand<User>, ResultBaseResponse>, DeleteUserHandler>();
         services.AddScoped<IRequestHandler<GetByIdRequest<UserResponse>, UserResponse>, GetUserByIdHandler>();
         services.AddScoped<IRequestHandler<GetAllRequest<UserResponse>, List<UserResponse>>, GetAllUsersHandler>();
-        
+
         services.AddScoped<IRequestHandler<CreateClientCommand, CreatedResponse>, CreateClientHandler>();
         services
             .AddScoped<IRequestHandler<CreateClientWithRelatedCommand, ResultBaseResponse>,
-                CreateClientWithRelatedHandler>(); 
-        services.AddScoped<IRequestHandler<UpdateClientCommand, Unit>, UpdateClientHandler>();
-        services.AddScoped<IRequestHandler<DeleteCommand<Client>, Unit>, DeleteClientHandler>();
-        services.AddScoped<IRequestHandler<GetByIdRequest<ClientResponse>, ClientResponse>, GetClientByIdHandler>(); 
-        services.AddScoped<IRequestHandler<GetAllRequest<ClientResponse>, List<ClientResponse>>, GetAllClientsHandler>();
-        services.AddScoped<IRequestHandler<GetFilteredAndSortAllRequest <ClientResponse>,TableData<ClientResponse>>, GetSortAllClientsHandler>();
-        
+                CreateClientWithRelatedHandler>();
+        services.AddScoped<IRequestHandler<UpdateClientCommand, ResultBaseResponse>, UpdateClientHandler>();
+        services.AddScoped<IRequestHandler<DeleteCommand<Client>, ResultBaseResponse>, DeleteClientHandler>();
+        services.AddScoped<IRequestHandler<GetByIdRequest<ClientResponse>, ClientResponse>, GetClientByIdHandler>();
+        services
+            .AddScoped<IRequestHandler<GetAllRequest<ClientResponse>, List<ClientResponse>>, GetAllClientsHandler>();
+        services
+            .AddScoped<IRequestHandler<GetFilteredAndSortAllRequest<ClientResponse>, TableData<ClientResponse>>,
+                GetSortAllClientsHandler>();
+
         services.AddScoped<IRequestHandler<CreateClientPrivateDataCommand, CreatedResponse>,
-                CreateClientPrivateDataHandler>(); 
-        services.AddScoped<IRequestHandler<UpdateClientPrivateDataCommand, Unit>, UpdateClientPrivateDataHandler>();
-        services.AddScoped<IRequestHandler<DeleteCommand<ClientPrivateData>, Unit>, DeleteClientPrivateDataHandler>();
-        services.AddScoped<IRequestHandler<GetByIdRequest<ClientPrivateDataResponse>, ClientPrivateDataResponse>, GetClientPrivateDataByIdHandler>(); 
-        services.AddScoped<IRequestHandler<GetAllRequest<ClientPrivateDataResponse>, List<ClientPrivateDataResponse>>, GetAllClientPrivateDatasHandler>();
-        services.AddScoped<IRequestHandler<GetByIdRequest<ClientPrivateDataResponse>, ClientPrivateDataResponse>, GetClientPrivateDataByClientIdHandler>(); 
-        
-        services.AddScoped<IRequestHandler<CreateClientStatusHistoryCommand, CreatedResponse>, CreateClientStatusHistoryHandler>();
-        services.AddScoped<IRequestHandler<GetByIdRequest<ClientStatusHistoryResponse>, ClientStatusHistoryResponse>, GetClientStatusHistoryByIdHandler>(); 
-        services.AddScoped<IRequestHandler<GetByIdReturnListRequest<ClientStatusHistoryResponse>, List<ClientStatusHistoryResponse>>, GetAllClientsStatusHistoryHandler>();
-      
+            CreateClientPrivateDataHandler>();
+        services
+            .AddScoped<IRequestHandler<UpdateClientPrivateDataCommand, ResultBaseResponse>,
+                UpdateClientPrivateDataHandler>();
+        services
+            .AddScoped<IRequestHandler<DeleteCommand<ClientPrivateData>, ResultBaseResponse>,
+                DeleteClientPrivateDataHandler>();
+        services
+            .AddScoped<IRequestHandler<GetByIdRequest<ClientPrivateDataResponse>, ClientPrivateDataResponse>,
+                GetClientPrivateDataByIdHandler>();
+        services
+            .AddScoped<IRequestHandler<GetAllRequest<ClientPrivateDataResponse>, List<ClientPrivateDataResponse>>,
+                GetAllClientPrivateDatasHandler>();
+        services
+            .AddScoped<IRequestHandler<GetByIdRequest<ClientPrivateDataResponse>, ClientPrivateDataResponse>,
+                GetClientPrivateDataByClientIdHandler>();
+
+        services
+            .AddScoped<IRequestHandler<CreateClientStatusHistoryCommand, CreatedResponse>,
+                CreateClientStatusHistoryHandler>();
+        services
+            .AddScoped<IRequestHandler<GetByIdRequest<ClientStatusHistoryResponse>, ClientStatusHistoryResponse>,
+                GetClientStatusHistoryByIdHandler>();
+        services
+            .AddScoped<IRequestHandler<GetByIdReturnListRequest<ClientStatusHistoryResponse>,
+                List<ClientStatusHistoryResponse>>, GetAllClientsStatusHistoryHandler>();
+
         services.AddScoped<IRequestHandler<CreatePassportInfoCommand, CreatedResponse>, CreatePassportInfoHandler>();
-        services.AddScoped<IRequestHandler<UpdatePassportInfoCommand, Unit>, UpdatePassportInfoHandler>();
-        services.AddScoped<IRequestHandler<DeleteCommand<PassportInfo>, Unit>, DeletePassportInfoHandler>();
-        services.AddScoped<IRequestHandler<GetByIdRequest<PassportInfoResponse>, PassportInfoResponse>, GetPassportInfoByIdHandler>(); 
-        services.AddScoped<IRequestHandler<GetAllRequest<PassportInfoResponse>, List<PassportInfoResponse>>, GetAllPassportsInfoHandler>();
+        services.AddScoped<IRequestHandler<UpdatePassportInfoCommand, ResultBaseResponse>, UpdatePassportInfoHandler>();
+        services
+            .AddScoped<IRequestHandler<DeleteCommand<PassportInfo>, ResultBaseResponse>, DeletePassportInfoHandler>();
+        services
+            .AddScoped<IRequestHandler<GetByIdRequest<PassportInfoResponse>, PassportInfoResponse>,
+                GetPassportInfoByIdHandler>();
+        services
+            .AddScoped<IRequestHandler<GetAllRequest<PassportInfoResponse>, List<PassportInfoResponse>>,
+                GetAllPassportsInfoHandler>();
         services
             .AddScoped<IRequestHandler<GetByIdReturnListRequest<PassportInfoResponse>, List<PassportInfoResponse>>,
                 GetByClientPrivateDataIdHandler>();
-            
+
         services.AddScoped<IRequestHandler<CreateCountryCommand, CreatedResponse>, CreateCountryHandler>();
-        services.AddScoped<IRequestHandler<UpdateCountryCommand, Unit>, UpdateCountryHandler>();
-        services.AddScoped<IRequestHandler<DeleteCommand<Country>, Unit>, DeleteCountryHandler>();
-        services.AddScoped<IRequestHandler<GetByIdRequest<CountryResponse>, CountryResponse>, GetCountryByIdHandler>(); 
-        services.AddScoped<IRequestHandler<GetAllRequest<CountryResponse>, List<CountryResponse>>, GetAllCountriesHandler>(); 
-        services.AddScoped<IRequestHandler<GetByNameRequest<CountryResponse>, CountryResponse>, GetCountryByNameHandler> (); 
-        
+        services.AddScoped<IRequestHandler<UpdateCountryCommand, ResultBaseResponse>, UpdateCountryHandler>();
+        services.AddScoped<IRequestHandler<DeleteCommand<Country>, ResultBaseResponse>, DeleteCountryHandler>();
+        services.AddScoped<IRequestHandler<GetByIdRequest<CountryResponse>, CountryResponse>, GetCountryByIdHandler>();
+        services
+            .AddScoped<IRequestHandler<GetAllRequest<CountryResponse>, List<CountryResponse>>,
+                GetAllCountriesHandler>();
+        services
+            .AddScoped<IRequestHandler<GetByNameRequest<CountryResponse>, CountryResponse>, GetCountryByNameHandler>();
+
         services.AddScoped<IRequestHandler<CreateOrderCommand, CreatedResponse>, CreateOrderHandler>();
-        services.AddScoped<IRequestHandler<UpdateOrderCommand, Unit>, UpdateOrderHandler>();
-        services.AddScoped<IRequestHandler<DeleteCommand<Order>, Unit>, DeleteOrderHandler>();
-        services.AddScoped<IRequestHandler<GetByIdRequest<OrderResponse>, OrderResponse>, GetOrderByIdHandler>(); 
+        services.AddScoped<IRequestHandler<UpdateOrderCommand, ResultBaseResponse>, UpdateOrderHandler>();
+        services.AddScoped<IRequestHandler<DeleteCommand<Order>, ResultBaseResponse>, DeleteOrderHandler>();
+        services.AddScoped<IRequestHandler<GetByIdRequest<OrderResponse>, OrderResponse>, GetOrderByIdHandler>();
         services.AddScoped<IRequestHandler<GetAllRequest<OrderResponse>, List<OrderResponse>>, GetAllOrdersHandler>();
-        
+
         services.AddScoped<IRequestHandler<CreateTouroperatorCommand, CreatedResponse>, CreateTouroperatorHandler>();
-        services.AddScoped<IRequestHandler<UpdateTouroperatorCommand, Unit>, UpdateTouroperatorHandler>();
-        services.AddScoped<IRequestHandler<DeleteCommand<Touroperator>, Unit>, DeleteTouroperatorHandler>();
-        services.AddScoped<IRequestHandler<GetByIdRequest<Domain.Responses.Touroperator.TouroperatorResponse>, Domain.Responses.Touroperator.TouroperatorResponse>, GetTouroperatorByIdHandler>(); 
-        services.AddScoped<IRequestHandler<GetAllRequest<Domain.Responses.Touroperator.TouroperatorResponse>, List<Domain.Responses.Touroperator.TouroperatorResponse>>, GetAllTouroperatorsHandler>(); 
+        services.AddScoped<IRequestHandler<UpdateTouroperatorCommand, ResultBaseResponse>, UpdateTouroperatorHandler>();
+        services
+            .AddScoped<IRequestHandler<DeleteCommand<Touroperator>, ResultBaseResponse>, DeleteTouroperatorHandler>();
+        services
+            .AddScoped<IRequestHandler<GetByIdRequest<TouroperatorResponse>, TouroperatorResponse>,
+                GetTouroperatorByIdHandler>();
+        services
+            .AddScoped<IRequestHandler<GetAllRequest<TouroperatorResponse>, List<TouroperatorResponse>>,
+                GetAllTouroperatorsHandler>();
 
         return services;
     }

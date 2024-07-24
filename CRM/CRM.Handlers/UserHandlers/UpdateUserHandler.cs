@@ -3,13 +3,14 @@ using CRM.DataAccess;
 using CRM.Domain.Commands.User;
 using CRM.Domain.Entities;
 using CRM.Domain.Enums;
+using CRM.Domain.Responses;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.UserHandlers;
 
-public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Unit>
+public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, ResultBaseResponse>
 {
     private readonly AppDbContext _context;
     private readonly ICurrentUser _currentUser;
@@ -20,7 +21,7 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Unit>
         _currentUser = currentUser;
     }
 
-    public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+    public async Task<ResultBaseResponse> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
         var currentUserRoles = _currentUser.GetRoles();
         var currentUserCompanyId = _currentUser.GetCompanyId();
@@ -71,6 +72,10 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Unit>
             throw new SaveDatabaseException(typeof(User), ex);
         }
 
-        return Unit.Value;
+        return new ResultBaseResponse
+        {
+            Success = true,
+            Message = "Successfully updated."
+        };
     }
 }

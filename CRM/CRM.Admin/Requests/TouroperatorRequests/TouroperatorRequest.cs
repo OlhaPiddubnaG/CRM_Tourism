@@ -1,40 +1,38 @@
-using System.Net;
+using CRM.Admin.Data;
 using CRM.Admin.Data.TouroperatorDto;
 using CRM.Admin.HttpRequests;
 using MudBlazor;
-using Newtonsoft.Json;
 
 namespace CRM.Admin.Requests.TouroperatorRequests;
 
 public class TouroperatorRequest : ITouroperatorRequest
 {
-    private readonly IHttpCrmApiRequests _httpCrmApiRequests;
+    private readonly IHttpRequests _httpRequests;
     private readonly ILogger<TouroperatorRequest> _logger;
     private readonly ISnackbar _snackbar;
     private const string RequestUri = "api/Touroperator";
 
-    public TouroperatorRequest(IHttpCrmApiRequests httpCrmApiRequests, ILogger<TouroperatorRequest> logger,
+    public TouroperatorRequest(IHttpRequests httpRequests, ILogger<TouroperatorRequest> logger,
         ISnackbar snackbar)
     {
-        _httpCrmApiRequests = httpCrmApiRequests;
+        _httpRequests = httpRequests;
         _logger = logger;
         _snackbar = snackbar;
     }
 
-    public async Task<Guid> CreateAsync(TouroperatorCreateDto touroperatorCreateDto)
+    public async Task<Guid> CreateAsync(TouroperatorCreateDto dto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPostRequestAsync(RequestUri, touroperatorCreateDto);
+            var createdTouroperator = await _httpRequests.SendPostRequestAsync<TouroperatorDto>(RequestUri, dto);
             _logger.LogInformation("Create touroperator method executed successfully");
-
-            var createdClient = await response.Content.ReadFromJsonAsync<TouroperatorDto>();
             _snackbar.Add("Туроператора успішно створено", Severity.Success);
-            return createdClient.Id;
+
+            return createdTouroperator.Id;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in Create client method");
+            _logger.LogError(ex, "Error in Create touroperator method");
             _snackbar.Add($"Помилка при створенні туроператора: {ex.Message}", Severity.Error);
             throw;
         }
@@ -44,12 +42,12 @@ public class TouroperatorRequest : ITouroperatorRequest
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendGetRequestAsync(RequestUri);
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendGetRequestAsync<List<TouroperatorDto>>(RequestUri);
 
-            var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("GetAllAsync method executed successfully");
-            return JsonConvert.DeserializeObject<List<TouroperatorDto>>(content);
+            _snackbar.Add("Дані всіх туроператорів успішно завантажено", Severity.Success);
+
+            return result;
         }
         catch (Exception ex)
         {
@@ -59,16 +57,16 @@ public class TouroperatorRequest : ITouroperatorRequest
         }
     }
 
-    public async Task<T> GetByIdAsync<T>(Guid id) where T : ITouroperatorDto
+    public async Task<TouroperatorDto> GetByIdAsync(Guid id)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendGetRequestAsync($"{RequestUri}/{id}");
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendGetRequestAsync<TouroperatorDto>($"{RequestUri}/{id}");
 
-            var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation($"GetByIdAsync method executed successfully for id: {id}");
-            return JsonConvert.DeserializeObject<T>(content);
+            _snackbar.Add("Дані туроператора успішно завантажено", Severity.Success);
+
+            return result;
         }
         catch (Exception ex)
         {
@@ -82,13 +80,22 @@ public class TouroperatorRequest : ITouroperatorRequest
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, touroperatorUpdateDto);
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendPutRequestAsync<ResultModel>(RequestUri, touroperatorUpdateDto);
 
-            _logger.LogInformation(
-                $"UpdateAsync method executed successfully for user with id: {touroperatorUpdateDto.Id}");
-            _snackbar.Add("Туроператора успішно оновлено", Severity.Success);
-            return response.StatusCode == HttpStatusCode.NoContent;
+            if (result.Success)
+            {
+                _logger.LogInformation(
+                    $"UpdateAsync method executed successfully for touroperator with id: {touroperatorUpdateDto.Id}");
+                _snackbar.Add("Туроператора успішно оновлено", Severity.Success);
+                return true;
+            }
+            else
+            {
+                _logger.LogWarning(
+                    $"UpdateAsync method failed for touroperator with id: {touroperatorUpdateDto.Id}. Message: {result.Message}");
+                _snackbar.Add($"Помилка при оновленні туроператора: {result.Message}", Severity.Error);
+                return false;
+            }
         }
         catch (Exception ex)
         {
@@ -102,12 +109,20 @@ public class TouroperatorRequest : ITouroperatorRequest
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendDeleteRequestAsync($"{RequestUri}/{id}");
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendDeleteRequestAsync<ResultModel>($"{RequestUri}/{id}");
 
-            _logger.LogInformation($"DeleteAsync method executed successfully for id: {id}");
-            _snackbar.Add("Туроператора успішно видалено", Severity.Success);
-            return response.StatusCode == HttpStatusCode.NoContent;
+            if (result.Success)
+            {
+                _logger.LogInformation($"DeleteAsync method executed successfully for id: {id}");
+                _snackbar.Add("Туроператора успішно видалено", Severity.Success);
+                return true;
+            }
+            else
+            {
+                _logger.LogWarning($"DeleteAsync method failed for id: {id}. Message: {result.Message}");
+                _snackbar.Add($"Помилка при видаленні туроператора: {result.Message}", Severity.Error);
+                return false;
+            }
         }
         catch (Exception ex)
         {

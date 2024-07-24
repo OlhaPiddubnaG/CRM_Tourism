@@ -2,13 +2,14 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands;
 using CRM.Domain.Entities;
+using CRM.Domain.Responses;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.PassportInfoHandlers;
 
-public class DeletePassportInfoHandler : IRequestHandler<DeleteCommand<PassportInfo>, Unit>
+public class DeletePassportInfoHandler : IRequestHandler<DeleteCommand<PassportInfo>, ResultBaseResponse>
 {
     private readonly AppDbContext _context;
     private readonly ICurrentUser _currentUser;
@@ -19,7 +20,8 @@ public class DeletePassportInfoHandler : IRequestHandler<DeleteCommand<PassportI
         _currentUser = currentUser;
     }
 
-    public async Task<Unit> Handle(DeleteCommand<PassportInfo> request, CancellationToken cancellationToken)
+    public async Task<ResultBaseResponse> Handle(DeleteCommand<PassportInfo> request,
+        CancellationToken cancellationToken)
     {
         var passportInfo = await _context.PassportInfo
             .Include(p => p.ClientPrivateData)
@@ -61,6 +63,10 @@ public class DeletePassportInfoHandler : IRequestHandler<DeleteCommand<PassportI
             throw new SaveDatabaseException(typeof(PassportInfo), ex);
         }
 
-        return Unit.Value;
+        return new ResultBaseResponse
+        {
+            Success = true,
+            Message = "Successfully deleted."
+        };
     }
 }

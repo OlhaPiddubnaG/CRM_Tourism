@@ -2,6 +2,7 @@ using CRM.Domain.Commands;
 using CRM.Domain.Commands.Company;
 using CRM.Domain.Entities;
 using CRM.Domain.Requests;
+using CRM.Domain.Responses;
 using CRM.Domain.Responses.Company;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CRM.WebApi.Controllers;
+
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
@@ -43,21 +45,23 @@ public class CompanyController : ControllerBase
 
     [HttpDelete("{id:guid}")]
     [Authorize(Policy = "Admin")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken token)
     {
-        await _sender.Send(new DeleteCommand<Company>(id), token);
+        var response = await _sender.Send(new DeleteCommand<Company>(id), token);
 
-        return NoContent();
+        return Ok(response);
     }
 
     [HttpPut]
     [Authorize(Policy = "Admin")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(UpdateCompanyCommand request, CancellationToken token)
     {
-        await _sender.Send(request, token);
+        var response = await _sender.Send(request, token);
 
-        return NoContent();
+        return Ok(response);
     }
 }

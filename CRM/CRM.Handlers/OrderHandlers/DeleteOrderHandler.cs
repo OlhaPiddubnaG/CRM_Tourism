@@ -2,13 +2,14 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands;
 using CRM.Domain.Entities;
+using CRM.Domain.Responses;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.OrderHandlers;
 
-public class DeleteOrderHandler : IRequestHandler<DeleteCommand<Order>, Unit>
+public class DeleteOrderHandler : IRequestHandler<DeleteCommand<Order>, ResultBaseResponse>
 {
     private readonly AppDbContext _context;
     private readonly ICurrentUser _currentUser;
@@ -19,7 +20,7 @@ public class DeleteOrderHandler : IRequestHandler<DeleteCommand<Order>, Unit>
         _currentUser = currentUser;
     }
 
-    public async Task<Unit> Handle(DeleteCommand<Order> request, CancellationToken cancellationToken)
+    public async Task<ResultBaseResponse> Handle(DeleteCommand<Order> request, CancellationToken cancellationToken)
     {
         var companyId = _currentUser.GetCompanyId();
         var order = await _context.Orders.FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
@@ -51,6 +52,10 @@ public class DeleteOrderHandler : IRequestHandler<DeleteCommand<Order>, Unit>
             throw new SaveDatabaseException(typeof(Order), ex);
         }
 
-        return Unit.Value;
+        return new ResultBaseResponse
+        {
+            Success = true,
+            Message = "Successfully deleted."
+        };
     }
 }

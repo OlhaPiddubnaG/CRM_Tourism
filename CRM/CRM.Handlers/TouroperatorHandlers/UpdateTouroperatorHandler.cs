@@ -2,13 +2,14 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands.Touroperator;
 using CRM.Domain.Entities;
+using CRM.Domain.Responses;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.TouroperatorHandlers;
 
-public class UpdateTouroperatorHandler : IRequestHandler<UpdateTouroperatorCommand, Unit>
+public class UpdateTouroperatorHandler : IRequestHandler<UpdateTouroperatorCommand, ResultBaseResponse>
 {
     private readonly AppDbContext _context;
     private readonly ICurrentUser _currentUser;
@@ -19,7 +20,7 @@ public class UpdateTouroperatorHandler : IRequestHandler<UpdateTouroperatorComma
         _currentUser = currentUser;
     }
 
-    public async Task<Unit> Handle(UpdateTouroperatorCommand request, CancellationToken cancellationToken)
+    public async Task<ResultBaseResponse> Handle(UpdateTouroperatorCommand request, CancellationToken cancellationToken)
     {
         var existingTouroperator = await _context.Touroperators
             .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
@@ -49,6 +50,10 @@ public class UpdateTouroperatorHandler : IRequestHandler<UpdateTouroperatorComma
             throw new SaveDatabaseException(typeof(Touroperator), ex);
         }
 
-        return Unit.Value;
+        return new ResultBaseResponse
+        {
+            Success = true,
+            Message = "Successfully updated."
+        };
     }
 }

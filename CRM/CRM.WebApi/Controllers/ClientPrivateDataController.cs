@@ -15,7 +15,7 @@ namespace CRM.WebApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 public class ClientPrivateDataController : ControllerBase
-{ 
+{
     private readonly ISender _sender;
 
     public ClientPrivateDataController(ISender sender)
@@ -52,7 +52,7 @@ public class ClientPrivateDataController : ControllerBase
 
         return Ok(response);
     }
-    
+
     [HttpGet("by-client-id/{clientId:guid}")]
     [ProducesResponseType(typeof(ClientPrivateDataResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
@@ -64,20 +64,22 @@ public class ClientPrivateDataController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken token)
     {
-        await _sender.Send(new DeleteCommand<ClientPrivateData>(id), token);
+        var response = await _sender.Send(new DeleteCommand<ClientPrivateData>(id), token);
 
-        return NoContent();
+        return Ok(response);
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(UpdateClientPrivateDataCommand request, CancellationToken token)
     {
-        await _sender.Send(request, token);
+        var response = await _sender.Send(request, token);
 
-        return NoContent();
+        return Ok(response);
     }
 }

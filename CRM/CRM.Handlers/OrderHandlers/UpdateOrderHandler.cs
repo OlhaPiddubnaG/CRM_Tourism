@@ -2,13 +2,14 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands.Order;
 using CRM.Domain.Entities;
+using CRM.Domain.Responses;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.OrderHandlers;
 
-public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, Unit>
+public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, ResultBaseResponse>
 {
     private readonly AppDbContext _context;
     private readonly ICurrentUser _currentUser;
@@ -19,7 +20,7 @@ public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, Unit>
         _currentUser = currentUser;
     }
 
-    public async Task<Unit> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
+    public async Task<ResultBaseResponse> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
     {
         var existingOrder = await _context.Orders
             .Include(o => o.NumberOfPeople)
@@ -41,7 +42,7 @@ public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, Unit>
 
         var countryFrom = await _context.Countries.FindAsync(request.CountryFromId);
         var countryTo = await _context.Countries.FindAsync(request.CountryToId);
-        
+
         if (countryFrom == null || countryTo == null)
         {
             throw new KeyNotFoundException("Country not found.");
@@ -66,6 +67,10 @@ public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, Unit>
             throw new SaveDatabaseException(typeof(Order), ex);
         }
 
-        return Unit.Value;
+        return new ResultBaseResponse
+        {
+            Success = true,
+            Message = "Successfully updated."
+        };
     }
 }

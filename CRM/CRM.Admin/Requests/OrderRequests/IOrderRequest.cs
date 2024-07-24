@@ -4,9 +4,9 @@ namespace CRM.Admin.Requests.OrderRequests;
 
 public interface IOrderRequest
 {
-    Task<Guid> CreateAsync(OrderCreateDto orderCreateDto);
+    Task<Guid> CreateAsync(OrderCreateDto dto);
     Task<List<OrderDto>> GetAllAsync();
-    Task<T> GetByIdAsync<T>(Guid id) where T : IOrderDto;
-    Task<bool> UpdateAsync(OrderUpdateDto orderUpdateDto);
+    Task<OrderDto> GetByIdAsync(Guid id);
+    Task<bool> UpdateAsync(OrderUpdateDto dto);
     Task<bool> DeleteAsync(Guid id);
 }

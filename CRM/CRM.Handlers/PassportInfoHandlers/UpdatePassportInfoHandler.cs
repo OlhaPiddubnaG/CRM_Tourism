@@ -2,13 +2,14 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands.PassportInfo;
 using CRM.Domain.Entities;
+using CRM.Domain.Responses;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.PassportInfoHandlers;
 
-public class UpdatePassportInfoHandler : IRequestHandler<UpdatePassportInfoCommand, Unit>
+public class UpdatePassportInfoHandler : IRequestHandler<UpdatePassportInfoCommand, ResultBaseResponse>
 {
     private readonly AppDbContext _context;
     private readonly ICurrentUser _currentUser;
@@ -19,7 +20,7 @@ public class UpdatePassportInfoHandler : IRequestHandler<UpdatePassportInfoComma
         _currentUser = currentUser;
     }
 
-    public async Task<Unit> Handle(UpdatePassportInfoCommand request, CancellationToken cancellationToken)
+    public async Task<ResultBaseResponse> Handle(UpdatePassportInfoCommand request, CancellationToken cancellationToken)
     {
         var existingPassportInfo = await _context.PassportInfo
             .Include(pi => pi.ClientPrivateData)
@@ -67,6 +68,10 @@ public class UpdatePassportInfoHandler : IRequestHandler<UpdatePassportInfoComma
             throw new SaveDatabaseException(typeof(PassportInfo), ex);
         }
 
-        return Unit.Value;
+        return new ResultBaseResponse
+        {
+            Success = true,
+            Message = "Successfully updated."
+        };
     }
 }

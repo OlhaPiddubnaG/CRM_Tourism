@@ -88,20 +88,22 @@ public class ClientController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken token)
     {
-        await _sender.Send(new DeleteCommand<Client>(id), token);
+        var response = await _sender.Send(new DeleteCommand<Client>(id), token);
 
-        return NoContent();
+        return Ok(response);
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(UpdateClientCommand request, CancellationToken token)
     {
-        await _sender.Send(request, token);
+        var response = await _sender.Send(request, token);
 
-        return NoContent();
+        return Ok(response);
     }
 }

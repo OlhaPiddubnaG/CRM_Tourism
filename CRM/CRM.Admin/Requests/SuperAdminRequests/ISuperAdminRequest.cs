@@ -5,6 +5,6 @@ namespace CRM.Admin.Requests.SuperAdminRequests;
 
 public interface ISuperAdminRequest
 {
-    Task<Guid> CreateCompanyAsync(CompanyCreateDto categoryCreateDTO);
-    Task<Guid> CreateUserAsync(UserCreateDto userCreateDTO);
+    Task<Guid> CreateCompanyAsync(CompanyCreateDto dto);
+    Task<Guid> CreateUserAsync(UserCreateDto dto);
 }

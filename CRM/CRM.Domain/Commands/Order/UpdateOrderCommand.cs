@@ -1,8 +1,9 @@
+using CRM.Domain.Responses;
 using MediatR;
 
 namespace CRM.Domain.Commands.Order;
 
-public class UpdateOrderCommand : IRequest<Unit>
+public class UpdateOrderCommand : IRequest<ResultBaseResponse>
 {
     public Guid Id { get; set; }
     public Guid CompanyId { get; set; }

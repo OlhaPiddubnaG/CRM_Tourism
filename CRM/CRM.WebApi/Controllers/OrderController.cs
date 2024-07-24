@@ -2,6 +2,7 @@ using CRM.Domain.Commands;
 using CRM.Domain.Commands.Order;
 using CRM.Domain.Entities;
 using CRM.Domain.Requests;
+using CRM.Domain.Responses;
 using CRM.Domain.Responses.Order;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -53,20 +54,22 @@ public class OrderController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken token)
     {
-        await _sender.Send(new DeleteCommand<Order>(id), token);
+        var response = await _sender.Send(new DeleteCommand<Order>(id), token);
 
-        return NoContent();
+        return Ok(response);
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(UpdateOrderCommand request, CancellationToken token)
     {
-        await _sender.Send(request, token);
+        var response = await _sender.Send(request, token);
 
-        return NoContent();
+        return Ok(response);
     }
 }

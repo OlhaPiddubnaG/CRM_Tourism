@@ -1,35 +1,33 @@
-using System.Net;
+using CRM.Admin.Data;
 using CRM.Admin.Data.OrderDto;
 using CRM.Admin.HttpRequests;
 using MudBlazor;
-using Newtonsoft.Json;
 
 namespace CRM.Admin.Requests.OrderRequests;
 
 public class OrderRequest : IOrderRequest
 {
-    private readonly IHttpCrmApiRequests _httpCrmApiRequests;
+    private readonly IHttpRequests _httpRequests;
     private readonly ILogger<OrderRequest> _logger;
     private readonly ISnackbar _snackbar;
     private const string RequestUri = "api/Order";
 
-    public OrderRequest(IHttpCrmApiRequests httpCrmApiRequests, ILogger<OrderRequest> logger, ISnackbar snackbar)
+    public OrderRequest(IHttpRequests httpRequests, ILogger<OrderRequest> logger, ISnackbar snackbar)
     {
-        _httpCrmApiRequests = httpCrmApiRequests;
+        _httpRequests = httpRequests;
         _logger = logger;
         _snackbar = snackbar;
     }
 
-    public async Task<Guid> CreateAsync(OrderCreateDto orderCreateDto)
+    public async Task<Guid> CreateAsync(OrderCreateDto dto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPostRequestAsync(RequestUri, orderCreateDto);
+            var createdOrder = await _httpRequests.SendPostRequestAsync<OrderDto>(RequestUri, dto);
             _logger.LogInformation("Create order method executed successfully");
-
-            var createdClient = await response.Content.ReadFromJsonAsync<OrderDto>();
             _snackbar.Add("Замовлення успішно створено", Severity.Success);
-            return createdClient.Id;
+            
+            return createdOrder.Id;
         }
         catch (Exception ex)
         {
@@ -43,12 +41,12 @@ public class OrderRequest : IOrderRequest
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendGetRequestAsync(RequestUri);
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendGetRequestAsync<List<OrderDto>>(RequestUri);
 
-            var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("GetAllAsync method executed successfully");
-            return JsonConvert.DeserializeObject<List<OrderDto>>(content);
+            _snackbar.Add("Дані всіх замовлень успішно завантажено", Severity.Success);
+
+            return result;
         }
         catch (Exception ex)
         {
@@ -58,16 +56,16 @@ public class OrderRequest : IOrderRequest
         }
     }
 
-    public async Task<T> GetByIdAsync<T>(Guid id) where T : IOrderDto
+    public async Task<OrderDto> GetByIdAsync(Guid id)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendGetRequestAsync($"{RequestUri}/{id}");
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendGetRequestAsync<OrderDto>($"{RequestUri}/{id}");
 
-            var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation($"GetByIdAsync method executed successfully for id: {id}");
-            return JsonConvert.DeserializeObject<T>(content);
+            _snackbar.Add("Дані замовлення успішно завантажено", Severity.Success);
+
+            return result;
         }
         catch (Exception ex)
         {
@@ -77,20 +75,28 @@ public class OrderRequest : IOrderRequest
         }
     }
 
-    public async Task<bool> UpdateAsync(OrderUpdateDto orderUpdateDto)
+    public async Task<bool> UpdateAsync(OrderUpdateDto dto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, orderUpdateDto);
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendPutRequestAsync<ResultModel>(RequestUri, dto);
 
-            _logger.LogInformation($"UpdateAsync method executed successfully for order with id: {orderUpdateDto.Id}");
-            _snackbar.Add("Замовлення успішно оновлено", Severity.Success);
-            return response.StatusCode == HttpStatusCode.NoContent;
+            if (result.Success)
+            {
+                _logger.LogInformation($"UpdateAsync method executed successfully for order with id: {dto.Id}");
+                _snackbar.Add("Замовлення успішно оновлено", Severity.Success);
+                return true;
+            }
+            else
+            {
+                _logger.LogWarning($"UpdateAsync method failed for order with id: {dto.Id}. Message: {result.Message}");
+                _snackbar.Add($"Помилка при оновленні замовлення: {result.Message}", Severity.Error);
+                return false;
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error in UpdateAsync method for order with id: {orderUpdateDto.Id}");
+            _logger.LogError(ex, $"Error in UpdateAsync method for order with id: {dto.Id}");
             _snackbar.Add($"Помилка при оновленні замовлення: {ex.Message}", Severity.Error);
             throw;
         }
@@ -100,12 +106,20 @@ public class OrderRequest : IOrderRequest
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendDeleteRequestAsync($"{RequestUri}/{id}");
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendDeleteRequestAsync<ResultModel>($"{RequestUri}/{id}");
 
-            _logger.LogInformation($"DeleteAsync method executed successfully for id: {id}");
-            _snackbar.Add("Замовлення успішно видалено", Severity.Success);
-            return response.StatusCode == HttpStatusCode.NoContent;
+            if (result.Success)
+            {
+                _logger.LogInformation($"DeleteAsync method executed successfully for id: {id}");
+                _snackbar.Add("Замовлення успішно видалено", Severity.Success);
+                return true;
+            }
+            else
+            {
+                _logger.LogWarning($"DeleteAsync method failed for id: {id}. Message: {result.Message}");
+                _snackbar.Add($"Помилка при видаленні замовлення: {result.Message}", Severity.Error);
+                return false;
+            }
         }
         catch (Exception ex)
         {

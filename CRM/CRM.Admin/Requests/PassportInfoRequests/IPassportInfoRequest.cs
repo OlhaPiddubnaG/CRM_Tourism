@@ -4,10 +4,10 @@ namespace CRM.Admin.Requests.PassportInfoRequests;
 
 public interface IPassportInfoRequest
 {
-    Task<Guid> CreateAsync(PassportInfoCreateDto passportInfoCreateDTO);
+    Task<Guid> CreateAsync(PassportInfoCreateDto dto);
     Task<List<PassportInfoDto>> GetAllAsync();
-    Task<T> GetByIdAsync<T>(Guid id) where T : IPassportInfoDto;
+    Task<PassportInfoUpdateDto> GetByIdAsync(Guid id);
     Task<List<PassportInfoDto>> GetByClientPrivateDataIdAsync(Guid clientPrivateDataId);
-    Task<bool> UpdateAsync(PassportInfoUpdateDto passportInfoUpdateDTO);
+    Task<bool> UpdateAsync(PassportInfoUpdateDto dto);
     Task<bool> DeleteAsync(Guid id);
 }

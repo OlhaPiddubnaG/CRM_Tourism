@@ -2,13 +2,14 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands;
 using CRM.Domain.Entities;
+using CRM.Domain.Responses;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.TouroperatorHandlers;
 
-public class DeleteTouroperatorHandler : IRequestHandler<DeleteCommand<Touroperator>, Unit>
+public class DeleteTouroperatorHandler : IRequestHandler<DeleteCommand<Touroperator>, ResultBaseResponse>
 {
     private readonly AppDbContext _context;
     private readonly ICurrentUser _currentUser;
@@ -19,7 +20,8 @@ public class DeleteTouroperatorHandler : IRequestHandler<DeleteCommand<Touropera
         _currentUser = currentUser;
     }
 
-    public async Task<Unit> Handle(DeleteCommand<Touroperator> request, CancellationToken cancellationToken)
+    public async Task<ResultBaseResponse> Handle(DeleteCommand<Touroperator> request,
+        CancellationToken cancellationToken)
     {
         var companyId = _currentUser.GetCompanyId();
 
@@ -51,6 +53,10 @@ public class DeleteTouroperatorHandler : IRequestHandler<DeleteCommand<Touropera
             throw new SaveDatabaseException(typeof(Touroperator), ex);
         }
 
-        return Unit.Value;
+        return new ResultBaseResponse
+        {
+            Success = true,
+            Message = "Successfully deleted."
+        };
     }
 }

@@ -5,11 +5,11 @@ namespace CRM.Admin.Requests.ClientRequests;
 
 public interface IClientRequest
 {
-    Task<Guid> CreateAsync(ClientCreateDto clientCreateDto);
-    Task<ResultModel> CreateClientWithRelatedAsync(ClientCreateDto clientCreateDto);
+    Task<Guid> CreateAsync(ClientCreateDto dto);
+    Task<ResultModel> CreateClientWithRelatedAsync(ClientCreateDto dto);
     Task<List<ClientDto>> GetAllAsync();
     Task<PagedResponse<ClientDto>> GetPagedDataAsync(ClientRequestParameters parameters);
-    Task<T> GetByIdAsync<T>(Guid id) where T : IClientDto;
-    Task<bool> UpdateAsync(ClientUpdateDto clientUpdateDTO);
+    Task<ClientUpdateDto> GetByIdAsync(Guid id);
+    Task<bool> UpdateAsync(ClientUpdateDto dto);
     Task<bool> DeleteAsync(Guid id);
 }

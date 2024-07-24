@@ -2,13 +2,14 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands;
 using CRM.Domain.Entities;
+using CRM.Domain.Responses;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.CountryHandlers;
 
-public class DeleteCountryHandler : IRequestHandler<DeleteCommand<Country>, Unit>
+public class DeleteCountryHandler : IRequestHandler<DeleteCommand<Country>, ResultBaseResponse>
 {
     private readonly AppDbContext _context;
     private readonly ICurrentUser _currentUser;
@@ -19,7 +20,7 @@ public class DeleteCountryHandler : IRequestHandler<DeleteCommand<Country>, Unit
         _currentUser = currentUser;
     }
 
-    public async Task<Unit> Handle(DeleteCommand<Country> request, CancellationToken cancellationToken)
+    public async Task<ResultBaseResponse> Handle(DeleteCommand<Country> request, CancellationToken cancellationToken)
     {
         var companyId = _currentUser.GetCompanyId();
 
@@ -53,6 +54,10 @@ public class DeleteCountryHandler : IRequestHandler<DeleteCommand<Country>, Unit
             throw new SaveDatabaseException(typeof(Country), ex);
         }
 
-        return Unit.Value;
+        return new ResultBaseResponse
+        {
+            Success = true,
+            Message = "Successfully deleted."
+        };
     }
 }
