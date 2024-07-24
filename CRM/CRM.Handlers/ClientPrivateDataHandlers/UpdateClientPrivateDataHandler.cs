@@ -2,14 +2,14 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands.ClientPrivateData;
 using CRM.Domain.Entities;
-using CRM.Domain.Enums;
+using CRM.Domain.Responses;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.ClientPrivateDataHandlers;
 
-public class UpdateClientPrivateDataHandler : IRequestHandler<UpdateClientPrivateDataCommand, Unit>
+public class UpdateClientPrivateDataHandler : IRequestHandler<UpdateClientPrivateDataCommand, ResultBaseResponse>
 {
     private readonly AppDbContext _context;
     private readonly ICurrentUser _currentUser;
@@ -20,10 +20,11 @@ public class UpdateClientPrivateDataHandler : IRequestHandler<UpdateClientPrivat
         _currentUser = currentUser;
     }
 
-    public async Task<Unit> Handle(UpdateClientPrivateDataCommand request, CancellationToken cancellationToken)
+    public async Task<ResultBaseResponse> Handle(UpdateClientPrivateDataCommand request,
+        CancellationToken cancellationToken)
     {
-        var currentUserCompanyId = _currentUser.GetCompanyId();
-        
+        var companyId = _currentUser.GetCompanyId();
+
         var existingClientPrivateData = await _context.ClientPrivateDatas
             .Include(cpd => cpd.Client)
             .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
@@ -32,12 +33,12 @@ public class UpdateClientPrivateDataHandler : IRequestHandler<UpdateClientPrivat
         {
             throw new NotFoundException(typeof(ClientPrivateData), request.Id);
         }
-        
-        if (currentUserCompanyId != existingClientPrivateData.Client?.CompanyId)
+
+        if (companyId != existingClientPrivateData.Client?.CompanyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to update this client private data.");
         }
-        
+
         existingClientPrivateData.UpdatedAt = DateTime.UtcNow;
         existingClientPrivateData.UpdatedUserId = _currentUser.GetUserId();
 
@@ -50,6 +51,10 @@ public class UpdateClientPrivateDataHandler : IRequestHandler<UpdateClientPrivat
             throw new SaveDatabaseException(typeof(ClientPrivateData), ex);
         }
 
-        return Unit.Value;
+        return new ResultBaseResponse
+        {
+            Success = true,
+            Message = "Successfully updated."
+        };
     }
 }

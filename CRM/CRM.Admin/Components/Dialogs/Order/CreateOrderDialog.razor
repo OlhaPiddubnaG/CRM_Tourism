@@ -1,5 +1,24 @@
-<h3>CreateOrderDialog</h3>
-
-@code {
-    
-}
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Оформити нове замовлення?</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudStack>
+            <MudLink Href="/order/{Id}" Underline="Underline.None" Color="Color.Dark">- Пакетний тур</MudLink>
+            <MudLink Href="/order" Underline="Underline.None" Color="Color.Dark">- Екскурсійний тур</MudLink>
+            <MudLink Href="/order" Underline="Underline.None" Color="Color.Dark">- Індивідуальний тур</MudLink>
+            <MudLink Href="/order" Underline="Underline.None" Color="Color.Dark">- Круїз</MudLink>
+            <MudLink Href="/" Underline="Underline.None" Color="Color.Dark">- Авіаквиток</MudLink>
+            <MudLink Href="/" Underline="Underline.None" Color="Color.Dark">- Автобус</MudLink>
+            <MudLink Href="/" Underline="Underline.None" Color="Color.Dark">- З/Д квиток</MudLink>
+            <MudLink Href="/" Underline="Underline.None" Color="Color.Dark">- Страхування</MudLink>
+            <MudLink Href="/" Underline="Underline.None" Color="Color.Dark">- Оформлення закордонного паспорту</MudLink>
+            <MudLink Href="/" Underline="Underline.None" Color="Color.Dark">- Оформлення візи</MudLink>
+            <MudLink Href="/" Underline="Underline.None" Color="Color.Dark">- Інше</MudLink>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" OnClick="Cancel" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel">ВІДМІНА</MudButton>
+        <MudSpacer/>
+    </DialogActions>
+</MudDialog>

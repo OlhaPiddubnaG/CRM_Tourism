@@ -17,7 +17,7 @@ public partial class UpdateCompanyDialog
 
     protected override async Task OnInitializedAsync()
     {
-        var result = _сompanyUpdateDto = await CompanyRequest.GetByIdAsync<CompanyUpdateDto>(Id);
+        var result = _сompanyUpdateDto = await CompanyRequest.GetByIdAsync(Id);
         if (result.Id != Guid.Empty)
         {
             Snackbar.Add("Дані компанії завантажено", Severity.Success);

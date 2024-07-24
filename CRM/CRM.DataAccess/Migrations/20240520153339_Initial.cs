@@ -238,7 +238,7 @@ namespace CRM.DataAccess.Migrations
                         column: x => x.ClientId,
                         principalTable: "Clients",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Cascade);  
                     table.ForeignKey(
                         name: "FK_Orders_Companies_CompanyId",
                         column: x => x.CompanyId,

@@ -25,9 +25,9 @@ public class CreateCountryHandler : IRequestHandler<CreateCountryCommand, Create
 
     public async Task<CreatedResponse> Handle(CreateCountryCommand request, CancellationToken cancellationToken)
     {
-        var currentUserCompanyId = _currentUser.GetCompanyId();
+        var companyId = _currentUser.GetCompanyId();
 
-        if (currentUserCompanyId != request.CompanyId)
+        if (companyId != request.CompanyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to create a country.");
         }

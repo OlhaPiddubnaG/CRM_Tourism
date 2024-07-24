@@ -1,34 +1,30 @@
-using System.Net;
 using CRM.Admin.Data;
 using CRM.Admin.Data.ClientDto;
 using CRM.Admin.HttpRequests;
 using MudBlazor;
-using Newtonsoft.Json;
 
 namespace CRM.Admin.Requests.ClientRequests;
 
 public class ClientRequest : IClientRequest
 {
-    private readonly IHttpCrmApiRequests _httpCrmApiRequests;
+    private readonly IHttpRequests _httpRequests;
     private readonly ILogger<ClientRequest> _logger;
     private readonly ISnackbar _snackbar;
     private const string RequestUri = "api/Client";
 
-    public ClientRequest(IHttpCrmApiRequests httpCrmApiRequests, ILogger<ClientRequest> logger, ISnackbar snackbar)
+    public ClientRequest(IHttpRequests httpRequests, ILogger<ClientRequest> logger, ISnackbar snackbar)
     {
-        _httpCrmApiRequests = httpCrmApiRequests;
+        _httpRequests = httpRequests;
         _logger = logger;
         _snackbar = snackbar;
     }
 
-    public async Task<Guid> CreateAsync(ClientCreateDto clientCreateDto)
+    public async Task<Guid> CreateAsync(ClientCreateDto dto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPostRequestAsync(RequestUri, clientCreateDto);
+            var createdClient = await _httpRequests.SendPostRequestAsync<ClientDto>(RequestUri, dto);
             _logger.LogInformation("Create client method executed successfully");
-
-            var createdClient = await response.Content.ReadFromJsonAsync<ClientDto>();
             _snackbar.Add("Клієнта успішно створено", Severity.Success);
             return createdClient.Id;
         }
@@ -40,15 +36,14 @@ public class ClientRequest : IClientRequest
         }
     }
 
-    public async Task<ResultModel> CreateClientWithRelatedAsync(ClientCreateDto clientCreateDto)
+    public async Task<ResultModel> CreateClientWithRelatedAsync(ClientCreateDto dto)
     {
         try
         {
             var clientResponse =
-                await _httpCrmApiRequests.SendPostRequestAsync($"{RequestUri}/withRelated", clientCreateDto);
-            await clientResponse.Content.ReadAsStringAsync();
+                await _httpRequests.SendPostRequestAsync<ResultModel>($"{RequestUri}/withRelated", dto);
 
-            if (clientResponse.IsSuccessStatusCode)
+            if (clientResponse != null && clientResponse.Success)
             {
                 _snackbar.Add("Клієнта та пов’язані дані успішно створено", Severity.Success);
                 return new ResultModel
@@ -79,12 +74,12 @@ public class ClientRequest : IClientRequest
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendGetRequestAsync(RequestUri);
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendGetRequestAsync<List<ClientDto>>(RequestUri);
 
-            var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("GetAllAsync method executed successfully");
-            return JsonConvert.DeserializeObject<List<ClientDto>>(content);
+            _snackbar.Add("Дані всіх клієнтів успішно завантажено", Severity.Success);
+
+            return result;
         }
         catch (Exception ex)
         {
@@ -106,21 +101,23 @@ public class ClientRequest : IClientRequest
         };
 
         var queryString = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
-        var response = await _httpCrmApiRequests.SendPostRequestAsync($"{RequestUri}/paged?{queryString}", parameters);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<PagedResponse<ClientDto>>();
+        var pagedResponse =
+            await _httpRequests.SendPostRequestAsync<PagedResponse<ClientDto>>($"{RequestUri}/paged?{queryString}",
+                parameters);
+
+        return pagedResponse;
     }
 
-    public async Task<T> GetByIdAsync<T>(Guid id) where T : IClientDto
+    public async Task<ClientUpdateDto> GetByIdAsync(Guid id)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendGetRequestAsync($"{RequestUri}/{id}");
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendGetRequestAsync<ClientUpdateDto>($"{RequestUri}/{id}");
 
-            var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation($"GetByIdAsync method executed successfully for id: {id}");
-            return JsonConvert.DeserializeObject<T>(content);
+            _snackbar.Add("Дані клієнта успішно завантажено", Severity.Success);
+
+            return result;
         }
         catch (Exception ex)
         {
@@ -130,20 +127,29 @@ public class ClientRequest : IClientRequest
         }
     }
 
-    public async Task<bool> UpdateAsync(ClientUpdateDto clientUpdateDto)
+    public async Task<bool> UpdateAsync(ClientUpdateDto dto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, clientUpdateDto);
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendPutRequestAsync<ResultModel>(RequestUri, dto);
 
-            _logger.LogInformation($"UpdateAsync method executed successfully for user with id: {clientUpdateDto.Id}");
-            _snackbar.Add("Клієнта успішно оновлено", Severity.Success);
-            return response.StatusCode == HttpStatusCode.NoContent;
+            if (result.Success)
+            {
+                _logger.LogInformation($"UpdateAsync method executed successfully for client with id: {dto.Id}");
+                _snackbar.Add("Клієнта успішно оновлено", Severity.Success);
+                return true;
+            }
+            else
+            {
+                _logger.LogWarning(
+                    $"UpdateAsync method failed for client with id: {dto.Id}. Message: {result.Message}");
+                _snackbar.Add($"Помилка при оновленні клієнта: {result.Message}", Severity.Error);
+                return false;
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error in UpdateAsync method for user with id: {clientUpdateDto.Id}");
+            _logger.LogError(ex, $"Error in UpdateAsync method for client with id: {dto.Id}");
             _snackbar.Add($"Помилка при оновленні клієнта: {ex.Message}", Severity.Error);
             throw;
         }
@@ -153,12 +159,20 @@ public class ClientRequest : IClientRequest
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendDeleteRequestAsync($"{RequestUri}/{id}");
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendDeleteRequestAsync<ResultModel>($"{RequestUri}/{id}");
 
-            _logger.LogInformation($"DeleteAsync method executed successfully for id: {id}");
-            _snackbar.Add("Клієнта успішно видалено", Severity.Success);
-            return response.StatusCode == HttpStatusCode.NoContent;
+            if (result.Success)
+            {
+                _logger.LogInformation($"DeleteAsync method executed successfully for id: {id}");
+                _snackbar.Add("Клієнта успішно видалено", Severity.Success);
+                return true;
+            }
+            else
+            {
+                _logger.LogWarning($"DeleteAsync method failed for id: {id}. Message: {result.Message}");
+                _snackbar.Add($"Помилка при видаленні клієнта: {result.Message}", Severity.Error);
+                return false;
+            }
         }
         catch (Exception ex)
         {

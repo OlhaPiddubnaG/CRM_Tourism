@@ -35,7 +35,7 @@ public class GetCountryByIdHandler : IRequestHandler<GetByIdRequest<CountryRespo
 
         if (country == null)
         {
-            throw new UnauthorizedAccessException("User is not authorized to access this country.");
+            throw new NotFoundException(typeof(Country), request.Id);
         }
 
         if (country == null)

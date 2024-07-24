@@ -4,10 +4,10 @@ namespace CRM.Admin.Requests.CountryRequests;
 
 public interface ICountryRequest
 {
-    Task<Guid> CreateAsync(CountryCreateDto countryCreateDTO);
+    Task<Guid> CreateAsync(CountryCreateDto dto);
     Task<List<CountryDto>> GetAllAsync();
-    Task<T> GetByIdAsync<T>(Guid id) where T : ICountryDto;
+    Task<CountryDto> GetByIdAsync(Guid id);
     Task<CountryDto> GetByNameAsync(string name);
-    Task<bool> UpdateAsync(CountryUpdateDto countryUpdateDTO);
+    Task<bool> UpdateAsync(CountryUpdateDto dto);
     Task<bool> DeleteAsync(Guid id);
 }

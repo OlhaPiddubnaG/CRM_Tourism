@@ -2,13 +2,14 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands;
 using CRM.Domain.Entities;
+using CRM.Domain.Responses;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.ClientHandlers;
 
-public class DeleteClientHandler : IRequestHandler<DeleteCommand<Client>, Unit>
+public class DeleteClientHandler : IRequestHandler<DeleteCommand<Client>, ResultBaseResponse>
 {
     private readonly AppDbContext _context;
     private readonly ICurrentUser _currentUser;
@@ -19,9 +20,9 @@ public class DeleteClientHandler : IRequestHandler<DeleteCommand<Client>, Unit>
         _currentUser = currentUser;
     }
 
-    public async Task<Unit> Handle(DeleteCommand<Client> request, CancellationToken cancellationToken)
+    public async Task<ResultBaseResponse> Handle(DeleteCommand<Client> request, CancellationToken cancellationToken)
     {
-        var currentUserCompanyId = _currentUser.GetCompanyId();
+        var companyId = _currentUser.GetCompanyId();
 
         var client = await _context.Clients.FirstOrDefaultAsync(c => c.Id == request.Id &&
                                                                      !c.IsDeleted, cancellationToken);
@@ -30,7 +31,7 @@ public class DeleteClientHandler : IRequestHandler<DeleteCommand<Client>, Unit>
             throw new NotFoundException(typeof(Client), request.Id);
         }
 
-        if (currentUserCompanyId != client.CompanyId)
+        if (companyId != client.CompanyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to delete this client.");
         }
@@ -53,6 +54,10 @@ public class DeleteClientHandler : IRequestHandler<DeleteCommand<Client>, Unit>
             throw new SaveDatabaseException(typeof(Client), ex);
         }
 
-        return Unit.Value;
+        return new ResultBaseResponse
+        {
+            Success = true,
+            Message = "Successfully deleted."
+        };
     }
 }

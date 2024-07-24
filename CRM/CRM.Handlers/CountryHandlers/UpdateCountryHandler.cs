@@ -2,13 +2,14 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands.Country;
 using CRM.Domain.Entities;
+using CRM.Domain.Responses;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.CountryHandlers;
 
-public class UpdateCountryHandler : IRequestHandler<UpdateCountryCommand, Unit>
+public class UpdateCountryHandler : IRequestHandler<UpdateCountryCommand, ResultBaseResponse>
 {
     private readonly AppDbContext _context;
     private readonly ICurrentUser _currentUser;
@@ -19,7 +20,7 @@ public class UpdateCountryHandler : IRequestHandler<UpdateCountryCommand, Unit>
         _currentUser = currentUser;
     }
 
-    public async Task<Unit> Handle(UpdateCountryCommand request, CancellationToken cancellationToken)
+    public async Task<ResultBaseResponse> Handle(UpdateCountryCommand request, CancellationToken cancellationToken)
     {
         var existingCountry = await _context.Countries
             .FirstOrDefaultAsync(c => c.Id == request.Id &&
@@ -30,9 +31,9 @@ public class UpdateCountryHandler : IRequestHandler<UpdateCountryCommand, Unit>
             throw new NotFoundException(typeof(Country), request.Id);
         }
 
-        var currentUserCompanyId = _currentUser.GetCompanyId();
+        var companyId = _currentUser.GetCompanyId();
 
-        if (currentUserCompanyId != existingCountry.CompanyId)
+        if (companyId != existingCountry.CompanyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to update this country.");
         }
@@ -48,6 +49,10 @@ public class UpdateCountryHandler : IRequestHandler<UpdateCountryCommand, Unit>
             throw new SaveDatabaseException(typeof(Country), ex);
         }
 
-        return Unit.Value;
+        return new ResultBaseResponse
+        {
+            Success = true,
+            Message = "Successfully updated."
+        };
     }
 }

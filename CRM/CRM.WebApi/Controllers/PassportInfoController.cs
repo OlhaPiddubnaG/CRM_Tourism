@@ -26,7 +26,7 @@ public class PassportInfoController : ControllerBase
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(PassportInfoResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken token)
+    public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken token)
     {
         var response = await _sender.Send(new GetByIdRequest<PassportInfoResponse>(id), token);
 
@@ -42,13 +42,15 @@ public class PassportInfoController : ControllerBase
 
         return Ok(response);
     }
-    
+
     [HttpGet("by-client-private-data-id/{clientPrivateDataId:guid}")]
     [ProducesResponseType(typeof(List<PassportInfoResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetByClientPrivateDataId(Guid clientPrivateDataId, CancellationToken token)
+    public async Task<IActionResult> GetByClientPrivateDataId([FromRoute] Guid clientPrivateDataId,
+        CancellationToken token)
     {
-        var response = await _sender.Send(new GetByIdReturnListRequest<PassportInfoResponse>(clientPrivateDataId), token);
+        var response =
+            await _sender.Send(new GetByIdReturnListRequest<PassportInfoResponse>(clientPrivateDataId), token);
         return Ok(response);
     }
 
@@ -63,20 +65,22 @@ public class PassportInfoController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken token)
+    [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken token)
     {
-        await _sender.Send(new DeleteCommand<PassportInfo>(id), token);
+        var response = await _sender.Send(new DeleteCommand<PassportInfo>(id), token);
 
-        return NoContent();
+        return Ok(response);
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(UpdatePassportInfoCommand request, CancellationToken token)
     {
-        await _sender.Send(request, token);
+        var response = await _sender.Send(request, token);
 
-        return NoContent();
+        return Ok(response);
     }
 }

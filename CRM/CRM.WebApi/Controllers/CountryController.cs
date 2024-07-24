@@ -22,11 +22,11 @@ public class CountryController : ControllerBase
     {
         _sender = sender;
     }
-    
+
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(CountryResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken token)
+    public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken token)
     {
         var response = await _sender.Send(new GetByIdRequest<CountryResponse>(id), token);
 
@@ -42,17 +42,17 @@ public class CountryController : ControllerBase
 
         return Ok(response);
     }
-    
+
     [HttpGet("name/{name}")]
     [ProducesResponseType(typeof(CountryResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetByName(string name, CancellationToken token)
+    public async Task<IActionResult> GetByName([FromRoute] string name, CancellationToken token)
     {
         var response = await _sender.Send(new GetByNameRequest<CountryResponse>(name), token);
 
         return Ok(response);
     }
-    
+
     [HttpPost]
     [ProducesResponseType(typeof(CreatedResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
@@ -62,22 +62,24 @@ public class CountryController : ControllerBase
 
         return Ok(response);
     }
-    
-    [HttpDelete("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken token)
-    {
-        await _sender.Send(new DeleteCommand<Country>(id), token);
 
-        return NoContent();
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken token)
+    {
+        var response = await _sender.Send(new DeleteCommand<Country>(id), token);
+
+        return Ok(response);
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(UpdateCountryCommand request, CancellationToken token)
     {
-        await _sender.Send(request, token);
+        var response = await _sender.Send(request, token);
 
-        return NoContent();
+        return Ok(response);
     }
 }

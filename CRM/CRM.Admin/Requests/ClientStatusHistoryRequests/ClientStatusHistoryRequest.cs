@@ -1,33 +1,32 @@
 using CRM.Admin.Data.ClientStatusHistoryDto;
 using CRM.Admin.HttpRequests;
 using MudBlazor;
-using Newtonsoft.Json;
 
 namespace CRM.Admin.Requests.ClientStatusHistoryRequests;
 
 public class ClientStatusHistoryRequest : IClientStatusHistoryRequest
 {
-    private readonly IHttpCrmApiRequests _httpCrmApiRequests;
+    private readonly IHttpRequests _httpRequests;
     private readonly ILogger<ClientStatusHistoryRequest> _logger;
     private readonly ISnackbar _snackbar;
     private const string RequestUri = "api/ClientStatusHistory";
 
-    public ClientStatusHistoryRequest(IHttpCrmApiRequests httpCrmApiRequests,
+    public ClientStatusHistoryRequest(IHttpRequests httpRequests,
         ILogger<ClientStatusHistoryRequest> logger, ISnackbar snackbar)
     {
-        _httpCrmApiRequests = httpCrmApiRequests;
+        _httpRequests = httpRequests;
         _logger = logger;
         _snackbar = snackbar;
     }
 
-    public async Task<Guid> CreateAsync(ClientStatusHistoryCreateDto clientStatusHistoryCreateDto)
+    public async Task<Guid> CreateAsync(ClientStatusHistoryCreateDto dto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPostRequestAsync(RequestUri, clientStatusHistoryCreateDto);
+            var createdClientStatusHistory =
+                await _httpRequests.SendPostRequestAsync<ClientStatusHistoryDto>(RequestUri, dto);
             _logger.LogInformation("Create ClientStatusHistory method executed successfully");
 
-            var createdClientStatusHistory = await response.Content.ReadFromJsonAsync<ClientStatusHistoryDto>();
             _snackbar.Add("Історія статусу клієнта успішно створена", Severity.Success);
             return createdClientStatusHistory.Id;
         }
@@ -43,13 +42,12 @@ public class ClientStatusHistoryRequest : IClientStatusHistoryRequest
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendGetRequestAsync(RequestUri);
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendGetRequestAsync<List<ClientStatusHistoryDto>>(RequestUri);
 
-            var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("GetAllAsync method executed successfully");
             _snackbar.Add("Дані всіх історій статусів клієнтів успішно завантажено", Severity.Success);
-            return JsonConvert.DeserializeObject<List<ClientStatusHistoryDto>>(content);
+
+            return result;
         }
         catch (Exception ex)
         {
@@ -59,17 +57,15 @@ public class ClientStatusHistoryRequest : IClientStatusHistoryRequest
         }
     }
 
-    public async Task<T> GetByIdAsync<T>(Guid id) where T : IClientStatusHistoryDto
+    public async Task<ClientStatusHistoryDto> GetByIdAsync(Guid id)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendGetRequestAsync($"{RequestUri}/{id}");
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendGetRequestAsync<ClientStatusHistoryDto>($"{RequestUri}/{id}");
 
-            var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation($"GetByIdAsync method executed successfully for id: {id}");
             _snackbar.Add("Дані історії статусу клієнта успішно завантажено", Severity.Success);
-            return JsonConvert.DeserializeObject<T>(content);
+            return result;
         }
         catch (Exception ex)
         {

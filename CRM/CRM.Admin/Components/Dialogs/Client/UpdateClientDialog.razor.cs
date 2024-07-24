@@ -18,7 +18,7 @@ public partial class UpdateClientDialog
 
     protected override async Task OnInitializedAsync()
     {
-        _сlientUpdateDto = await ClientRequest.GetByIdAsync<ClientUpdateDto>(Id);
+        _сlientUpdateDto = await ClientRequest.GetByIdAsync(Id);
         _dateOfBirth = _сlientUpdateDto.DateOfBirth?.ToDateTime(TimeOnly.MinValue);
     }
 

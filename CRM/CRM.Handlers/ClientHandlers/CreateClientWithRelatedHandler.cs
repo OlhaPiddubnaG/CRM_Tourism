@@ -75,9 +75,9 @@ namespace CRM.Handlers.ClientHandlers
         {
             if (managerIds.Any())
             {
-                var currentUserCompanyId = _currentUser.GetCompanyId();
+                var companyId = _currentUser.GetCompanyId();
                 var users = await _context.Users
-                    .Where(u => managerIds.Contains(u.Id) && u.CompanyId == currentUserCompanyId)
+                    .Where(u => managerIds.Contains(u.Id) && u.CompanyId == companyId)
                     .ToListAsync(cancellationToken);
 
                 if (users.Count != managerIds.Count())

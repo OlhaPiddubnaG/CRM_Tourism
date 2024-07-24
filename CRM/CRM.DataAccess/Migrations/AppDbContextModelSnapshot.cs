@@ -365,6 +365,9 @@ namespace CRM.DataAccess.Migrations
                     b.Property<int>("NumberOfNights")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("TouroperatorId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -383,6 +386,8 @@ namespace CRM.DataAccess.Migrations
                     b.HasIndex("CountryFromId");
 
                     b.HasIndex("CountryToId");
+
+                    b.HasIndex("TouroperatorId");
 
                     b.HasIndex("UserId");
 
@@ -613,6 +618,21 @@ namespace CRM.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreatedUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("DeletedUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -620,13 +640,15 @@ namespace CRM.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("OrderId")
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UpdatedUserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderId")
-                        .IsUnique();
+                    b.HasIndex("CompanyId");
 
                     b.ToTable("Touroperators");
                 });
@@ -895,6 +917,10 @@ namespace CRM.DataAccess.Migrations
                         .WithMany()
                         .HasForeignKey("CountryToId");
 
+                    b.HasOne("CRM.Domain.Entities.Touroperator", "Touroperator")
+                        .WithMany()
+                        .HasForeignKey("TouroperatorId");
+
                     b.HasOne("CRM.Domain.Entities.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
@@ -908,6 +934,8 @@ namespace CRM.DataAccess.Migrations
                     b.Navigation("CountryFrom");
 
                     b.Navigation("CountryTo");
+
+                    b.Navigation("Touroperator");
 
                     b.Navigation("User");
                 });
@@ -958,13 +986,11 @@ namespace CRM.DataAccess.Migrations
 
             modelBuilder.Entity("CRM.Domain.Entities.Touroperator", b =>
                 {
-                    b.HasOne("CRM.Domain.Entities.Order", "Order")
-                        .WithOne("Touroperator")
-                        .HasForeignKey("CRM.Domain.Entities.Touroperator", "OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("CRM.Domain.Entities.Company", "Company")
+                        .WithMany("Touroperators")
+                        .HasForeignKey("CompanyId");
 
-                    b.Navigation("Order");
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("CRM.Domain.Entities.User", b =>
@@ -1039,6 +1065,8 @@ namespace CRM.DataAccess.Migrations
 
                     b.Navigation("Orders");
 
+                    b.Navigation("Touroperators");
+
                     b.Navigation("Users");
                 });
 
@@ -1058,8 +1086,6 @@ namespace CRM.DataAccess.Migrations
                     b.Navigation("Payments");
 
                     b.Navigation("Stays");
-
-                    b.Navigation("Touroperator");
                 });
 
             modelBuilder.Entity("CRM.Domain.Entities.Stays", b =>

@@ -28,8 +28,13 @@ public class GetAllCompaniesHandler : IRequestHandler<GetAllRequest<CompanyRespo
         CancellationToken cancellationToken)
     {
         var companies = await GetCompaniesByRoleAsync(cancellationToken);
+        if (!companies.Any())
+        {
+            return new List<CompanyResponse>();
+        }
 
         var companyResponses = _mapper.Map<List<CompanyResponse>>(companies);
+        
         return companyResponses;
     }
 

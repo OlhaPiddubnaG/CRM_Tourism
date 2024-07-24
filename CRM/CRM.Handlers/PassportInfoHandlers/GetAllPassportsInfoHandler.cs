@@ -33,9 +33,9 @@ public class
                          !pi.IsDeleted)
             .ToListAsync(cancellationToken);
 
-        if (passportInfos == null)
+        if (!passportInfos.Any())
         {
-            throw new UnauthorizedAccessException("User is not authorized to access passport info.");
+            return new List<PassportInfoResponse>();
         }
 
         var passportInfoResponses = _mapper.Map<List<PassportInfoResponse>>(passportInfos);

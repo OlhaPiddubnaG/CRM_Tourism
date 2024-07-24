@@ -3,13 +3,14 @@ using CRM.DataAccess;
 using CRM.Domain.Commands;
 using CRM.Domain.Entities;
 using CRM.Domain.Enums;
+using CRM.Domain.Responses;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.UserHandlers;
 
-public class DeleteUserHandler : IRequestHandler<DeleteCommand<User>, Unit>
+public class DeleteUserHandler : IRequestHandler<DeleteCommand<User>, ResultBaseResponse>
 {
     private readonly AppDbContext _context;
     private readonly ICurrentUser _currentUser;
@@ -20,7 +21,7 @@ public class DeleteUserHandler : IRequestHandler<DeleteCommand<User>, Unit>
         _currentUser = currentUser;
     }
 
-    public async Task<Unit> Handle(DeleteCommand<User> request, CancellationToken cancellationToken)
+    public async Task<ResultBaseResponse> Handle(DeleteCommand<User> request, CancellationToken cancellationToken)
     {
         var currentUserRoles = _currentUser.GetRoles();
         var currentUserCompanyId = _currentUser.GetCompanyId();
@@ -55,6 +56,10 @@ public class DeleteUserHandler : IRequestHandler<DeleteCommand<User>, Unit>
             throw new SaveDatabaseException(typeof(User), ex);
         }
 
-        return Unit.Value;
+        return new ResultBaseResponse
+        {
+            Success = true,
+            Message = "Successfully deleted."
+        };
     }
 }

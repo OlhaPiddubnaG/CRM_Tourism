@@ -17,11 +17,11 @@ public partial class AddStatusForClientDialog
     [Parameter] public Guid Id { get; set; }
 
     private ClientStatusHistoryCreateDto ClientStatusHistoryCreateDto { get; set; } = new();
-    private ClientDto ClientDto { get; set; } = new();
+    private ClientUpdateDto ClientDto { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        ClientDto = await ClientRequest.GetByIdAsync<ClientDto>(Id);
+        ClientDto = await ClientRequest.GetByIdAsync(Id);
     }
 
     private async Task Update()

@@ -2,13 +2,14 @@ using CRM.Core.Exceptions;
 using CRM.DataAccess;
 using CRM.Domain.Commands.Client;
 using CRM.Domain.Entities;
+using CRM.Domain.Responses;
 using CRM.Handlers.Services.CurrentUser;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.ClientHandlers;
 
-public class UpdateClientHandler : IRequestHandler<UpdateClientCommand, Unit>
+public class UpdateClientHandler : IRequestHandler<UpdateClientCommand, ResultBaseResponse>
 {
     private readonly AppDbContext _context;
     private readonly ICurrentUser _currentUser;
@@ -19,27 +20,27 @@ public class UpdateClientHandler : IRequestHandler<UpdateClientCommand, Unit>
         _currentUser = currentUser;
     }
 
-    public async Task<Unit> Handle(UpdateClientCommand request, CancellationToken cancellationToken)
+    public async Task<ResultBaseResponse> Handle(UpdateClientCommand request, CancellationToken cancellationToken)
     {
-        var currentUserCompanyId = _currentUser.GetCompanyId();
-        
+        var companyId = _currentUser.GetCompanyId();
+
         var existingClient = await _context.Clients
-            .Include(c => c.Users) 
+            .Include(c => c.Users)
             .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
 
         if (existingClient == null)
         {
             throw new NotFoundException(typeof(Client), request.Id);
         }
-        
-        if (currentUserCompanyId != existingClient.CompanyId)
+
+        if (companyId != existingClient.CompanyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to update this client.");
         }
-        
+
         existingClient.Name = request.Name;
         existingClient.Surname = request.Surname;
-        existingClient.Patronymic = request.Patronymic; 
+        existingClient.Patronymic = request.Patronymic;
         existingClient.DateOfBirth = request.DateOfBirth;
         existingClient.Address = request.Address;
         existingClient.Email = request.Email;
@@ -62,7 +63,7 @@ public class UpdateClientHandler : IRequestHandler<UpdateClientCommand, Unit>
             existingClient.Users.Clear();
             existingClient.Users.AddRange(newManagers);
         }
-        
+
         try
         {
             await _context.SaveChangesAsync(cancellationToken);
@@ -72,6 +73,10 @@ public class UpdateClientHandler : IRequestHandler<UpdateClientCommand, Unit>
             throw new SaveDatabaseException(typeof(Client), ex);
         }
 
-        return Unit.Value;
+        return new ResultBaseResponse
+        {
+            Success = true,
+            Message = "Successfully updated."
+        };
     }
 }

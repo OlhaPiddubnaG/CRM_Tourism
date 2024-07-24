@@ -34,7 +34,7 @@ public class ClientStatusHistoryController : ControllerBase
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ClientStatusHistoryResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken token)
+    public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken token)
     {
         var response = await _sender.Send(new GetByIdRequest<ClientStatusHistoryResponse>(id), token);
 
@@ -44,7 +44,7 @@ public class ClientStatusHistoryController : ControllerBase
     [HttpGet("client/{clientId:guid}")]
     [ProducesResponseType(typeof(List<ClientStatusHistoryResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAllByClientId(Guid clientId, CancellationToken token)
+    public async Task<IActionResult> GetAllByClientId([FromRoute] Guid clientId, CancellationToken token)
     {
         var response = await _sender.Send(new GetByIdReturnListRequest<ClientStatusHistoryResponse>(clientId), token);
 

@@ -1,35 +1,33 @@
-using System.Net;
+using CRM.Admin.Data;
 using CRM.Admin.Data.CountryDto;
 using CRM.Admin.HttpRequests;
 using MudBlazor;
-using Newtonsoft.Json;
 
 namespace CRM.Admin.Requests.CountryRequests;
 
 public class CountryRequest : ICountryRequest
 {
-    private readonly IHttpCrmApiRequests _httpCrmApiRequests;
+    private readonly IHttpRequests _httpRequests;
     private readonly ILogger<CountryRequest> _logger;
     private readonly ISnackbar _snackbar;
     private const string RequestUri = "api/Country";
 
-    public CountryRequest(IHttpCrmApiRequests httpCrmApiRequests, ILogger<CountryRequest> logger, ISnackbar snackbar)
+    public CountryRequest(IHttpRequests httpRequests, ILogger<CountryRequest> logger, ISnackbar snackbar)
     {
-        _httpCrmApiRequests = httpCrmApiRequests;
+        _httpRequests = httpRequests;
         _logger = logger;
         _snackbar = snackbar;
     }
 
-    public async Task<Guid> CreateAsync(CountryCreateDto countryCreateDto)
+    public async Task<Guid> CreateAsync(CountryCreateDto dto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPostRequestAsync(RequestUri, countryCreateDto);
+            var createdCountry = await _httpRequests.SendPostRequestAsync<CountryDto>(RequestUri, dto);
             _logger.LogInformation("Create country method executed successfully");
-
-            var createdClient = await response.Content.ReadFromJsonAsync<CountryDto>();
             _snackbar.Add("Країну успішно створено", Severity.Success);
-            return createdClient.Id;
+
+            return createdCountry.Id;
         }
         catch (Exception ex)
         {
@@ -43,13 +41,11 @@ public class CountryRequest : ICountryRequest
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendGetRequestAsync(RequestUri);
-            response.EnsureSuccessStatusCode();
-
-            var content = await response.Content.ReadAsStringAsync();
+            var result = await _httpRequests.SendGetRequestAsync<List<CountryDto>>(RequestUri);
             _logger.LogInformation("GetAllAsync method executed successfully");
             _snackbar.Add("Дані всіх країн успішно завантажено", Severity.Success);
-            return JsonConvert.DeserializeObject<List<CountryDto>>(content);
+
+            return result;
         }
         catch (Exception ex)
         {
@@ -59,17 +55,15 @@ public class CountryRequest : ICountryRequest
         }
     }
 
-    public async Task<T> GetByIdAsync<T>(Guid id) where T : ICountryDto
+    public async Task<CountryDto> GetByIdAsync(Guid id)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendGetRequestAsync($"{RequestUri}/{id}");
-            response.EnsureSuccessStatusCode();
-
-            var content = await response.Content.ReadAsStringAsync();
+            var result = await _httpRequests.SendGetRequestAsync<CountryDto>($"{RequestUri}/{id}");
             _logger.LogInformation($"GetByIdAsync method executed successfully for id: {id}");
             _snackbar.Add("Дані країни успішно завантажено", Severity.Success);
-            return JsonConvert.DeserializeObject<T>(content);
+
+            return result;
         }
         catch (Exception ex)
         {
@@ -83,18 +77,11 @@ public class CountryRequest : ICountryRequest
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendGetRequestAsync($"{RequestUri}/name/{name}");
-            if (response.StatusCode == HttpStatusCode.NotFound)
-            {
-                _snackbar.Add($"Країна з ім'ям {name} не знайдена", Severity.Warning);
-                return null;
-            }
-
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
+            var result = await _httpRequests.SendGetRequestAsync<CountryDto>($"{RequestUri}/name/{name}");
             _logger.LogInformation($"GetByNameAsync method executed successfully for name: {name}");
             _snackbar.Add("Дані країни успішно завантажено", Severity.Success);
-            return JsonConvert.DeserializeObject<CountryDto>(content);
+
+            return result;
         }
         catch (Exception ex)
         {
@@ -104,21 +91,29 @@ public class CountryRequest : ICountryRequest
         }
     }
 
-    public async Task<bool> UpdateAsync(CountryUpdateDto countryUpdateDto)
+    public async Task<bool> UpdateAsync(CountryUpdateDto dto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, countryUpdateDto);
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendPutRequestAsync<ResultModel>(RequestUri, dto);
 
-            _logger.LogInformation(
-                $"UpdateAsync method executed successfully for country with id: {countryUpdateDto.Id}");
-            _snackbar.Add("Країну успішно оновлено", Severity.Success);
-            return response.StatusCode == HttpStatusCode.NoContent;
+            if (result.Success)
+            {
+                _logger.LogInformation($"UpdateAsync method executed successfully for country with id: {dto.Id}");
+                _snackbar.Add("Країну успішно оновлено", Severity.Success);
+                return true;
+            }
+            else
+            {
+                _logger.LogWarning(
+                    $"UpdateAsync method failed for country with id: {dto.Id}. Message: {result.Message}");
+                _snackbar.Add($"Помилка при оновленні країни: {result.Message}", Severity.Error);
+                return false;
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error in UpdateAsync method for country with id: {countryUpdateDto.Id}");
+            _logger.LogError(ex, $"Error in UpdateAsync method for country with id: {dto.Id}");
             _snackbar.Add($"Помилка при оновленні країни: {ex.Message}", Severity.Error);
             throw;
         }
@@ -128,12 +123,20 @@ public class CountryRequest : ICountryRequest
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendDeleteRequestAsync($"{RequestUri}/{id}");
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendDeleteRequestAsync<ResultModel>($"{RequestUri}/{id}");
 
-            _logger.LogInformation($"DeleteAsync method executed successfully for id: {id}");
-            _snackbar.Add("Країну успішно видалено", Severity.Success);
-            return response.StatusCode == HttpStatusCode.NoContent;
+            if (result.Success)
+            {
+                _logger.LogInformation($"DeleteAsync method executed successfully for id: {id}");
+                _snackbar.Add("Країну успішно видалено", Severity.Success);
+                return true;
+            }
+            else
+            {
+                _logger.LogWarning($"DeleteAsync method failed for id: {id}. Message: {result.Message}");
+                _snackbar.Add($"Помилка при видаленні країни: {result.Message}", Severity.Error);
+                return false;
+            }
         }
         catch (Exception ex)
         {

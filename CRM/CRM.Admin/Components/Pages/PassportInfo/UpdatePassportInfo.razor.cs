@@ -32,7 +32,7 @@ public partial class UpdatePassportInfo
     protected override async Task OnInitializedAsync()
     {
         _id = Guid.Parse(ClientId);
-        _clientPrivateDataDto = await ClientPrivateDataRequest.GetByClientIdAsync<ClientPrivateDataDto>(_id);
+        _clientPrivateDataDto = await ClientPrivateDataRequest.GetByClientIdAsync(_id);
 
         _passportInfoDtos = await PassportInfoRequest.GetByClientPrivateDataIdAsync(_clientPrivateDataDto.Id);
         var internalPassport = _passportInfoDtos.FirstOrDefault(s => s.PassportType == PassportType.Internal);
@@ -40,7 +40,7 @@ public partial class UpdatePassportInfo
 
         if (internalPassport != null)
         {
-            _passportInternalDto = await PassportInfoRequest.GetByIdAsync<PassportInfoUpdateDto>(internalPassport.Id);
+            _passportInternalDto = await PassportInfoRequest.GetByIdAsync(internalPassport.Id);
             _passportInternalExpiryDate = _passportInternalDto.ExpiryDate.ToDateTime(TimeOnly.MinValue);
             _passportInternalIssueDate = _passportInternalDto.DateOfIssue.ToDateTime(TimeOnly.MinValue);
         }
@@ -52,7 +52,7 @@ public partial class UpdatePassportInfo
         if (internationalPassport != null)
         {
             _passportInternationalDto =
-                await PassportInfoRequest.GetByIdAsync<PassportInfoUpdateDto>(internationalPassport.Id);
+                await PassportInfoRequest.GetByIdAsync(internationalPassport.Id);
             _passportInternationalExpiryDate = _passportInternationalDto.ExpiryDate.ToDateTime(TimeOnly.MinValue);
             _passportInternationalIssueDate = _passportInternationalDto.DateOfIssue.ToDateTime(TimeOnly.MinValue);
         }

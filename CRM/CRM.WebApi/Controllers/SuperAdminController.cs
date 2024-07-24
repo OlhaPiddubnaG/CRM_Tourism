@@ -34,7 +34,7 @@ public class SuperAdminController : ControllerBase
     [Authorize(Policy = "Admin")]
     [ProducesResponseType(typeof(CreatedResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> CreateCompany(CreateCompanyCommand request, CancellationToken token)
+    public async Task<IActionResult> CreateCompany([FromBody] CreateCompanyCommand request, CancellationToken token)
     {
         var response = await _sender.Send(request, token);
 

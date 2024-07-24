@@ -33,14 +33,14 @@ public partial class ClientById
     private PassportInfoDto _passportInternalDto = new ();
     private PassportInfoDto _passportInternationalDto = new ();
     private ClientPrivateDataDto _clientPrivateDataDto = new ();
-    private ClientDto _clientDto = new (); 
+    private ClientUpdateDto _clientDto = new (); 
     private Guid _id;
    
     protected override async Task OnInitializedAsync()
     {
         _id = Guid.Parse(ClientId);
-        _clientDto = await ClientRequest.GetByIdAsync<ClientDto>(_id);
-        _clientPrivateDataDto = await ClientPrivateDataRequest.GetByClientIdAsync<ClientPrivateDataDto>(_id);
+        _clientDto = await ClientRequest.GetByIdAsync(_id);
+        _clientPrivateDataDto = await ClientPrivateDataRequest.GetByClientIdAsync(_id);
 
         _passportInfoDtos = await PassportInfoRequest.GetByClientPrivateDataIdAsync(_clientPrivateDataDto.Id);
 

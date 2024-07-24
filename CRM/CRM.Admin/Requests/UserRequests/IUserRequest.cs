@@ -5,8 +5,8 @@ namespace CRM.Admin.Requests.UserRequests;
 public interface IUserRequest
 {
     Task<List<UserDto>> GetAllAsync();
-    Task<T> GetByIdAsync<T>(Guid id) where T : IUserDto;
-    Task<Guid> CreateAsync(UserCreateDto userCreateDTO);
-    Task<bool> UpdateAsync(UserUpdateDto userUpdateDTO);
+    Task<UserUpdateDto> GetByIdAsync(Guid id);
+    Task<Guid> CreateAsync(UserCreateDto dto);
+    Task<bool> UpdateAsync(UserUpdateDto dto);
     Task<bool> DeleteAsync(Guid id);
 }

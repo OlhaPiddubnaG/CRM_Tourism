@@ -28,7 +28,11 @@ public class GetAllUsersHandler : IRequestHandler<GetAllRequest<UserResponse>, L
         CancellationToken cancellationToken)
     {
         var users = await GetUsersByRoleAsync(cancellationToken);
-
+        if (!users.Any())
+        {
+            return new List<UserResponse>();
+        }
+        
         var userResponses = _mapper.Map<List<UserResponse>>(users);
         return userResponses;
     }

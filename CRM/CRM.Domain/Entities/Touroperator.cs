@@ -2,9 +2,9 @@ using CRM.Domain.Entities.Base;
 
 namespace CRM.Domain.Entities;
 
-public class Touroperator : BaseEntity
+public class Touroperator : Auditable
 {
-    public Guid OrderId { get; set; } 
-    public Order? Order { get; set; } 
+    public Guid? CompanyId { get; set; }
+    public Company? Company { get; set; }
     public string Name { get; set; } = null!;
 }

@@ -1,32 +1,30 @@
-using System.Net;
+using CRM.Admin.Data;
 using CRM.Admin.Data.UserDto;
 using CRM.Admin.HttpRequests;
 using MudBlazor;
-using Newtonsoft.Json;
 
 namespace CRM.Admin.Requests.UserRequests;
 
 public class UserRequest : IUserRequest
 {
-    private readonly IHttpCrmApiRequests _httpCrmApiRequests;
+    private readonly IHttpRequests _httpRequests;
     private readonly ILogger<UserRequest> _logger;
     private readonly ISnackbar _snackbar;
     private const string RequestUri = "api/User";
 
-    public UserRequest(IHttpCrmApiRequests httpCrmApiRequests, ILogger<UserRequest> logger, ISnackbar snackbar)
+    public UserRequest(IHttpRequests httpRequests, ILogger<UserRequest> logger, ISnackbar snackbar)
     {
-        _httpCrmApiRequests = httpCrmApiRequests;
+        _httpRequests = httpRequests;
         _logger = logger;
         _snackbar = snackbar;
     }
 
-    public async Task<Guid> CreateAsync(UserCreateDto userCreateDto)
+    public async Task<Guid> CreateAsync(UserCreateDto dto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPostRequestAsync(RequestUri, userCreateDto);
+            var createdUser = await _httpRequests.SendPostRequestAsync<UserDto>(RequestUri, dto);
             _logger.LogInformation("CreateUser method executed successfully");
-            var createdUser = await response.Content.ReadFromJsonAsync<UserDto>();
             _snackbar.Add("Користувач успішно створений", Severity.Success);
             return createdUser.Id;
         }
@@ -42,12 +40,12 @@ public class UserRequest : IUserRequest
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendGetRequestAsync(RequestUri);
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendGetRequestAsync<List<UserDto>>(RequestUri);
 
-            var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("GetAllAsync method executed successfully");
-            return JsonConvert.DeserializeObject<List<UserDto>>(content);
+            _snackbar.Add("Дані всіх користувачів успішно завантажено", Severity.Success);
+
+            return result;
         }
         catch (Exception ex)
         {
@@ -57,16 +55,16 @@ public class UserRequest : IUserRequest
         }
     }
 
-    public async Task<T> GetByIdAsync<T>(Guid id) where T : IUserDto
+    public async Task<UserUpdateDto> GetByIdAsync(Guid id)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendGetRequestAsync($"{RequestUri}/{id}");
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendGetRequestAsync<UserUpdateDto>($"{RequestUri}/{id}");
 
-            var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation($"GetByIdAsync method executed successfully for id: {id}");
-            return JsonConvert.DeserializeObject<T>(content);
+            _snackbar.Add("Дані користувача успішно завантажено", Severity.Success);
+
+            return result;
         }
         catch (Exception ex)
         {
@@ -76,21 +74,29 @@ public class UserRequest : IUserRequest
         }
     }
 
-    public async Task<bool> UpdateAsync(UserUpdateDto userUpdateDto)
+    public async Task<bool> UpdateAsync(UserUpdateDto dto)
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendPutRequestAsync(RequestUri, userUpdateDto);
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendPutRequestAsync<ResultModel>(RequestUri, dto);
 
-            _logger.LogInformation($"UpdateAsync method executed successfully for user with id: {userUpdateDto.Id}");
-            _snackbar.Add("Користувач успішно оновлений", Severity.Success);
-            return response.StatusCode == HttpStatusCode.NoContent;
+            if (result.Success)
+            {
+                _logger.LogInformation($"UpdateAsync method executed successfully for user with id: {dto.Id}");
+                _snackbar.Add("Користувач успішно оновлений", Severity.Success);
+                return true;
+            }
+            else
+            {
+                _logger.LogWarning($"UpdateAsync method failed for user with id: {dto.Id}. Message: {result.Message}");
+                _snackbar.Add($"Помилка при оновленні користувача: {result.Message}", Severity.Error);
+                return false;
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error in UpdateAsync method for user with id: {userUpdateDto.Id}");
-            _snackbar.Add($"Помилка при оновленні користувача з id {userUpdateDto.Id}: {ex.Message}", Severity.Error);
+            _logger.LogError(ex, $"Error in UpdateAsync method for user with id: {dto.Id}");
+            _snackbar.Add($"Помилка при оновленні користувача з id {dto.Id}: {ex.Message}", Severity.Error);
             throw;
         }
     }
@@ -99,12 +105,20 @@ public class UserRequest : IUserRequest
     {
         try
         {
-            var response = await _httpCrmApiRequests.SendDeleteRequestAsync($"{RequestUri}/{id}");
-            response.EnsureSuccessStatusCode();
+            var result = await _httpRequests.SendDeleteRequestAsync<ResultModel>($"{RequestUri}/{id}");
 
-            _logger.LogInformation($"DeleteAsync method executed successfully for id: {id}");
-            _snackbar.Add("Користувач успішно видалений", Severity.Success);
-            return response.StatusCode == HttpStatusCode.NoContent;
+            if (result.Success)
+            {
+                _logger.LogInformation($"DeleteAsync method executed successfully for id: {id}");
+                _snackbar.Add("Користувач успішно видалений", Severity.Success);
+                return true;
+            }
+            else
+            {
+                _logger.LogWarning($"DeleteAsync method failed for id: {id}. Message: {result.Message}");
+                _snackbar.Add($"Помилка при видаленні користувача з id {id}: {result.Message}", Severity.Error);
+                return false;
+            }
         }
         catch (Exception ex)
         {
