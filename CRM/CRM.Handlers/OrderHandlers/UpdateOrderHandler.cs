@@ -33,9 +33,9 @@ public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, ResultBase
             throw new NotFoundException(typeof(Order), request.Id);
         }
 
-        var currentUserCompanyId = _currentUser.GetCompanyId();
+        var companyId = _currentUser.GetCompanyId();
 
-        if (existingOrder.CompanyId != currentUserCompanyId)
+        if (existingOrder.CompanyId != companyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to update order.");
         }

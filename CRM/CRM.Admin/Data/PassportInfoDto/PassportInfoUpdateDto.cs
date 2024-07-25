@@ -2,7 +2,7 @@ using CRM.Domain.Enums;
 
 namespace CRM.Admin.Data.PassportInfoDto;
 
-public class PassportInfoUpdateDto : IPassportInfoDto
+public class PassportInfoUpdateDto
 {
     public Guid Id { get; set; }
     public Guid ClientPrivateDataId { get; set; }

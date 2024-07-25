@@ -1,6 +1,6 @@
 namespace CRM.Admin.Data.CompanyDto;
 
-public class CompanyUpdateDto : ICompanyDto
+public class CompanyUpdateDto
 {
     public Guid Id { get; set; }
     public string Name { get; set; } 

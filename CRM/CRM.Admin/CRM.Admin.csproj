@@ -17,6 +17,11 @@
     <ItemGroup>
       <Compile Remove="Components\Pages\Login.razor.cs" />
       <Compile Remove="Extensions\JSRuntimeExtensions.cs" />
+      <Compile Remove="Data\ClientPrivateDataDto\IClientPrivateDataDto.cs" />
+      <Compile Remove="Data\ClientStatusHistoryDto\IClientStatusHistoryDto.cs" />
+      <Compile Remove="Data\CountryDto\ICountryDto.cs" />
+      <Compile Remove="Data\PassportInfoDto\IPassportInfoDto.cs" />
+      <Compile Remove="Data\TouroperatorDto\ITouroperatorDto.cs" />
     </ItemGroup>
 
     <ItemGroup>

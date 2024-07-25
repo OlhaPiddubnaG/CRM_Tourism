@@ -17,6 +17,9 @@ public static class AutoMapperProfiles
             typeof(PassportInfoProfile).Assembly,
             typeof(OrderProfile).Assembly,
             typeof(TouroperatorProfile).Assembly,
+            typeof(OrderStatusHistoryProfile).Assembly,
+            typeof(NumberOfPeopleProfile).Assembly,
+            typeof(StaysProfile).Assembly,
         };
     }
 }
