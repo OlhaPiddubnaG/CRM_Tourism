@@ -46,7 +46,18 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreatedRes
 
         order.CreatedAt = DateTime.UtcNow;
         order.CreatedUserId = _currentUser.GetUserId();
+        order.OrderStatus = request.LatestStatus;
 
+        var orderStatusHistory = new OrderStatusHistory
+        {
+            OrderId = order.Id,
+            DateTime = DateTime.UtcNow,
+            OrderStatus = request.LatestStatus,
+            CreatedAt = DateTime.UtcNow,
+            CreatedUserId = _currentUser.GetUserId()
+        };
+
+        order.OrderStatusHistory.Add(orderStatusHistory);
         _context.Orders.Add(order);
 
         try

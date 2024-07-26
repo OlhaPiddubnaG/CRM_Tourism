@@ -26,6 +26,7 @@ public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, ResultBase
             .Include(o => o.NumberOfPeople)
             .Include(o => o.CountryFrom)
             .Include(o => o.CountryTo)
+            .Include(o => o.OrderStatusHistory)
             .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
 
         if (existingOrder == null)
@@ -57,6 +58,20 @@ public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, ResultBase
         existingOrder.Comment = request.Comment;
         existingOrder.UpdatedAt = DateTime.UtcNow;
         existingOrder.UpdatedUserId = _currentUser.GetUserId();
+
+        if (existingOrder.OrderStatus != request.LatestStatus)
+        {
+            existingOrder.OrderStatus = request.LatestStatus;
+            var orderStatusHistory = new OrderStatusHistory
+            {
+                OrderId = existingOrder.Id,
+                DateTime = DateTime.UtcNow,
+                OrderStatus = request.LatestStatus,
+                CreatedAt = DateTime.UtcNow,
+                CreatedUserId = _currentUser.GetUserId()
+            };
+            existingOrder.OrderStatusHistory.Add(orderStatusHistory);
+        }
 
         try
         {

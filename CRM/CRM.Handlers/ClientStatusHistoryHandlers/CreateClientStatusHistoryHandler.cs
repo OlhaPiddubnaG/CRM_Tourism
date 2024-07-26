@@ -35,8 +35,8 @@ public class CreateClientStatusHistoryHandler : IRequestHandler<CreateClientStat
 
         if (client == null)
         {
-            throw new UnauthorizedAccessException(
-                "User is not authorized to create status history for a client from a different company.");
+            throw new InvalidOperationException(
+                "Client not found or user is not authorized to create status history for a client from a different company.");
         }
 
         client.CurrentStatus = request.ClientStatus;

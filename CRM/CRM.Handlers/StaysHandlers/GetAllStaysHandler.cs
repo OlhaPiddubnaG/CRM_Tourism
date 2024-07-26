@@ -27,8 +27,8 @@ public class GetAllStaysHandler : IRequestHandler<GetAllRequest<StaysResponse>,
     {
         var companyId = _currentUser.GetCompanyId();
         var stays = await _context.Stays
-            .Include(s => s.Order)
             .Where(s => s.Order.CompanyId == companyId &&
+                        !s.Order.IsDeleted  &&
                         !s.IsDeleted)
             .ToListAsync(cancellationToken);
 

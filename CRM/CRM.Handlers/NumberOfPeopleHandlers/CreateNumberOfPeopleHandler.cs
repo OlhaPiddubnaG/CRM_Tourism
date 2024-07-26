@@ -34,8 +34,8 @@ public class CreateNumberOfPeopleHandler : IRequestHandler<CreateNumberOfPeopleC
 
         if (order == null)
         {
-            throw new UnauthorizedAccessException(
-                "User is not authorized to create numberOfPeople for a order from a different company.");
+            throw new InvalidOperationException(
+                "Order not found or user is not authorized to create numberOfPeople for an order from a different company.");
         }
 
         var numberOfPeople = _mapper.Map<NumberOfPeople>(request);

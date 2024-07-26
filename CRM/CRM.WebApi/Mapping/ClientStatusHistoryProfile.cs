@@ -10,7 +10,6 @@ public class ClientStatusHistoryProfile : Profile
     public ClientStatusHistoryProfile()
     {
         CreateMap<CreateClientStatusHistoryCommand, ClientStatusHistory>();
-        CreateMap<UpdateClientStatusHistoryCommand, ClientStatusHistory>();
         CreateMap<ClientStatusHistory, ClientStatusHistoryResponse>();
     }
 }

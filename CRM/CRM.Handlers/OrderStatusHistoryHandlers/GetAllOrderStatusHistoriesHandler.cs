@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CRM.Handlers.OrderStatusHistoryHandlers;
 
-public class GetAllOrderStatusHistoriesHandler : IRequestHandler<GetAllRequest<OrderStatusHistoryResponse>,
+public class GetAllOrderStatusHistoriesHandler : IRequestHandler<GetByIdReturnListRequest<OrderStatusHistoryResponse>,
     List<OrderStatusHistoryResponse>>
 {
     private readonly AppDbContext _context;
@@ -22,14 +22,17 @@ public class GetAllOrderStatusHistoriesHandler : IRequestHandler<GetAllRequest<O
         _currentUser = currentUser;
     }
 
-    public async Task<List<OrderStatusHistoryResponse>> Handle(GetAllRequest<OrderStatusHistoryResponse> request,
+    public async Task<List<OrderStatusHistoryResponse>> Handle(
+        GetByIdReturnListRequest<OrderStatusHistoryResponse> request,
         CancellationToken cancellationToken)
     {
         var companyId = _currentUser.GetCompanyId();
+
         var orderStatusHistories = await _context.OrderStatusHistory
             .Include(o => o.Order)
-            .Where(o => o.Order.CompanyId == companyId &&
-                        !o.IsDeleted)
+            .Where(o => o.OrderId == request.Id &&
+                        o.Order.CompanyId == companyId &&
+                        !o.Order.IsDeleted)
             .ToListAsync(cancellationToken);
 
         if (!orderStatusHistories.Any())

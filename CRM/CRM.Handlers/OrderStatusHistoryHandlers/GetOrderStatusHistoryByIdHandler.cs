@@ -31,7 +31,7 @@ public class GetOrderStatusHistoryByIdHandler : IRequestHandler<GetByIdRequest<O
         var orderStatusHistory = await _context.OrderStatusHistory
             .FirstOrDefaultAsync(o => o.Id == request.Id &&
                                       o.Order.CompanyId == companyId &&
-                                      !o.IsDeleted);
+                                      !o.Order.IsDeleted);
 
         if (orderStatusHistory == null)
         {

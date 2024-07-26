@@ -27,8 +27,8 @@ public class GetAllNumberOfPeopleHandler : IRequestHandler<GetAllRequest<NumberO
     {
         var companyId = _currentUser.GetCompanyId();
         var numberOfPeople = await _context.NumberOfPeople
-            .Include(o => o.Order)
             .Where(o => o.Order.CompanyId == companyId &&
+                        !o.Order.IsDeleted  &&
                         !o.IsDeleted)
             .ToListAsync(cancellationToken);
 

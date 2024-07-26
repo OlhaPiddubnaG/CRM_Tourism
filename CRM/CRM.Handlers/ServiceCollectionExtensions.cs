@@ -7,7 +7,6 @@ using CRM.Domain.Commands.Company;
 using CRM.Domain.Commands.Country;
 using CRM.Domain.Commands.NumberOfPeople;
 using CRM.Domain.Commands.Order;
-using CRM.Domain.Commands.OrderStatusHistory;
 using CRM.Domain.Commands.PassportInfo;
 using CRM.Domain.Commands.Stays;
 using CRM.Domain.Commands.Touroperator;
@@ -130,12 +129,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<GetAllRequest<TouroperatorResponse>, List<TouroperatorResponse>>,
                 GetAllTouroperatorsHandler>();
         
-        services.AddScoped<IRequestHandler<CreateOrderStatusHistoryCommand, CreatedResponse>, CreateOrderStatusHistoryHandler>();
-        services.AddScoped<IRequestHandler<UpdateOrderStatusHistoryCommand, ResultBaseResponse>, UpdateOrderStatusHistoryHandler>();
-        services.AddScoped<IRequestHandler<DeleteCommand<OrderStatusHistory>, ResultBaseResponse>, DeleteOrderStatusHistoryHandler>();
         services.AddScoped<IRequestHandler<GetByIdRequest<OrderStatusHistoryResponse>, OrderStatusHistoryResponse>,
                 GetOrderStatusHistoryByIdHandler>();
-        services.AddScoped<IRequestHandler<GetAllRequest<OrderStatusHistoryResponse>, List<OrderStatusHistoryResponse>>,
+        services.AddScoped<IRequestHandler<GetByIdReturnListRequest<OrderStatusHistoryResponse>, List<OrderStatusHistoryResponse>>,
                 GetAllOrderStatusHistoriesHandler>();
         
         services.AddScoped<IRequestHandler<CreateNumberOfPeopleCommand, CreatedResponse>, CreateNumberOfPeopleHandler>();

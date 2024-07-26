@@ -31,6 +31,7 @@ public class GetNumberOfPeopleByIdHandler : IRequestHandler<GetByIdRequest<Numbe
         var numberOfPeople = await _context.NumberOfPeople
             .FirstOrDefaultAsync(o => o.Id == request.Id &&
                                       o.Order.CompanyId == companyId &&
+                                      !o.Order.IsDeleted  &&
                                       !o.IsDeleted);
 
         if (numberOfPeople == null)

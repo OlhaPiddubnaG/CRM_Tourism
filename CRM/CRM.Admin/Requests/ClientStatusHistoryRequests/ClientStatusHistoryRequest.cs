@@ -38,11 +38,11 @@ public class ClientStatusHistoryRequest : IClientStatusHistoryRequest
         }
     }
 
-    public async Task<List<ClientStatusHistoryDto>> GetAllAsync()
+    public async Task<List<ClientStatusHistoryDto>> GetAllAsync(Guid clientId)
     {
         try
         {
-            var result = await _httpRequests.SendGetRequestAsync<List<ClientStatusHistoryDto>>(RequestUri);
+            var result = await _httpRequests.SendGetRequestAsync<List<ClientStatusHistoryDto>>($"{RequestUri}/client/{clientId}");
 
             _logger.LogInformation("GetAllAsync method executed successfully");
             _snackbar.Add("Дані всіх історій статусів клієнтів успішно завантажено", Severity.Success);
