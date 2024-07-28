@@ -19,16 +19,6 @@ public class OrderStatusHistoryController : ControllerBase
         _sender = sender;
     }
 
-    [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(OrderStatusHistoryResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken token)
-    {
-        var response = await _sender.Send(new GetByIdRequest<OrderStatusHistoryResponse>(id), token);
-
-        return Ok(response);
-    }
-
     [HttpGet("order/{orderId:guid}")]
     [ProducesResponseType(typeof(List<OrderStatusHistoryResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]

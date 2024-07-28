@@ -63,6 +63,20 @@ public class UpdateClientHandler : IRequestHandler<UpdateClientCommand, ResultBa
             existingClient.Users.Clear();
             existingClient.Users.AddRange(newManagers);
         }
+        
+        if (existingClient.CurrentStatus != request.LatestStatus)
+        {
+            existingClient.CurrentStatus = request.LatestStatus;
+            var clientStatusHistory = new ClientStatusHistory
+            {
+                ClientId = existingClient.Id,
+                DateTime = DateTime.UtcNow,
+                ClientStatus = request.LatestStatus,
+                CreatedAt = DateTime.UtcNow,
+                CreatedUserId = _currentUser.GetUserId()
+            };
+            existingClient.ClientStatusHistory.Add(clientStatusHistory);
+        }
 
         try
         {

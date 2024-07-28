@@ -32,15 +32,16 @@ public class GetAllClientsStatusHistoryHandler : IRequestHandler<GetByIdReturnLi
             .Include(csh => csh.Client)
             .Where(csh => csh.ClientId == clientId &&
                           csh.Client.CompanyId == companyId)
+            .OrderByDescending(csh => csh.DateTime)
             .ToListAsync(cancellationToken);
-        
+
         if (!clientsStatusHistory.Any())
         {
             return new List<ClientStatusHistoryResponse>();
         }
 
         var clientStatusHistoryResponses = _mapper.Map<List<ClientStatusHistoryResponse>>(clientsStatusHistory);
-        
+
         return clientStatusHistoryResponses;
     }
 }

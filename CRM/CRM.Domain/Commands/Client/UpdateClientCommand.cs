@@ -20,4 +20,5 @@ public class UpdateClientCommand : IRequest<ResultBaseResponse>
     public string? Comment { get; set; }
     public SourceOfEngagement SourceOfEngagement { get; set; }
     public List<Guid> ManagerIds { get; set; } = new();
+    public ClientStatus LatestStatus { get; set; }
 }

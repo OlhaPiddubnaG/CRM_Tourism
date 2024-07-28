@@ -4,8 +4,8 @@
         <MudText Typo="Typo.h6">Змінити статус для </MudText>
     </TitleContent>
     <DialogContent>
-        <MudText Typo="Typo.subtitle1">@ClientDto.Surname @ClientDto.Name</MudText>
-        <MudSelect T="ClientStatus" @bind-Value="ClientStatusHistoryCreateDto.ClientStatus" Label="Статус">
+        <MudText Typo="Typo.subtitle1">@ClientUpdateDto.Surname @ClientUpdateDto.Name</MudText>
+        <MudSelect T="ClientStatus" @bind-Value="ClientUpdateDto.LatestStatus" Label="Статус">
             @foreach (ClientStatus clientStatus in Enum.GetValues(typeof(ClientStatus)))
             {
                 <MudSelectItem Value="clientStatus">@clientStatus.ToString()</MudSelectItem>

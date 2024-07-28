@@ -18,5 +18,5 @@ public class ClientUpdateDto
     public string Comment { get; set; } = "";
     public SourceOfEngagement SourceOfEngagement { get; set; } 
     public IEnumerable<Guid> ManagerIds { get; set; } = new List<Guid>();
-    public ClientStatus? LatestStatus { get; set; }
+    public ClientStatus LatestStatus { get; set; }
 }

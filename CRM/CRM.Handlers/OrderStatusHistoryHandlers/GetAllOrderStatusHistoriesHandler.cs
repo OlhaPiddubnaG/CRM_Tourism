@@ -33,6 +33,7 @@ public class GetAllOrderStatusHistoriesHandler : IRequestHandler<GetByIdReturnLi
             .Where(o => o.OrderId == request.Id &&
                         o.Order.CompanyId == companyId &&
                         !o.Order.IsDeleted)
+            .OrderByDescending(o => o.DateTime)
             .ToListAsync(cancellationToken);
 
         if (!orderStatusHistories.Any())

@@ -2,7 +2,6 @@ using CRM.Domain.Commands;
 using CRM.Domain.Commands.Authentication;
 using CRM.Domain.Commands.Client;
 using CRM.Domain.Commands.ClientPrivateData;
-using CRM.Domain.Commands.ClientStatusHistory;
 using CRM.Domain.Commands.Company;
 using CRM.Domain.Commands.Country;
 using CRM.Domain.Commands.NumberOfPeople;
@@ -90,10 +89,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<GetByIdRequest<ClientPrivateDataResponse>, ClientPrivateDataResponse>,
                 GetClientPrivateDataByClientIdHandler>();
         
-        services.AddScoped<IRequestHandler<CreateClientStatusHistoryCommand, CreatedResponse>,
-                CreateClientStatusHistoryHandler>();
-        services.AddScoped<IRequestHandler<GetByIdRequest<ClientStatusHistoryResponse>, ClientStatusHistoryResponse>,
-                GetClientStatusHistoryByIdHandler>();
         services.AddScoped<IRequestHandler<GetByIdReturnListRequest<ClientStatusHistoryResponse>,
                 List<ClientStatusHistoryResponse>>, GetAllClientsStatusHistoryHandler>();
         
@@ -129,8 +124,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<GetAllRequest<TouroperatorResponse>, List<TouroperatorResponse>>,
                 GetAllTouroperatorsHandler>();
         
-        services.AddScoped<IRequestHandler<GetByIdRequest<OrderStatusHistoryResponse>, OrderStatusHistoryResponse>,
-                GetOrderStatusHistoryByIdHandler>();
         services.AddScoped<IRequestHandler<GetByIdReturnListRequest<OrderStatusHistoryResponse>, List<OrderStatusHistoryResponse>>,
                 GetAllOrderStatusHistoriesHandler>();
         

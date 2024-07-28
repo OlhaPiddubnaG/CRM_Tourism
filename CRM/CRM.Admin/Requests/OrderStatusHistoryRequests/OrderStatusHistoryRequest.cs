@@ -37,24 +37,4 @@ public class OrderStatusHistoryRequest : IOrderStatusHistoryRequest
             throw;
         }
     }
-
-    public async Task<OrderStatusHistoryUpdateDto> GetByIdAsync(Guid id)
-    {
-        try
-        {
-            var result = await _httpRequests.SendGetRequestAsync<OrderStatusHistoryUpdateDto>($"{RequestUri}/{id}");
-
-            _logger.LogInformation($"GetByIdAsync method executed successfully for id: {id}");
-            _snackbar.Add("Дані історії статусу замовлення успішно завантажено", Severity.Success);
-
-            return result;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error in GetByIdAsync method for id: {id}");
-            _snackbar.Add($"Помилка при завантаженні історії статусу замовлення через id: {id}, {ex.Message}",
-                Severity.Error);
-            throw;
-        }
-    }
 }
