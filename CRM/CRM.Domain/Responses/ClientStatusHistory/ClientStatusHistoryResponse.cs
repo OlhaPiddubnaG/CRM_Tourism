@@ -8,5 +8,4 @@ public class ClientStatusHistoryResponse
     public Guid ClientId { get; set; } 
     public DateTime DateTime { get; set; } 
     public ClientStatus ClientStatus { get; set; } 
-    public bool IsDeleted { get; set; } 
 }

@@ -36,8 +36,8 @@ public class CreateClientPrivateDataHandler : IRequestHandler<CreateClientPrivat
 
         if (client == null)
         {
-            throw new UnauthorizedAccessException(
-                "User is not authorized to create private data for a client from a different company.");
+            throw new InvalidOperationException(
+                "Client not found or user is not authorized to create private data for a client from a different company.");
         }
 
         var clientPrivateData = _mapper.Map<ClientPrivateData>(request);

@@ -4,7 +4,5 @@ namespace CRM.Admin.Requests.ClientStatusHistoryRequests;
 
 public interface IClientStatusHistoryRequest
 {
-    Task<Guid> CreateAsync(ClientStatusHistoryCreateDto dto);
-    Task<List<ClientStatusHistoryDto>> GetAllAsync();
-    Task<ClientStatusHistoryDto> GetByIdAsync(Guid id);
+    Task<List<ClientStatusHistoryDto>> GetAllAsync(Guid clientId);
 }

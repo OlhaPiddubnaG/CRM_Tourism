@@ -2,7 +2,7 @@ using CRM.Domain.Enums;
 
 namespace CRM.Admin.Data.ClientDto;
 
-public class ClientUpdateDto : IClientDto
+public class ClientUpdateDto
 {
     public Guid Id { get; set; } 
     public Guid CompanyId { get; set; } 
@@ -18,5 +18,5 @@ public class ClientUpdateDto : IClientDto
     public string Comment { get; set; } = "";
     public SourceOfEngagement SourceOfEngagement { get; set; } 
     public IEnumerable<Guid> ManagerIds { get; set; } = new List<Guid>();
-    public ClientStatus? LatestStatus { get; set; }
+    public ClientStatus LatestStatus { get; set; }
 }

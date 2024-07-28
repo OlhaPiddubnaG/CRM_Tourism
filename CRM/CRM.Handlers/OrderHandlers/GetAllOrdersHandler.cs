@@ -29,6 +29,7 @@ public class GetAllOrdersHandler : IRequestHandler<GetAllRequest<OrderResponse>,
             .Include(o => o.NumberOfPeople)
             .Include(o => o.CountryFrom)
             .Include(o => o.CountryTo)
+            .Include(c => c.OrderStatusHistory)
             .Where(o => o.CompanyId == companyId &&
                         !o.IsDeleted)
             .ToListAsync(cancellationToken);
@@ -37,8 +38,17 @@ public class GetAllOrdersHandler : IRequestHandler<GetAllRequest<OrderResponse>,
         {
             return new List<OrderResponse>();
         }
-        
+
         var orderResponses = _mapper.Map<List<OrderResponse>>(orders);
+
+        foreach (var orderResponse in orderResponses)
+        {
+            var order = orders.FirstOrDefault(c => c.Id == orderResponse.Id);
+            if (order != null)
+            {
+                orderResponse.LatestStatus = order.OrderStatus;
+            }
+        }
 
         return orderResponses;
     }

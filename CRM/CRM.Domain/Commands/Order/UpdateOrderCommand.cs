@@ -1,3 +1,4 @@
+using CRM.Domain.Enums;
 using CRM.Domain.Responses;
 using MediatR;
 
@@ -17,4 +18,5 @@ public class UpdateOrderCommand : IRequest<ResultBaseResponse>
     public int NumberOfNights { get; set; }
     public decimal Amount { get; set; }
     public string Comment { get; set; }
+    public OrderStatus LatestStatus { get; set; } 
 }

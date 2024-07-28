@@ -5,6 +5,7 @@ using CRM.Admin.Requests.ClientStatusHistoryRequests;
 using CRM.Admin.Requests.CompanyRequests;
 using CRM.Admin.Requests.CountryRequests;
 using CRM.Admin.Requests.OrderRequests;
+using CRM.Admin.Requests.OrderStatusHistoryRequests;
 using CRM.Admin.Requests.PassportInfoRequests;
 using CRM.Admin.Requests.SuperAdminRequests;
 using CRM.Admin.Requests.TouroperatorRequests;
@@ -27,6 +28,7 @@ public static class ServiceExtensions
         services.AddTransient<IOrderRequest, OrderRequest>();
         services.AddTransient<ITouroperatorRequest, TouroperatorRequest>();
         services.AddTransient<ICountryRequest, CountryRequest>();
+        services.AddTransient<IOrderStatusHistoryRequest, OrderStatusHistoryRequest>();
         
         return services;
     }

@@ -1,6 +1,4 @@
-using CRM.Domain.Commands.ClientStatusHistory;
 using CRM.Domain.Requests;
-using CRM.Domain.Responses;
 using CRM.Domain.Responses.ClientStatusHistory;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -19,26 +17,6 @@ public class ClientStatusHistoryController : ControllerBase
     public ClientStatusHistoryController(ISender sender)
     {
         _sender = sender;
-    }
-
-    [HttpPost]
-    [ProducesResponseType(typeof(CreatedResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Create([FromBody] CreateClientStatusHistoryCommand request, CancellationToken token)
-    {
-        var response = await _sender.Send(request, token);
-
-        return Ok(response);
-    }
-
-    [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(ClientStatusHistoryResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken token)
-    {
-        var response = await _sender.Send(new GetByIdRequest<ClientStatusHistoryResponse>(id), token);
-
-        return Ok(response);
     }
 
     [HttpGet("client/{clientId:guid}")]

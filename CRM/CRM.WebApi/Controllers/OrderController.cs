@@ -44,7 +44,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(OrderResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(CreatedResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Create([FromBody] CreateOrderCommand request, CancellationToken token)
     {

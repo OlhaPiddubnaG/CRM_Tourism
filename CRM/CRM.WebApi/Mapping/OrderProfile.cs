@@ -13,6 +13,10 @@ public class OrderProfile : Profile
             .ForMember(dest => dest.CountryFrom, opt => opt.Ignore())
             .ForMember(dest => dest.CountryTo, opt => opt.Ignore());
         CreateMap<UpdateOrderCommand, Order>();
-        CreateMap<Order, OrderResponse>();
+        CreateMap<Order, OrderResponse>()
+            .ForMember(dest => dest.LatestStatus,
+                opt => opt.MapFrom(src =>
+                    src.OrderStatusHistory.OrderByDescending(h => h.OrderStatus).FirstOrDefault().OrderStatus
+                        .ToString()));
     }
 }

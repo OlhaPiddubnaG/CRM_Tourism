@@ -1,6 +1,6 @@
 namespace CRM.Admin.Data.TouroperatorDto;
 
-public class TouroperatorDto : ITouroperatorDto
+public class TouroperatorDto
 {
     public Guid Id { get; set; }
     public Guid? CompanyId { get; set; }

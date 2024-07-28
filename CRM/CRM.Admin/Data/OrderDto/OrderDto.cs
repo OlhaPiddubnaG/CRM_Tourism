@@ -1,6 +1,6 @@
 namespace CRM.Admin.Data.OrderDto;
 
-public class OrderDto : IOrderDto
+public class OrderDto
 {
     public Guid Id { get; set; }
     public Guid CompanyId { get; set; }

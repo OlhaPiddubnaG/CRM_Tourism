@@ -365,6 +365,9 @@ namespace CRM.DataAccess.Migrations
                     b.Property<int>("NumberOfNights")
                         .HasColumnType("integer");
 
+                    b.Property<int>("OrderStatus")
+                        .HasColumnType("integer");
+
                     b.Property<Guid?>("TouroperatorId")
                         .HasColumnType("uuid");
 

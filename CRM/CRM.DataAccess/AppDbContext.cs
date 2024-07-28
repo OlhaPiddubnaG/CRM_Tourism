@@ -22,7 +22,9 @@ public class AppDbContext : DbContext
     
     public  DbSet<Meals> Meals { get; set; }
     
-    public  DbSet<NumberOfPeople> NumberOfPeople { get; set; }
+    public  DbSet<NumberOfPeople> NumberOfPeople { get; set; }  
+    
+    public  DbSet<Stays> Stays { get; set; }
     
     public  DbSet<Order> Orders { get; set; }
     

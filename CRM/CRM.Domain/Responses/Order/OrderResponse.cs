@@ -1,3 +1,5 @@
+using CRM.Domain.Enums;
+
 namespace CRM.Domain.Responses.Order;
 
 public class OrderResponse
@@ -15,4 +17,5 @@ public class OrderResponse
     public decimal Amount { get; set; }
     public string Comment { get; set; }
     public bool IsDeleted { get; set; } 
+    public OrderStatus? LatestStatus { get; set; }
 }

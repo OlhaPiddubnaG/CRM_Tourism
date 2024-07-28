@@ -31,6 +31,7 @@ public class GetOrderByIdHandler : IRequestHandler<GetByIdRequest<OrderResponse>
             .Include(o => o.NumberOfPeople)
             .Include(o => o.CountryFrom)
             .Include(o => o.CountryTo)
+            .Include(c => c.OrderStatusHistory)
             .FirstOrDefaultAsync(o => o.Id == request.Id &&
                                       o.CompanyId == companyId &&
                                       !o.IsDeleted);
