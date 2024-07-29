@@ -20,6 +20,8 @@ public static class AutoMapperProfiles
             typeof(OrderStatusHistoryProfile).Assembly,
             typeof(NumberOfPeopleProfile).Assembly,
             typeof(StaysProfile).Assembly,
+            typeof(MealsProfile).Assembly,
+            typeof(PaymentProfile).Assembly,
         };
     }
 }
