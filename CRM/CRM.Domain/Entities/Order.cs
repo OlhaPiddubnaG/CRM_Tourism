@@ -1,4 +1,5 @@
 using CRM.Domain.Entities.Base;
+using CRM.Domain.Enums;
 
 namespace CRM.Domain.Entities;
 
@@ -23,4 +24,5 @@ public class Order : Auditable
     public List<Payment> Payments { get; set; } = new(); 
     public List<Stays> Stays { get; set; } = new(); 
     public List<NumberOfPeople> NumberOfPeople { get; set; } = new(); 
+    public OrderStatus OrderStatus { get; set; }
 }

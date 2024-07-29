@@ -4,9 +4,11 @@ using CRM.Domain.Commands.Client;
 using CRM.Domain.Commands.ClientPrivateData;
 using CRM.Domain.Commands.Company;
 using CRM.Domain.Commands.Country;
+using CRM.Domain.Commands.Meals;
 using CRM.Domain.Commands.NumberOfPeople;
 using CRM.Domain.Commands.Order;
 using CRM.Domain.Commands.PassportInfo;
+using CRM.Domain.Commands.Payment;
 using CRM.Domain.Commands.Stays;
 using CRM.Domain.Commands.Touroperator;
 using CRM.Domain.Commands.User;
@@ -18,10 +20,12 @@ using CRM.Domain.Responses.Client;
 using CRM.Domain.Responses.ClientPrivateData;
 using CRM.Domain.Responses.ClientStatusHistory;
 using CRM.Domain.Responses.Company;
+using CRM.Domain.Responses.Meals;
 using CRM.Domain.Responses.NumberOfPeople;
 using CRM.Domain.Responses.Order;
 using CRM.Domain.Responses.OrderStatusHistory;
 using CRM.Domain.Responses.PassportInfo;
+using CRM.Domain.Responses.Payment;
 using CRM.Domain.Responses.Stays;
 using CRM.Domain.Responses.Touroperator;
 using CRM.Domain.Responses.User;
@@ -32,10 +36,12 @@ using CRM.Handlers.ClientPrivateDataHandlers;
 using CRM.Handlers.ClientStatusHistoryHandlers;
 using CRM.Handlers.CompanyHandlers;
 using CRM.Handlers.CountryHandlers;
+using CRM.Handlers.MealsHandlers;
 using CRM.Handlers.NumberOfPeopleHandlers;
 using CRM.Handlers.OrderHandlers;
 using CRM.Handlers.OrderStatusHistoryHandlers;
 using CRM.Handlers.PassportInfoHandlers;
+using CRM.Handlers.PaymentHandlers;
 using CRM.Handlers.StaysHandlers;
 using CRM.Handlers.TouroperatorHandlers;
 using CRM.Handlers.UserHandlers;
@@ -142,6 +148,22 @@ public static class ServiceCollectionExtensions
                 GetStaysByIdHandler>();
         services.AddScoped<IRequestHandler<GetAllRequest<StaysResponse>, List<StaysResponse>>,
                 GetAllStaysHandler>();
+        
+        services.AddScoped<IRequestHandler<CreateMealsCommand, CreatedResponse>, CreateMealsHandler>();
+        services.AddScoped<IRequestHandler<UpdateMealsCommand, ResultBaseResponse>, UpdateMealsHandler>();
+        services.AddScoped<IRequestHandler<DeleteCommand<Meals>, ResultBaseResponse>, DeleteMealsHandler>();
+        services.AddScoped<IRequestHandler<GetByIdRequest<MealsResponse>, MealsResponse>,
+                GetMealsByIdHandler>();
+        services.AddScoped<IRequestHandler<GetAllRequest<MealsResponse>, List<MealsResponse>>,
+                GetAllMealsHandler>();
+        
+        services.AddScoped<IRequestHandler<CreatePaymentCommand, CreatedResponse>, CreatePaymentHandler>();
+        services.AddScoped<IRequestHandler<UpdatePaymentCommand, ResultBaseResponse>, UpdatePaymentHandler>();
+        services.AddScoped<IRequestHandler<DeleteCommand<Payment>, ResultBaseResponse>, DeletePaymentHandler>();
+        services.AddScoped<IRequestHandler<GetByIdRequest<PaymentResponse>, PaymentResponse>,
+                GetPaymentByIdHandler>();
+        services.AddScoped<IRequestHandler<GetAllRequest<PaymentResponse>, List<PaymentResponse>>,
+                GetAllPaymentsHandler>();
 
         return services;
     }
