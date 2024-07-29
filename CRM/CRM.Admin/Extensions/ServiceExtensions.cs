@@ -4,9 +4,13 @@ using CRM.Admin.Requests.ClientRequests;
 using CRM.Admin.Requests.ClientStatusHistoryRequests;
 using CRM.Admin.Requests.CompanyRequests;
 using CRM.Admin.Requests.CountryRequests;
+using CRM.Admin.Requests.MealsRequests;
+using CRM.Admin.Requests.NumberOfPeopleRequests;
 using CRM.Admin.Requests.OrderRequests;
 using CRM.Admin.Requests.OrderStatusHistoryRequests;
 using CRM.Admin.Requests.PassportInfoRequests;
+using CRM.Admin.Requests.PaymentRequests;
+using CRM.Admin.Requests.StaysRequests;
 using CRM.Admin.Requests.SuperAdminRequests;
 using CRM.Admin.Requests.TouroperatorRequests;
 using CRM.Admin.Requests.UserRequests;
@@ -29,6 +33,10 @@ public static class ServiceExtensions
         services.AddTransient<ITouroperatorRequest, TouroperatorRequest>();
         services.AddTransient<ICountryRequest, CountryRequest>();
         services.AddTransient<IOrderStatusHistoryRequest, OrderStatusHistoryRequest>();
+        services.AddTransient<INumberOfPeopleRequest, NumberOfPeopleRequest>();
+        services.AddTransient<IStaysRequest, StaysRequest>();
+        services.AddTransient<IPaymentRequest, PaymentRequest>();
+        services.AddTransient<IMealsRequest, MealsRequest>();
         
         return services;
     }
