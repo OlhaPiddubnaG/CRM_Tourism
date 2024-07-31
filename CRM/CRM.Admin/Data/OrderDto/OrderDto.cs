@@ -1,3 +1,5 @@
+using CRM.Domain.Enums;
+
 namespace CRM.Admin.Data.OrderDto;
 
 public class OrderDto
@@ -14,4 +16,5 @@ public class OrderDto
     public int NumberOfNights { get; set; }
     public decimal Amount { get; set; }
     public string Comment { get; set; }
+    public OrderStatus LatestStatus { get; set; }
 }

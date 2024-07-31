@@ -40,7 +40,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 }).AddCookie();
 builder.Services.AddCascadingAuthenticationState();
-
+builder.Services.AddScoped<AuthState>();
 var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {

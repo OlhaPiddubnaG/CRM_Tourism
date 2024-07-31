@@ -12,6 +12,7 @@ public class OrderProfile : Profile
         CreateMap<CreateOrderCommand, Order>()
             .ForMember(dest => dest.CountryFrom, opt => opt.Ignore())
             .ForMember(dest => dest.CountryTo, opt => opt.Ignore());
+        CreateMap<CreateOrderWithRelatedCommand, Order>();
         CreateMap<UpdateOrderCommand, Order>();
         CreateMap<Order, OrderResponse>()
             .ForMember(dest => dest.LatestStatus,

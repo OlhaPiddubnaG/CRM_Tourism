@@ -37,6 +37,40 @@ public class OrderRequest : IOrderRequest
         }
     }
 
+    public async Task<ResultModel> CreateOrderWithRelatedAsync(OrderCreateDto dto)
+    {
+        try
+        {
+            var orderResponse =
+                await _httpRequests.SendPostRequestAsync<ResultModel>($"{RequestUri}/withRelated", dto);
+
+            if (orderResponse != null && orderResponse.Success)
+            {
+                _snackbar.Add("Замовлення та пов’язані дані успішно створено", Severity.Success);
+                return new ResultModel
+                {
+                    Success = true,
+                    Message = "Create successfully."
+                };
+            }
+            else
+            {
+                _snackbar.Add("Сталася помилка під час обробки вашого запиту", Severity.Error);
+                return new ResultModel
+                {
+                    Success = false,
+                    Message = "An error occurred while processing your request."
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in CreateOrderWithRelatedAsync method");
+            _snackbar.Add($"Помилка при створенні замовлення з пов’язаними даними: {ex.Message}", Severity.Error);
+            throw;
+        }
+    }
+
     public async Task<List<OrderDto>> GetAllAsync()
     {
         try

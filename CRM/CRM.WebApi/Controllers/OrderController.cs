@@ -52,6 +52,16 @@ public class OrderController : ControllerBase
 
         return Ok(response);
     }
+    
+    [HttpPost("withRelated")]
+    [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Create([FromBody] CreateOrderWithRelatedCommand request, CancellationToken token)
+    {
+        var response = await _sender.Send(request, token);
+
+        return Ok(response);
+    }
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
