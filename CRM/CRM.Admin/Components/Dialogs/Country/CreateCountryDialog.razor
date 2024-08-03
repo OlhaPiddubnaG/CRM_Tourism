@@ -1,0 +1,13 @@
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Додавання країни</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField Class="mb-2" Label="Назва" @bind-Value="_countryCreateDto.Name" For="@(() => _countryCreateDto.Name)" Lines="2"/>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" OnClick="Cancel" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel">ВІДМІНА</MudButton>
+        <MudSpacer/>
+        <MudButton OnClick="Create" Variant="Variant.Filled" Class="buttonBase" StartIcon="@Icons.Material.Filled.Save">ЗБЕРЕГТИ</MudButton>
+    </DialogActions>
+</MudDialog>

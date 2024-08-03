@@ -35,6 +35,19 @@ public class ClientRequest : IClientRequest
             throw;
         }
     }
+    
+    public async Task<List<ClientDto>> GetFiltredDataAsync(string searchString)
+    {
+        var queryParams = new Dictionary<string, string>
+        {
+            { "searchString", searchString ?? string.Empty }
+        };
+
+        var queryString = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+        var response = await _httpRequests.SendPostRequestAsync<List<ClientDto>>($"{RequestUri}/filter?{queryString}", searchString);
+
+        return response;
+    }
 
     public async Task<ResultModel> CreateClientWithRelatedAsync(ClientCreateDto dto)
     {

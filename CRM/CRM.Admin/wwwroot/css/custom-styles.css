@@ -42,3 +42,7 @@
     flex-direction: column;
     height: 100%;
 }
+
+.custom-margin {
+    margin-top: 20px;
+}

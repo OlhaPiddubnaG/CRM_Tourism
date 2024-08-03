@@ -1,5 +1,6 @@
 using CRM.Domain.Commands.Meals;
 using CRM.Domain.Commands.NumberOfPeople;
+using CRM.Domain.Commands.Payment;
 using CRM.Domain.Commands.Stays;
 using CRM.Domain.Enums;
 using CRM.Domain.Responses;
@@ -24,4 +25,5 @@ public class CreateOrderWithRelatedCommand : IRequest<ResultBaseResponse>
     public CreateNumberOfPeopleCommand[] NumberOfPeopleCreateDto { get; set; }
     public CreateStaysCommand[] StaysCreateDto { get; set; }
     public CreateMealsCommand[] MealsCreateDto { get; set; }
+    public CreatePaymentCommand[] PaymentCreateDto { get; set; }
 }

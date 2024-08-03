@@ -34,4 +34,8 @@
       <_ContentIncludedByDefault Remove="Components\Dialogs\PassportInfo\CreateInternationalPassportInfoDialog.razor" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Components\Dialogs\Stays\" />
+    </ItemGroup>
+
 </Project>

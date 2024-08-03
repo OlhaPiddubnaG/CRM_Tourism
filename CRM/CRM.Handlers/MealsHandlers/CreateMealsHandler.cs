@@ -27,15 +27,15 @@ public class CreateMealsHandler : IRequestHandler<CreateMealsCommand, CreatedRes
     {
         var companyId = _currentUser.GetCompanyId();
 
-        var stays = await _context.Stays
-            .FirstOrDefaultAsync(s => s.Id == request.StaysId &&
-                                      s.Order.CompanyId == companyId &&
+        var hotel = await _context.Hotels
+            .FirstOrDefaultAsync(s => s.Id == request.HotelId &&
+                                      s.CompanyId == companyId &&
                                       !s.IsDeleted, cancellationToken);
 
-        if (stays == null)
+        if (hotel == null)
         {
             throw new InvalidOperationException(
-                "Stays not found or user is not authorized to create meals for stays from a different company.");
+                "Hotel not found or user is not authorized to create meals for hotel from a different company.");
         }
 
         var meals = _mapper.Map<Meals>(request);

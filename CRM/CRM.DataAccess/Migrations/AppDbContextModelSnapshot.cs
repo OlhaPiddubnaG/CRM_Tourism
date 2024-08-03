@@ -265,6 +265,56 @@ namespace CRM.DataAccess.Migrations
                     b.ToTable("Countries");
                 });
 
+            modelBuilder.Entity("CRM.Domain.Entities.Hotel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreatedUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("DeletedUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("RoomTypeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UpdatedUserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("RoomTypeId");
+
+                    b.ToTable("Hotels");
+                });
+
             modelBuilder.Entity("CRM.Domain.Entities.Meals", b =>
                 {
                     b.Property<Guid>("Id")
@@ -275,18 +325,18 @@ namespace CRM.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("HotelId")
+                        .HasColumnType("uuid");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<int>("MealsType")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("StaysId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("StaysId");
+                    b.HasIndex("HotelId");
 
                     b.ToTable("Meals");
                 });
@@ -564,6 +614,33 @@ namespace CRM.DataAccess.Migrations
                     b.ToTable("Payments");
                 });
 
+            modelBuilder.Entity("CRM.Domain.Entities.RoomType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("RoomTypes");
+                });
+
             modelBuilder.Entity("CRM.Domain.Entities.Stays", b =>
                 {
                     b.Property<Guid>("Id")
@@ -589,12 +666,11 @@ namespace CRM.DataAccess.Migrations
                     b.Property<Guid>("DeletedUserId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("HotelId")
+                        .HasColumnType("uuid");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<int>("NumberOfNights")
                         .HasColumnType("integer");
@@ -609,6 +685,8 @@ namespace CRM.DataAccess.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("HotelId");
 
                     b.HasIndex("OrderId");
 
@@ -876,15 +954,34 @@ namespace CRM.DataAccess.Migrations
                     b.Navigation("Company");
                 });
 
-            modelBuilder.Entity("CRM.Domain.Entities.Meals", b =>
+            modelBuilder.Entity("CRM.Domain.Entities.Hotel", b =>
                 {
-                    b.HasOne("CRM.Domain.Entities.Stays", "Stays")
-                        .WithMany("Meals")
-                        .HasForeignKey("StaysId")
+                    b.HasOne("CRM.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Stays");
+                    b.HasOne("CRM.Domain.Entities.RoomType", "RoomType")
+                        .WithMany()
+                        .HasForeignKey("RoomTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("RoomType");
+                });
+
+            modelBuilder.Entity("CRM.Domain.Entities.Meals", b =>
+                {
+                    b.HasOne("CRM.Domain.Entities.Hotel", "Hotels")
+                        .WithMany("Meals")
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Hotels");
                 });
 
             modelBuilder.Entity("CRM.Domain.Entities.NumberOfPeople", b =>
@@ -976,13 +1073,30 @@ namespace CRM.DataAccess.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("CRM.Domain.Entities.RoomType", b =>
+                {
+                    b.HasOne("CRM.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.Navigation("Company");
+                });
+
             modelBuilder.Entity("CRM.Domain.Entities.Stays", b =>
                 {
+                    b.HasOne("CRM.Domain.Entities.Hotel", "Hotel")
+                        .WithMany()
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CRM.Domain.Entities.Order", "Order")
                         .WithMany("Stays")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Hotel");
 
                     b.Navigation("Order");
                 });
@@ -1080,6 +1194,11 @@ namespace CRM.DataAccess.Migrations
                     b.Navigation("Client");
                 });
 
+            modelBuilder.Entity("CRM.Domain.Entities.Hotel", b =>
+                {
+                    b.Navigation("Meals");
+                });
+
             modelBuilder.Entity("CRM.Domain.Entities.Order", b =>
                 {
                     b.Navigation("NumberOfPeople");
@@ -1089,11 +1208,6 @@ namespace CRM.DataAccess.Migrations
                     b.Navigation("Payments");
 
                     b.Navigation("Stays");
-                });
-
-            modelBuilder.Entity("CRM.Domain.Entities.Stays", b =>
-                {
-                    b.Navigation("Meals");
                 });
 
             modelBuilder.Entity("CRM.Domain.Entities.User", b =>

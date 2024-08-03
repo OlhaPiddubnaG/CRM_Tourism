@@ -44,11 +44,22 @@ public class TouroperatorController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(TouroperatorResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(CreatedResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Create([FromBody] CreateTouroperatorCommand request, CancellationToken token)
     {
         var response = await _sender.Send(request, token);
+
+        return Ok(response);
+    }
+    
+    [HttpPost("filter")]
+    [ProducesResponseType(typeof(List<TouroperatorResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadRequestResult), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> GetFiltredDataAsync([FromQuery] string? searchString,
+        CancellationToken token)
+    {
+        var response = await _sender.Send(new GetFilteredAllRequest<TouroperatorResponse>(searchString), token);
 
         return Ok(response);
     }
