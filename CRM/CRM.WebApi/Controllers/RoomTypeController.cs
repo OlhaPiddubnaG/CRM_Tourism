@@ -42,6 +42,17 @@ public class RoomTypeController : ControllerBase
 
         return Ok(response);
     }
+    
+    [HttpPost("filter")]
+    [ProducesResponseType(typeof(List<RoomTypeResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadRequestResult), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> GetFiltredDataAsync([FromQuery] string? searchString,
+        CancellationToken token)
+    {
+        var response = await _sender.Send(new GetFilteredAllRequest<RoomTypeResponse>(searchString), token);
+
+        return Ok(response);
+    }
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]

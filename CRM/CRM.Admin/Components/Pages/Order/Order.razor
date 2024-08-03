@@ -1,128 +1,161 @@
-@page "/order/{Id}"
+@page "/order"
+@using CRM.Admin.Helper
+@using CRM.Domain.Enums
 
-<MudGrid Style="margin-top: 20px">
-
-    <MudItem xs="12" md="8">
-        <MudText Style="margin: 10px" Typo="Typo.h5">Загальна інформація</MudText>
-        <MudCard>
-            <MudCardContent>
-                <MudGrid>
-                    <MudItem xs="12" md="3">
-                        <MudDatePicker Variant="Variant.Outlined" DateFormat="dd-MM-yyyy" Label="Від" @bind-Date="_dateFrom"/>
-                    </MudItem>
-                    <MudItem xs="12" md="3">
-                        <MudDatePicker Variant="Variant.Outlined" DateFormat="dd-MM-yyyy" Label="До" @bind-Date="_dateTo"/>
-                    </MudItem>
-                    <MudSelect T="Guid" @bind-Value="_orderCreateDto.UserId" Label="Менеджер" Class="mb-5">
-                        @foreach (var manager in _userDto)
-                        {
-                            <MudSelectItem Value="@manager.Id">@($"{manager.Name} {manager.Surname}")</MudSelectItem>
-                        }
-                    </MudSelect>
-                    <MudTextField Class="mb-2" Label="Коментар" @bind-Value="_orderCreateDto.Comment" For="@(() => _orderCreateDto.Comment)" Lines="2"/>
-                </MudGrid>
-                <MudItem xs="12" md="2">
-                    <MudTextField Class="mb-2" Label="Кількість ночей" @bind-Value="_orderCreateDto.NumberOfNights" For="@(() => _orderCreateDto.NumberOfNights)" T="int" />
-                </MudItem> 
-                <MudItem xs="12" md="2">
-                    <MudTextField Class="mb-2" Label="suma" @bind-Value="_orderCreateDto.Amount" For="@(() => _orderCreateDto.Amount)" T="decimal" />
-                </MudItem>
-            </MudCardContent>
-        </MudCard>
-    </MudItem>
-    
-    <MudItem xs="12" md="8">
-        <MudText Style="margin: 20px" Typo="Typo.h5">Інформація по туристам</MudText>
-        <MudCard>
-            <MudCardContent>
-                <MudGrid>
-                    <MudItem xs="12" md="3">
-                        <MudSelect @bind-Value="selectedAdult" Label="Дорослі">
-                            <MudSelectItem Value="1">1</MudSelectItem>
-                            <MudSelectItem Value="2">2</MudSelectItem>
-                            <MudSelectItem Value="3">3</MudSelectItem>
-                        </MudSelect>
-                    </MudItem>
-                    <MudItem xs="12" md="3">
-                        <MudSelect @bind-Value="selectedKid" Label="Діти">
-                            <MudSelectItem Value="0">0</MudSelectItem>
-                            <MudSelectItem Value="1">1</MudSelectItem>
-                            <MudSelectItem Value="2">2</MudSelectItem>
-                        </MudSelect>
-                    </MudItem>
+<MudForm @ref="_form" @bind-IsValid="isValid">
+    <MudGrid Style="margin-top: 20px">
+        <MudItem xs="12" md="8">
+            <MudText Style="margin: 10px" Typo="Typo.h5">Загальна інформація</MudText>
+            <MudCard>
+                <MudCardContent>
+                    <MudGrid>
+                        <MudItem xs="12" md="3">
+                            <MudDatePicker Variant="Variant.Outlined" DateFormat="dd-MM-yyyy" Label="Від" @bind-Date="_orderCreateDto.DateFrom" Required="true"/>
+                        </MudItem>
+                        <MudItem xs="12" md="3">
+                            <MudDatePicker Variant="Variant.Outlined" DateFormat="dd-MM-yyyy" Label="До" @bind-Date="_orderCreateDto.DateTo" Required="true"/>
+                        </MudItem>
+                        <MudItem xs="12" md="3">
+                            <MudNumericField T="int" Label="Кількість ночей" @bind-Value="_orderCreateDto.NumberOfNights" For="@(() => _orderCreateDto.NumberOfNights)" Min="1" Max="100" Variant="Variant.Outlined" Step="1" Required="true"/>
+                        </MudItem>
+                        <MudItem xs="12" md="3">
+                            <MudNumericField T="decimal" Label="Вартість" @bind-Value="_orderCreateDto.Amount" For="@(() => _orderCreateDto.Amount)" Min="0" Max="1000000" Variant="Variant.Outlined" Step="1" Required="true"/>
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudAutocomplete T="Guid" Label="Країна з"
+                                             @bind-Value="_orderCreateDto.CountryFromId"
+                                             AdornmentIcon="@Icons.Material.Filled.Add"
+                                             Variant="Variant.Outlined"
+                                             OnAdornmentClick="AddCountry"
+                                             SearchFunc="SearchCountries"
+                                             ToStringFunc="GetCountryName"
+                                             Required="true"/>
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudAutocomplete T="Guid" Label="Країна до"
+                                             @bind-Value="_orderCreateDto.CountryToId"
+                                             AdornmentIcon="@Icons.Material.Filled.Add"
+                                             Variant="Variant.Outlined"
+                                             OnAdornmentClick="AddCountry"
+                                             SearchFunc="SearchCountries"
+                                             ToStringFunc="GetCountryName"
+                                             Required="true"/>
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudAutocomplete T="Guid" Label="Туроператор"
+                                             @bind-Value="_orderCreateDto.TouroperatorId"
+                                             AdornmentIcon="@Icons.Material.Filled.Add"
+                                             OnAdornmentClick="AddTouroperator"
+                                             SearchFunc="SearchTouroperators"
+                                             ToStringFunc="GetTouroperatorName"
+                                             Required="true"/>
+                        </MudItem>
+                    </MudGrid>
                     <MudItem xs="12">
-                        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.PlaylistAdd" Class="mt-2">Обрати туриста</MudButton>
+                        <MudTextField Class="mb-2" Label="Коментар" @bind-Value="_orderCreateDto.Comment" For="@(() => _orderCreateDto.Comment)"/>
                     </MudItem>
-                </MudGrid>
-            </MudCardContent>
-        </MudCard>
-    </MudItem>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
 
-    <MudItem xs="12" md="8">
-        <MudText Style="margin: 10px" Typo="Typo.h5">Інформація по проживанню</MudText>
-        <MudCard>
-            <MudCardContent>
-                <MudGrid>
-                    <MudItem xs="12">
-                        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Class="mt-2">Додати проживання</MudButton>
-                    </MudItem>
-                </MudGrid>
-            </MudCardContent>
-        </MudCard>
-    </MudItem>
+        <MudItem xs="12" md="8">
+            <MudText Style="margin: 20px" Typo="Typo.h5">Інформація по туристам</MudText>
+            <MudCard>
+                <MudCardContent>
+                    <MudGrid>
+                        <MudItem xs="12" md="3">
+                            <MudNumericField T="int" Label="Дорослі" @bind-Value="_adultCreateDto.Number" Min="0" Max="100" Variant="Variant.Outlined" Step="1" Required="true"/>
+                        </MudItem>
+                        <MudItem xs="12" md="3">
+                            <MudNumericField T="int" Label="Діти" @bind-Value="_childCreateDto.Number" Min="0" Max="100" Variant="Variant.Outlined" Step="1"/>
+                        </MudItem>
+                        <MudItem xs="12" md="6">
+                            <MudAutocomplete T="Guid" Label="Обрати туриста"
+                                             @bind-Value="_orderCreateDto.ClientId"
+                                             AdornmentIcon="@Icons.Material.Filled.Add"
+                                             OnAdornmentClick="AddClient"
+                                             SearchFunc="SearchClients"
+                                             ToStringFunc="GetClientFullName"
+                                             Required="true"/>
+                        </MudItem>
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
 
-    <MudItem xs="12" md="8">
-        <MudText Style="margin: 10px" Typo="Typo.h5">Інформація по транспорту</MudText>
-        <MudCard>
-            <MudCardContent>
-                <MudGrid>
-                    <MudItem xs="12" md="6">
-                        <MudSelect @bind-Value="selectedTransport" Label="Вид транспорту">
-                            <MudSelectItem Value="1">1</MudSelectItem>
-                            <MudSelectItem Value="2">2</MudSelectItem>
-                            <MudSelectItem Value="3">3</MudSelectItem>
-                        </MudSelect>
-                    </MudItem>
-                </MudGrid>
-            </MudCardContent>
-        </MudCard>
-    </MudItem>
+        <MudItem xs="12" md="8">
+            <MudText Style="margin: 10px" Typo="Typo.h5">Інформація по проживанню</MudText>
+            <MudCard>
+                <MudCardContent>
+                    <MudGrid>
+                        <MudItem xs="12" md="6">
+                            <MudAutocomplete T="Guid" Label="Готель"
+                                             @bind-Value="_staysCreateDto.HotelId"
+                                             AdornmentIcon="@Icons.Material.Filled.Add"
+                                             OnAdornmentClick="AddStays"
+                                             SearchFunc="SearchStays"
+                                             ToStringFunc="GetStaysName"
+                                             Required="true"/>
+                        </MudItem>
+                        <MudItem xs="12" md="3">
+                            <MudDatePicker Variant="Variant.Outlined" @bind-Date="_staysCreateDto.CheckInDate" DateFormat="dd-MM-yyyy" Label="Дата заселення"/>
+                        </MudItem>
+                        <MudItem xs="12" md="3">
+                            <MudNumericField T="int" Label="Кіл-ть ночей" @bind-Value="_staysCreateDto.NumberOfNights" Min="1" Max="100" Variant="Variant.Outlined" Step="1"/>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudTextField Class="mb-2" Label="Коментар до проживання" @bind-Value="_staysCreateDto.Comment" For="@(() => _staysCreateDto.Comment)"/>
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudSelect T="MealsType" @bind-Value="_mealsCreateDto.MealsType" Label="Харчування">
+                                @foreach (MealsType meals in Enum.GetValues(typeof(MealsType)))
+                                {
+                                    <MudSelectItem Value="@meals">@EnumHelper.GetEnumDescriptionWithName(meals)</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12" md="8">
+                            <MudTextField Class="mb-2" Label="Коментар до харчування" @bind-Value="_mealsCreateDto.Comment" For="@(() => _mealsCreateDto.Comment)"/>
+                        </MudItem>
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
 
-    <MudItem xs="12" md="8">
-        <MudText Style="margin: 10px" Typo="Typo.h5">Інші послуги</MudText>
-        <MudCard>
-            <MudCardContent>
-                <MudGrid>
-                    <MudItem xs="12">
-                        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Class="mt-2">Додати послугу</MudButton>
-                    </MudItem>
-                </MudGrid>
-            </MudCardContent>
-        </MudCard>
-    </MudItem>
-
-    <MudItem xs="12" md="8">
-        <MudText Style="margin: 10px" Typo="Typo.h5">Фінансова інформація</MudText>
-        <MudCard>
-            <MudCardContent>
-                <MudGrid>
-                    <MudItem xs="12" md="6">
-                        <MudButton Variant="Variant.Filled" Class="mt-2">Оплата туриста</MudButton>
-                    </MudItem>
-                    <MudItem xs="12" md="6">
-                        <MudButton Variant="Variant.Filled" Class="mt-2">Наші витрати</MudButton>
-                    </MudItem>
-                </MudGrid>
-            </MudCardContent>
-        </MudCard>
-    </MudItem>
-
-    <MudButton
-        Variant="Variant.Filled"
-        OnClick="CreateOrder"
-        StartIcon="@Icons.Material.Filled.AddCircleOutline"
-        Class="buttonBase">
-        СТВОРИТИ
-    </MudButton>
-</MudGrid>
-
+        <MudItem xs="12" md="8">
+            <MudText Style="margin: 10px" Typo="Typo.h5">Фінансова інформація</MudText>
+            <MudCard>
+                <MudCardContent>
+                    <MudGrid>
+                        <MudItem xs="12" md="4">
+                            <MudDatePicker Variant="Variant.Outlined" DateFormat="dd-MM-yyyy" Label="Час оплати" @bind-Date="_paymentData"/>
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudNumericField T="decimal" Label="Вартість" @bind-Value="_paymentCreateDto.Amount" For="@(() => _paymentCreateDto.Amount)" Min="0" Max="1000000" Variant="Variant.Outlined" Step="1"/>
+                        </MudItem>
+                        <MudItem xs="12" md="4">
+                            <MudSelect T="TypeOfPayment" @bind-Value="_paymentCreateDto.TypeOfPayment" Label="Тип оплати">
+                                @foreach (TypeOfPayment typeOfPayment in Enum.GetValues(typeof(TypeOfPayment)))
+                                {
+                                    <MudSelectItem Value="@typeOfPayment">@typeOfPayment.ToString()</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        <MudGrid>
+            <MudItem>
+                <MudButton
+                    Variant="Variant.Filled"
+                    OnClick="CreateOrder"
+                    StartIcon="@Icons.Material.Filled.AddCircleOutline"
+                    Class="buttonBase"
+                    Disabled="!isValid">
+                    СТВОРИТИ
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudGrid>
+</MudForm>

@@ -1,0 +1,33 @@
+@page "/allOrders"
+
+<MudGrid>
+    <MudItem xs="12" md="8">
+        <MudText Style="margin: 10px" Typo="Typo.h5">Інформація по транспорту</MudText>
+        <MudCard>
+            <MudCardContent>
+                <MudGrid>
+                    <MudItem xs="12" md="6">
+                        <MudSelect @bind-Value="_selectedTransport" Label="Вид транспорту">
+                            <MudSelectItem Value="1">1</MudSelectItem>
+                            <MudSelectItem Value="2">2</MudSelectItem>
+                            <MudSelectItem Value="3">3</MudSelectItem>
+                        </MudSelect>
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" md="8">
+        <MudText Style="margin: 10px" Typo="Typo.h5">Інші послуги</MudText>
+        <MudCard>
+            <MudCardContent>
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Class="mt-2">Додати послугу</MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>

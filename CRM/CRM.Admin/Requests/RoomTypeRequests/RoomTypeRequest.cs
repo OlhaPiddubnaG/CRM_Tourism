@@ -36,6 +36,21 @@ public class RoomTypeRequest : IRoomTypeRequest
             throw;
         }
     }
+    
+    public async Task<List<RoomTypeDto>> GetFiltredDataAsync(string searchString)
+    {
+        var queryParams = new Dictionary<string, string>
+        {
+            { "searchString", searchString ?? string.Empty }
+        };
+
+        var queryString = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+        var response =
+            await _httpRequests.SendPostRequestAsync<List<RoomTypeDto>>($"{RequestUri}/filter?{queryString}",
+                searchString);
+
+        return response;
+    }
 
     public async Task<List<RoomTypeDto>> GetAllAsync()
     {

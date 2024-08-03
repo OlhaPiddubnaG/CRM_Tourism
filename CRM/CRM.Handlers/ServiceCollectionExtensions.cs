@@ -174,6 +174,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<DeleteCommand<RoomType>, ResultBaseResponse>, DeleteRoomTypeHandler>();
         services.AddScoped<IRequestHandler<GetAllRequest<RoomTypeResponse>, List<RoomTypeResponse>>,
                 GetAllRoomTypesHandler>();
+        services.AddScoped<IRequestHandler<GetFilteredAllRequest<RoomTypeResponse>, List<RoomTypeResponse>>,
+                GetFilteredRoomTypesHandler>();   
         
         services.AddScoped<IRequestHandler<CreateMealsCommand, CreatedResponse>, CreateMealsHandler>();
         services.AddScoped<IRequestHandler<UpdateMealsCommand, ResultBaseResponse>, UpdateMealsHandler>();
