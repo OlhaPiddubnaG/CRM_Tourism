@@ -60,16 +60,16 @@ public partial class AppBar
         throw new InvalidOperationException("Invalid CompanyId claim.");
     }
 
-    private async Task NewClient()
+    /*private async Task NewClient()
     {
         var parameters = new DialogParameters { { "Id", _companyId } };
         _dialogOptions.MaxWidth = MaxWidth.Small;
-        var dialogReference = await DialogService.ShowAsync<CreateClientWithRelatedDialog>("",parameters, _dialogOptions);
-        var dialogResult = await dialogReference.Result;
+         var dialogReference = await DialogService.ShowAsync<CreateClientWithRelatedDialog>("",parameters, _dialogOptions);
+         var dialogResult = await dialogReference.Result;
 
         if (dialogResult.Canceled)
             return;
-    }
+    }*/
 
     private async Task NewOrder()
     {
