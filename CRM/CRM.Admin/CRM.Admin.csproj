@@ -22,6 +22,7 @@
       <Compile Remove="Data\CountryDto\ICountryDto.cs" />
       <Compile Remove="Data\PassportInfoDto\IPassportInfoDto.cs" />
       <Compile Remove="Data\TouroperatorDto\ITouroperatorDto.cs" />
+      <Compile Remove="Data\StaysDto\StaysDialogResult.cs" />
     </ItemGroup>
 
     <ItemGroup>
@@ -32,6 +33,10 @@
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Components\Dialogs\PassportInfo\CreateInternalPassportInfoDialog.razor" />
       <_ContentIncludedByDefault Remove="Components\Dialogs\PassportInfo\CreateInternationalPassportInfoDialog.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Components\Dialogs\Stays\" />
     </ItemGroup>
 
 </Project>

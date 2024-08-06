@@ -24,12 +24,13 @@ public class AppDbContext : DbContext
     
     public  DbSet<NumberOfPeople> NumberOfPeople { get; set; }  
     
-    public  DbSet<Stays> Stays { get; set; }
+    public  DbSet<Stays> Stays { get; set; }  
+    public  DbSet<Hotel> Hotels { get; set; }
+    public  DbSet<RoomType> RoomTypes { get; set; }
     
     public  DbSet<Order> Orders { get; set; }
     
     public  DbSet<OrderStatusHistory> OrderStatusHistory { get; set; }
-   
     
     public  DbSet<PassportInfo> PassportInfo { get; set; }
     
@@ -50,5 +51,6 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Client>()
             .HasIndex(c => c.CountryId)
             .IsUnique(false);
+
     }
 }

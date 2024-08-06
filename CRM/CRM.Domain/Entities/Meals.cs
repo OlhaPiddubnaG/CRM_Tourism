@@ -5,8 +5,8 @@ namespace CRM.Domain.Entities;
 
 public class Meals : BaseEntity
 {
-    public Guid StaysId { get; set; } 
-    public Stays Stays { get; set; } 
+    public Guid HotelId { get; set; }
+    public Hotel Hotels { get; set; }
     public MealsType MealsType { get; set; }
     public string Comment { get; set; }
 }

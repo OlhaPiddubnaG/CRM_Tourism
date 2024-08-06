@@ -24,7 +24,7 @@ public class UpdateMealsHandler : IRequestHandler<UpdateMealsCommand, ResultBase
         CancellationToken cancellationToken)
     {
         var existingMeals = await _context.Meals
-            .Include(m => m.Stays)
+            .Include(m => m.Hotels)
             .FirstOrDefaultAsync(m => m.Id == request.Id, cancellationToken);
 
         if (existingMeals == null)
@@ -34,12 +34,12 @@ public class UpdateMealsHandler : IRequestHandler<UpdateMealsCommand, ResultBase
 
         var companyId = _currentUser.GetCompanyId();
 
-        if (existingMeals.Stays.Order != null && existingMeals.Stays.Order.CompanyId != companyId)
+        if (existingMeals.Hotels.CompanyId != companyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to update meals.");
         }
 
-        existingMeals.StaysId = request.StaysId;
+        existingMeals.HotelId = request.HotelId;
         existingMeals.MealsType = request.MealsType;
         existingMeals.Comment = request.Comment;
 

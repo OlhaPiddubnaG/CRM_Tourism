@@ -25,8 +25,7 @@ public class DeleteMealsHandler : IRequestHandler<DeleteCommand<Meals>, ResultBa
     {
         var companyId = _currentUser.GetCompanyId();
         var meals = await _context.Meals
-            .Include(m => m.Stays)
-            .ThenInclude(s => s.Order)
+            .Include(m => m.Hotels)
             .FirstOrDefaultAsync(m => m.Id == request.Id, cancellationToken);
 
         if (meals == null)
@@ -34,7 +33,7 @@ public class DeleteMealsHandler : IRequestHandler<DeleteCommand<Meals>, ResultBa
             throw new NotFoundException(typeof(Meals), request.Id);
         }
 
-        if (companyId != meals.Stays.Order.CompanyId)
+        if (companyId != meals.Hotels.CompanyId)
         {
             throw new UnauthorizedAccessException("User is not authorized to delete this meals.");
         }
