@@ -117,6 +117,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<GetByNameRequest<CountryResponse>, CountryResponse>, GetCountryByNameHandler>();
 
         services.AddScoped<IRequestHandler<CreateOrderCommand, CreatedResponse>, CreateOrderHandler>();
+        // services.AddScoped<IRequestHandler<CreateOrderWithRelatedCommand, ResultBaseResponse>, CreateOrderWithRelatedHandler>();
         services.AddScoped<IRequestHandler<UpdateOrderCommand, ResultBaseResponse>, UpdateOrderHandler>();
         services.AddScoped<IRequestHandler<DeleteCommand<Order>, ResultBaseResponse>, DeleteOrderHandler>();
         services.AddScoped<IRequestHandler<GetByIdRequest<OrderResponse>, OrderResponse>, GetOrderByIdHandler>();
