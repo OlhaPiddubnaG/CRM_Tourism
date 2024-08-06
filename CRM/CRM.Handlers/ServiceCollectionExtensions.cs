@@ -4,11 +4,13 @@ using CRM.Domain.Commands.Client;
 using CRM.Domain.Commands.ClientPrivateData;
 using CRM.Domain.Commands.Company;
 using CRM.Domain.Commands.Country;
+using CRM.Domain.Commands.Hotel;
 using CRM.Domain.Commands.Meals;
 using CRM.Domain.Commands.NumberOfPeople;
 using CRM.Domain.Commands.Order;
 using CRM.Domain.Commands.PassportInfo;
 using CRM.Domain.Commands.Payment;
+using CRM.Domain.Commands.RoomType;
 using CRM.Domain.Commands.Stays;
 using CRM.Domain.Commands.Touroperator;
 using CRM.Domain.Commands.User;
@@ -20,12 +22,14 @@ using CRM.Domain.Responses.Client;
 using CRM.Domain.Responses.ClientPrivateData;
 using CRM.Domain.Responses.ClientStatusHistory;
 using CRM.Domain.Responses.Company;
+using CRM.Domain.Responses.Hotel;
 using CRM.Domain.Responses.Meals;
 using CRM.Domain.Responses.NumberOfPeople;
 using CRM.Domain.Responses.Order;
 using CRM.Domain.Responses.OrderStatusHistory;
 using CRM.Domain.Responses.PassportInfo;
 using CRM.Domain.Responses.Payment;
+using CRM.Domain.Responses.RoomType;
 using CRM.Domain.Responses.Stays;
 using CRM.Domain.Responses.Touroperator;
 using CRM.Domain.Responses.User;
@@ -36,12 +40,14 @@ using CRM.Handlers.ClientPrivateDataHandlers;
 using CRM.Handlers.ClientStatusHistoryHandlers;
 using CRM.Handlers.CompanyHandlers;
 using CRM.Handlers.CountryHandlers;
+using CRM.Handlers.HotelHandlers;
 using CRM.Handlers.MealsHandlers;
 using CRM.Handlers.NumberOfPeopleHandlers;
 using CRM.Handlers.OrderHandlers;
 using CRM.Handlers.OrderStatusHistoryHandlers;
 using CRM.Handlers.PassportInfoHandlers;
 using CRM.Handlers.PaymentHandlers;
+using CRM.Handlers.RoomTypeHandlers;
 using CRM.Handlers.StaysHandlers;
 using CRM.Handlers.TouroperatorHandlers;
 using CRM.Handlers.UserHandlers;
@@ -81,6 +87,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<GetAllRequest<ClientResponse>, List<ClientResponse>>, GetAllClientsHandler>();
         services.AddScoped<IRequestHandler<GetFilteredAndSortAllRequest<ClientResponse>, TableData<ClientResponse>>,
                 GetSortAllClientsHandler>();
+        services.AddScoped<IRequestHandler<GetFilteredAllRequest<ClientResponse>, List<ClientResponse>>, GetFilteredClientsHandler>();
         
         services.AddScoped<IRequestHandler<CreateClientPrivateDataCommand, CreatedResponse>,
             CreateClientPrivateDataHandler>();
@@ -115,9 +122,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<GetAllRequest<CountryResponse>, List<CountryResponse>>,
                 GetAllCountriesHandler>();
         services.AddScoped<IRequestHandler<GetByNameRequest<CountryResponse>, CountryResponse>, GetCountryByNameHandler>();
+        services.AddScoped<IRequestHandler<GetFilteredAllRequest<CountryResponse>, List<CountryResponse>>, GetFilteredCountriesHandler>();
 
-        services.AddScoped<IRequestHandler<CreateOrderCommand, CreatedResponse>, CreateOrderHandler>();
-        // services.AddScoped<IRequestHandler<CreateOrderWithRelatedCommand, ResultBaseResponse>, CreateOrderWithRelatedHandler>();
+        services.AddScoped<IRequestHandler<CreateOrderCommand, CreatedResponse>, CreateOrderHandler>(); 
+        services.AddScoped<IRequestHandler<CreateOrderWithRelatedCommand, ResultBaseResponse>, CreateOrderWithRelatedHandler>();
         services.AddScoped<IRequestHandler<UpdateOrderCommand, ResultBaseResponse>, UpdateOrderHandler>();
         services.AddScoped<IRequestHandler<DeleteCommand<Order>, ResultBaseResponse>, DeleteOrderHandler>();
         services.AddScoped<IRequestHandler<GetByIdRequest<OrderResponse>, OrderResponse>, GetOrderByIdHandler>();
@@ -130,6 +138,7 @@ public static class ServiceCollectionExtensions
                 GetTouroperatorByIdHandler>();
         services.AddScoped<IRequestHandler<GetAllRequest<TouroperatorResponse>, List<TouroperatorResponse>>,
                 GetAllTouroperatorsHandler>();
+        services.AddScoped<IRequestHandler<GetFilteredAllRequest<TouroperatorResponse>, List<TouroperatorResponse>>, GetFilteredTouroperatorsHandler>();
         
         services.AddScoped<IRequestHandler<GetByIdReturnListRequest<OrderStatusHistoryResponse>, List<OrderStatusHistoryResponse>>,
                 GetAllOrderStatusHistoriesHandler>();
@@ -148,7 +157,25 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<GetByIdRequest<StaysResponse>, StaysResponse>,
                 GetStaysByIdHandler>();
         services.AddScoped<IRequestHandler<GetAllRequest<StaysResponse>, List<StaysResponse>>,
-                GetAllStaysHandler>();
+                GetAllStaysHandler>();  
+        
+        services.AddScoped<IRequestHandler<CreateHotelCommand, CreatedResponse>, CreateHotelHandler>();
+        services.AddScoped<IRequestHandler<UpdateHotelCommand, ResultBaseResponse>, UpdateHotelHandler>();
+        services.AddScoped<IRequestHandler<DeleteCommand<Hotel>, ResultBaseResponse>, DeleteHotelHandler>();
+        services.AddScoped<IRequestHandler<GetByIdRequest<HotelResponse>, HotelResponse>,
+                GetHotelByIdHandler>();
+        services.AddScoped<IRequestHandler<GetAllRequest<HotelResponse>, List<HotelResponse>>,
+                GetAllHotelsHandler>();   
+        services.AddScoped<IRequestHandler<GetFilteredAllRequest<HotelResponse>, List<HotelResponse>>,
+                GetFilteredHotelsHandler>();   
+        
+        services.AddScoped<IRequestHandler<CreateRoomTypeCommand, CreatedResponse>, CreateRoomTypeHandler>();
+        services.AddScoped<IRequestHandler<UpdateRoomTypeCommand, ResultBaseResponse>, UpdateRoomTypeHandler>();
+        services.AddScoped<IRequestHandler<DeleteCommand<RoomType>, ResultBaseResponse>, DeleteRoomTypeHandler>();
+        services.AddScoped<IRequestHandler<GetAllRequest<RoomTypeResponse>, List<RoomTypeResponse>>,
+                GetAllRoomTypesHandler>();
+        services.AddScoped<IRequestHandler<GetFilteredAllRequest<RoomTypeResponse>, List<RoomTypeResponse>>,
+                GetFilteredRoomTypesHandler>();   
         
         services.AddScoped<IRequestHandler<CreateMealsCommand, CreatedResponse>, CreateMealsHandler>();
         services.AddScoped<IRequestHandler<UpdateMealsCommand, ResultBaseResponse>, UpdateMealsHandler>();

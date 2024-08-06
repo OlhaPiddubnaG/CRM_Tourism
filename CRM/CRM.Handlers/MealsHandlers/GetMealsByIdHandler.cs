@@ -30,8 +30,8 @@ public class GetMealsByIdHandler : IRequestHandler<GetByIdRequest<MealsResponse>
         var companyId = _currentUser.GetCompanyId();
         var meals = await _context.Meals
             .FirstOrDefaultAsync(m => m.Id == request.Id &&
-                                      m.Stays.Order.CompanyId == companyId &&
-                                      !m.Stays.IsDeleted &&
+                                      m.Hotels.CompanyId == companyId &&
+                                      !m.Hotels.IsDeleted &&
                                       !m.IsDeleted);
 
         if (meals == null)

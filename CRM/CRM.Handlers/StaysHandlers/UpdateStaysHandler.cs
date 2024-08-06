@@ -39,7 +39,6 @@ public class UpdateStaysHandler : IRequestHandler<UpdateStaysCommand, ResultBase
             throw new UnauthorizedAccessException("User is not authorized to update stays.");
         }
 
-        existingStays.Name = request.Name;
         existingStays.CheckInDate = request.CheckInDate;
         existingStays.NumberOfNights = request.NumberOfNights;
         existingStays.Comment = request.Comment;

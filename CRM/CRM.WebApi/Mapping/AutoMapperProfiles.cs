@@ -22,6 +22,8 @@ public static class AutoMapperProfiles
             typeof(StaysProfile).Assembly,
             typeof(MealsProfile).Assembly,
             typeof(PaymentProfile).Assembly,
+            typeof(RoomTypeProfile).Assembly,
+            typeof(HotelProfile).Assembly,
         };
     }
 }

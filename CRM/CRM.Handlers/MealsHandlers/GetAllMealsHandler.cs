@@ -27,8 +27,8 @@ public class GetAllMealsHandler : IRequestHandler<GetAllRequest<MealsResponse>,
     {
         var companyId = _currentUser.GetCompanyId();
         var meals = await _context.Meals
-            .Where(m => m.Stays.Order.CompanyId == companyId &&
-                        !m.Stays.IsDeleted &&
+            .Where(m => m.Hotels.CompanyId == companyId &&
+                        !m.Hotels.IsDeleted &&
                         !m.IsDeleted)
             .ToListAsync(cancellationToken);
 
