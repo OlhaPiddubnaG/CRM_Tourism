@@ -9,12 +9,15 @@ public class OrderDto
     public Guid UserId { get; set; }
     public Guid ClientId { get; set; }
     public Guid? TouroperatorId { get; set; }
-    public DateOnly? DateFrom { get; set; }
-    public DateOnly? DateTo { get; set; }
-    public Guid CountryFromId { get; set; }
-    public Guid CountryToId { get; set; }
+    public DateTime DateFrom { get; set; }
+    public DateTime DateTo { get; set; }
+    public string?  CountryFromName { get; set; }
+    public string?  CountryToName { get; set; }
     public int NumberOfNights { get; set; }
     public decimal Amount { get; set; }
     public string Comment { get; set; }
-    public OrderStatus LatestStatus { get; set; }
+    public OrderStatus? LatestStatus { get; set; }
+    public List<StaysDto.StaysDto> Stays { get; set; } = new();
+    public string ClientName { get; set; } 
+    public DateTime CreatedAt { get; set; }
 }

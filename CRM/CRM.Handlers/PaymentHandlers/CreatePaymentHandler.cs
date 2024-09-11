@@ -35,7 +35,7 @@ public class CreatePaymentHandler : IRequestHandler<CreatePaymentCommand, Create
         if (order == null)
         {
             throw new InvalidOperationException(
-                "Order not found or user is not authorized to create payment for an order from a different company.");
+                "NewOrder not found or user is not authorized to create payment for an order from a different company.");
         }
 
         var payment = _mapper.Map<Payment>(request);

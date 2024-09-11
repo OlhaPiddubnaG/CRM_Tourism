@@ -1,4 +1,5 @@
 using CRM.Admin.Data;
+using CRM.Admin.Data.ClientDto;
 using CRM.Admin.Data.OrderDto;
 using CRM.Admin.HttpRequests;
 using MudBlazor;
@@ -88,6 +89,25 @@ public class OrderRequest : IOrderRequest
             _snackbar.Add($"Помилка при завантаженні всіх замовлень: {ex.Message}", Severity.Error);
             throw;
         }
+    }
+    
+    public async Task<PagedResponse<OrderDto>> GetPagedDataAsync(OrderRequestParameters parameters)
+    {
+        var queryParams = new Dictionary<string, string>
+        {
+            { "searchString", parameters.SearchString ?? string.Empty },
+            { "sortLabel", parameters.SortLabel ?? string.Empty },
+            { "sortDirection", parameters.SortDirection.ToString() },
+            { "page", parameters.PageIndex.ToString() },
+            { "pageSize", parameters.PageSize.ToString() }
+        };
+
+        var queryString = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+        var pagedResponse =
+            await _httpRequests.SendPostRequestAsync<PagedResponse<OrderDto>>($"{RequestUri}/paged?{queryString}",
+                parameters);
+
+        return pagedResponse;
     }
 
     public async Task<OrderDto> GetByIdAsync(Guid id)

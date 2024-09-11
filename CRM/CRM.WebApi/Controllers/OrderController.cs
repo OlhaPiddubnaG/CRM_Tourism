@@ -8,6 +8,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MudBlazor;
 
 namespace CRM.WebApi.Controllers;
 
@@ -39,6 +40,29 @@ public class OrderController : ControllerBase
     public async Task<IActionResult> GetAll(CancellationToken token)
     {
         var response = await _sender.Send(new GetAllRequest<OrderResponse>(), token);
+
+        return Ok(response);
+    }
+    
+    [HttpPost("paged")]
+    [ProducesResponseType(typeof(TableData<OrderResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadRequestResult), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetPagedFilteredAndSorted(
+        [FromQuery] string? searchString,
+        [FromQuery] string? sortLabel,
+        [FromQuery] SortDirection sortDirection,
+        [FromQuery] int page,
+        [FromQuery] int pageSize,
+        CancellationToken token)
+    {
+        var request = new GetFilteredAndSortAllRequest<OrderResponse>(
+            searchString,
+            sortLabel,
+            sortDirection,
+            page,
+            pageSize);
+
+        var response = await _sender.Send(request, token);
 
         return Ok(response);
     }

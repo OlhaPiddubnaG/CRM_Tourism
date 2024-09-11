@@ -1,0 +1,16 @@
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Додавання типу номеру</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField Class="mb-2" Label="Назва" @bind-Value="_roomTypeCreateDto.Name" For="@(() => _roomTypeCreateDto.Name)" Lines="2"/>
+        <MudItem xs="12">
+            <MudTextField Class="mb-2" Label="Коментар" @bind-Value="_roomTypeCreateDto.Description" For="@(() => _roomTypeCreateDto.Description)"/>
+        </MudItem>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" OnClick="Cancel" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel">ВІДМІНА</MudButton>
+        <MudSpacer/>
+        <MudButton OnClick="Create" Variant="Variant.Filled" Class="buttonBase" StartIcon="@Icons.Material.Filled.Save">ЗБЕРЕГТИ</MudButton>
+    </DialogActions>
+</MudDialog>

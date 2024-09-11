@@ -35,7 +35,7 @@ public class CreateStaysHandler : IRequestHandler<CreateStaysCommand, CreatedRes
         if (order == null)
         {
             throw new InvalidOperationException(
-                "Order not found or user is not authorized to create stays for an order from a different company.");
+                "NewOrder not found or user is not authorized to create stays for an order from a different company.");
         }
 
         var stays = _mapper.Map<Stays>(request);

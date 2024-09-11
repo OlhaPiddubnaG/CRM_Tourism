@@ -36,7 +36,7 @@ public class DeleteOrderHandler : IRequestHandler<DeleteCommand<Order>, ResultBa
 
         if (order.IsDeleted)
         {
-            throw new InvalidOperationException($"Order with ID {request.Id} is already deleted.");
+            throw new InvalidOperationException($"NewOrder with ID {request.Id} is already deleted.");
         }
 
         order.IsDeleted = true;

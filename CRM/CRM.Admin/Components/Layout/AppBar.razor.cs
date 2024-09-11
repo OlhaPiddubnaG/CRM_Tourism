@@ -31,11 +31,11 @@ public partial class AppBar
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _user = authState.User;
         
-        _companyId = GetCompanyId();
-        AuthState.SetCompanyId(_companyId);
-        
         _userId = GetUserId();
         AuthState.SetUserId(_userId);
+        
+        _companyId = GetCompanyId();
+        AuthState.SetCompanyId(_companyId);
     }
 
     private Guid GetCompanyId()
@@ -60,7 +60,7 @@ public partial class AppBar
         throw new InvalidOperationException("Invalid CompanyId claim.");
     }
 
-    /*private async Task NewClient()
+    private async Task NewClient()
     {
         var parameters = new DialogParameters { { "Id", _companyId } };
         _dialogOptions.MaxWidth = MaxWidth.Small;
@@ -69,7 +69,7 @@ public partial class AppBar
 
         if (dialogResult.Canceled)
             return;
-    }*/
+    }
 
     private async Task NewOrder()
     {

@@ -1,0 +1,32 @@
+@using CRM.Domain.Enums
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Нове нагадування</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudGrid>
+            <MudItem xs="12">
+                <MudTextField Class="mb-2" Label="Текст нагадування" @bind-Value="_userTasksCreateDto.Description"/>
+            </MudItem>
+            <MudHidden Breakpoint="@Breakpoint.Xs">
+                <MudDatePicker PickerVariant="PickerVariant.Static" Orientation="Orientation.Landscape" Color="Color.Default" @bind-Date="_date"/>
+            </MudHidden>
+            <MudItem xs="12" md="6">
+                <MudSelect T="UserTaskStatus" @bind-Value="_userTasksCreateDto.TaskStatus" Label="Статус">
+                    @foreach (UserTaskStatus taskStatus in Enum.GetValues(typeof(UserTaskStatus)))
+                    {
+                        <MudSelectItem Value="@taskStatus">@taskStatus.ToString()</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTimePicker Label="Час" @bind-Time="_time" TimeEditMode="TimeEditMode.Normal"/>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" OnClick="Cancel" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel">ВІДМІНА</MudButton>
+        <MudSpacer/>
+        <MudButton OnClick="Create" Variant="Variant.Filled" Class="buttonBase" StartIcon="@Icons.Material.Filled.Save">ЗБЕРЕГТИ</MudButton>
+    </DialogActions>
+</MudDialog>

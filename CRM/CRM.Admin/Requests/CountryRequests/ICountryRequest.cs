@@ -5,6 +5,7 @@ namespace CRM.Admin.Requests.CountryRequests;
 public interface ICountryRequest
 {
     Task<Guid> CreateAsync(CountryCreateDto dto);
+    Task<List<CountryDto>> GetFiltredDataAsync(string searchString);
     Task<List<CountryDto>> GetAllAsync();
     Task<CountryDto> GetByIdAsync(Guid id);
     Task<CountryDto> GetByNameAsync(string name);

@@ -26,10 +26,13 @@ public class GetAllOrdersHandler : IRequestHandler<GetAllRequest<OrderResponse>,
     {
         var companyId = _currentUser.GetCompanyId();
         var orders = await _context.Orders
+            .Include(o => o.Client)
             .Include(o => o.NumberOfPeople)
             .Include(o => o.CountryFrom)
             .Include(o => o.CountryTo)
             .Include(c => c.OrderStatusHistory)
+            .Include(o => o.Stays)
+            .ThenInclude(s => s.Hotel)
             .Where(o => o.CompanyId == companyId &&
                         !o.IsDeleted)
             .ToListAsync(cancellationToken);

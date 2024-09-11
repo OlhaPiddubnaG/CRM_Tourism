@@ -41,7 +41,7 @@ namespace CRM.Handlers.OrderHandlers
                 _context.Orders.Add(order);
                 await SaveChangesAsync(cancellationToken);
 
-                return new ResultBaseResponse { Success = true, Message = "Order created successfully." };
+                return new ResultBaseResponse { Success = true, Message = "NewOrder created successfully." };
             }
             catch (UnauthorizedAccessException ex)
             {

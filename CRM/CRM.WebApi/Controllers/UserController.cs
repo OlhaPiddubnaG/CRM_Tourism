@@ -1,3 +1,4 @@
+using CRM.Admin.Data;
 using CRM.Domain.Commands;
 using CRM.Domain.Commands.User;
 using CRM.Domain.Entities;
@@ -40,6 +41,21 @@ public class UserController : ControllerBase
         var response = await _sender.Send(new GetAllRequest<UserResponse>(), token);
 
         return Ok(response);
+    }
+    
+    [HttpGet("check-email")]
+    [ProducesResponseType(typeof(ResultModel), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResultModel), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> CheckEmail(string email, CancellationToken token)
+    {
+        var response = await _sender.Send(new GetByEmailRequest<UserResponse>(email), token);
+
+        if (response != null)
+        {
+            return Ok(new ResultModel { Success = true, Message = response.Email });
+        }
+
+        return NotFound(new ResultModel { Success = false, Message = "Email not found" });
     }
 
     [HttpPost]
