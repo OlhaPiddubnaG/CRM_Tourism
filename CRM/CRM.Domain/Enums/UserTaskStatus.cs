@@ -1,6 +1,6 @@
 namespace CRM.Domain.Enums;
 
-public enum TaskStatus
+public enum UserTaskStatus
 {
     ToDo = 0,
     InProgress = 1,

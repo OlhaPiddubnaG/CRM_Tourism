@@ -13,16 +13,16 @@ public partial class AddStatusForClientDialog
     [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
     [Parameter] public Guid Id { get; set; }
 
-    private ClientUpdateDto ClientUpdateDto { get; set; } = new();
+    private ClientUpdateDto _clientUpdateDto { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        ClientUpdateDto = await ClientRequest.GetByIdAsync(Id);
+        _clientUpdateDto = await ClientRequest.GetByIdAsync(Id);
     }
 
     private async Task Update()
     {
-        var result = await ClientRequest.UpdateAsync(ClientUpdateDto);
+        var result = await ClientRequest.UpdateAsync(_clientUpdateDto);
         if (result)
         {
             Snackbar.Add("Статус туриста змінено", Severity.Success);

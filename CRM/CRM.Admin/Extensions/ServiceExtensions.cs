@@ -16,6 +16,7 @@ using CRM.Admin.Requests.StaysRequests;
 using CRM.Admin.Requests.SuperAdminRequests;
 using CRM.Admin.Requests.TouroperatorRequests;
 using CRM.Admin.Requests.UserRequests;
+using CRM.Admin.Requests.UserTasksRequests;
 
 namespace CRM.Admin.Extensions;
 
@@ -27,6 +28,7 @@ public static class ServiceExtensions
         services.AddTransient<ISuperAdminRequest, SuperAdminRequest>();
         services.AddTransient<ICompanyRequest, CompanyRequest>();
         services.AddTransient<IUserRequest, UserRequest>();
+        services.AddTransient<IUserTasksRequest, UserTasksRequest>();
         services.AddTransient<IClientRequest, ClientRequest>();
         services.AddTransient<IClientPrivateDataRequest, ClientPrivateDataRequest>();
         services.AddTransient<IClientStatusHistoryRequest, ClientStatusHistoryRequest>();

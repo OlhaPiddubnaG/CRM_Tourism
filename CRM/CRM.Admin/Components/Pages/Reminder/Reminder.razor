@@ -1,6 +1,85 @@
 @page "/reminder"
-<h3>Reminder</h3>
+@using CRM.Domain.Enums
 
-@code {
-    
-}
+<MudGrid Style="margin-top: 20px">
+    <MudItem xs="12" md="5">
+        <MudCard>
+            <MudCardContent>
+                <MudItem xs="12">
+                    <MudHidden Breakpoint="@Breakpoint.Xs">
+                        <MudDatePicker
+                            @bind-Date="_selectedDate"
+                            PickerVariant="PickerVariant.Static"
+                            Orientation="Orientation.Landscape"
+                            Color="Color.Default"/>
+                    </MudHidden>
+                </MudItem>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" md="7">
+        <MudCard>
+            <MudCardContent>
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudGrid Justify="Justify.SpaceBetween">
+                            <MudItem>
+                                <MudText Style="margin: 10px" Typo="Typo.h5">Перелік справ на @_selectedDate?.ToString("dd.MM.yyyy")</MudText>
+                            </MudItem>
+                            <MudItem>
+                                <MudButton
+                                    Variant="Variant.Filled"
+                                    OnClick="CreateReminder"
+                                    StartIcon="@Icons.Material.Filled.Notifications"
+                                    Class="buttonBase">
+                                    Додати нагадування
+                                </MudButton>
+                            </MudItem>
+                        </MudGrid>
+                    </MudItem>
+                </MudGrid>
+
+                <MudItem xs="12">
+                    @if (_tasksDtos.Any())
+                    {
+                        <MudList>
+                            @foreach (var task in _tasksDtos)
+                            {
+                                <MudListItem>
+                                    <MudGrid>
+                                        <MudItem xs="12" md="1">
+                                            <MudTooltip Text="Змінити статус">
+                                                <MudIconButton
+                                                    OnClick="() => AddStatus(task.Id)"
+                                                    Icon="@(task.TaskStatus == UserTaskStatus.ToDo ? Icons.Material.Filled.Schedule : task.TaskStatus == UserTaskStatus.InProgress ? Icons.Material.Filled.HourglassTop : task.TaskStatus == UserTaskStatus.Done ? Icons.Material.Filled.CheckCircle : task.TaskStatus == UserTaskStatus.Canceled ? Icons.Material.Filled.Cancel : Icons.Material.Filled.HourglassEmpty)"
+                                                    Color="@(task.TaskStatus == UserTaskStatus.ToDo ? Color.Warning : task.TaskStatus == UserTaskStatus.InProgress ? Color.Primary : task.TaskStatus == UserTaskStatus.Done ? Color.Success : task.TaskStatus == UserTaskStatus.Canceled ? Color.Error : Color.Default)"/>
+                                            </MudTooltip>
+                                        </MudItem>
+                                        <MudItem xs="12" md="9">
+                                            <MudText Typo="Typo.body1">@task.Description</MudText>
+                                            <MudText Typo="Typo.caption">@task.DateTime.ToString("g")</MudText>
+                                        </MudItem>
+                                        <MudItem xs="12" md="2" Class="d-flex align-items-center">
+                                            <MudText Typo="Typo.body1">@task.TaskStatus</MudText>
+                                            <MudTooltip Text="Редагувати нагадування">
+                                                <MudIconButton
+                                                    OnClick="() => UpdateReminder(task.Id)"
+                                                    Icon="@Icons.Material.Filled.EditNotifications"
+                                                    Color="Color.Default"/>
+                                            </MudTooltip>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.body2">Жодних завдань на сьогодні.</MudText>
+                    }
+                </MudItem>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>

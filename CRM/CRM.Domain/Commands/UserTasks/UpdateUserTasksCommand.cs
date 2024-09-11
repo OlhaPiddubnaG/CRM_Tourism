@@ -1,12 +1,13 @@
-using CRM.Domain.Entities.Base;
 using CRM.Domain.Enums;
+using CRM.Domain.Responses;
+using MediatR;
 
-namespace CRM.Domain.Entities;
+namespace CRM.Domain.Commands.UserTasks;
 
-public class UserTasks : Auditable
+public class UpdateUserTasksCommand : IRequest<ResultBaseResponse>
 {
+    public Guid Id { get; set; }
     public Guid UserId { get; set; } 
-    public User? User { get; set; } 
     public DateTime DateTime { get; set; } 
     public string Description { get; set; } 
     public UserTaskStatus TaskStatus { get; set; } 

@@ -1,3 +1,4 @@
+using CRM.Admin.Data;
 using CRM.Domain.Commands;
 using CRM.Domain.Commands.Authentication;
 using CRM.Domain.Commands.Client;
@@ -14,6 +15,7 @@ using CRM.Domain.Commands.RoomType;
 using CRM.Domain.Commands.Stays;
 using CRM.Domain.Commands.Touroperator;
 using CRM.Domain.Commands.User;
+using CRM.Domain.Commands.UserTasks;
 using CRM.Domain.Entities;
 using CRM.Domain.Requests;
 using CRM.Domain.Responses;
@@ -33,6 +35,7 @@ using CRM.Domain.Responses.RoomType;
 using CRM.Domain.Responses.Stays;
 using CRM.Domain.Responses.Touroperator;
 using CRM.Domain.Responses.User;
+using CRM.Domain.Responses.UserTasks;
 using CRM.Domain.Responses.Сountry;
 using CRM.Handlers.AuthenticationHandlers;
 using CRM.Handlers.ClientHandlers;
@@ -51,6 +54,7 @@ using CRM.Handlers.RoomTypeHandlers;
 using CRM.Handlers.StaysHandlers;
 using CRM.Handlers.TouroperatorHandlers;
 using CRM.Handlers.UserHandlers;
+using CRM.Handlers.UserTasksHandlers;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor;
@@ -77,7 +81,15 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<DeleteCommand<User>, ResultBaseResponse>, DeleteUserHandler>();
         services.AddScoped<IRequestHandler<GetByIdRequest<UserResponse>, UserResponse>, GetUserByIdHandler>();
         services.AddScoped<IRequestHandler<GetAllRequest<UserResponse>, List<UserResponse>>, GetAllUsersHandler>();
+        services.AddScoped<IRequestHandler<GetByEmailRequest<ResultModel>, ResultModel>, CheckUserByEmailHandler>();
         
+        services.AddScoped<IRequestHandler<CreateUserTasksCommand, CreatedResponse>, CreateUserTasksHandler>();
+        services.AddScoped<IRequestHandler<UpdateUserTasksCommand, ResultBaseResponse>, UpdateUserTasksHandler>();
+        services.AddScoped<IRequestHandler<DeleteCommand<UserTasks>, ResultBaseResponse>, DeleteUserTasksHandler>();
+        services.AddScoped<IRequestHandler<GetByIdRequest<UserTasksResponse>, UserTasksResponse>, GetUserTaskByIdHandler>();
+        services.AddScoped<IRequestHandler<GetByIdReturnListRequest<UserTasksResponse>, List<UserTasksResponse>>, GetUserTasksByUserIdHandler>();
+        services.AddScoped<IRequestHandler<GetByIdAndDateRequest<UserTasksResponse>, List<UserTasksResponse>>, GetTasksByUserIdAndDateHandler>();
+                
         services.AddScoped<IRequestHandler<CreateClientCommand, CreatedResponse>, CreateClientHandler>();
         services.AddScoped<IRequestHandler<CreateClientWithRelatedCommand, ResultBaseResponse>,
                 CreateClientWithRelatedHandler>();
@@ -130,6 +142,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<DeleteCommand<Order>, ResultBaseResponse>, DeleteOrderHandler>();
         services.AddScoped<IRequestHandler<GetByIdRequest<OrderResponse>, OrderResponse>, GetOrderByIdHandler>();
         services.AddScoped<IRequestHandler<GetAllRequest<OrderResponse>, List<OrderResponse>>, GetAllOrdersHandler>();
+        services.AddScoped<IRequestHandler<GetFilteredAndSortAllRequest<OrderResponse>, TableData<OrderResponse>>,
+                        GetSortAllOrdersHandler>();
 
         services.AddScoped<IRequestHandler<CreateTouroperatorCommand, CreatedResponse>, CreateTouroperatorHandler>();
         services.AddScoped<IRequestHandler<UpdateTouroperatorCommand, ResultBaseResponse>, UpdateTouroperatorHandler>();

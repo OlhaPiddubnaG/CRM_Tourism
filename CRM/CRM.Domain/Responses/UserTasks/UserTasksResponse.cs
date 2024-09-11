@@ -1,12 +1,11 @@
-using CRM.Domain.Entities.Base;
 using CRM.Domain.Enums;
 
-namespace CRM.Domain.Entities;
+namespace CRM.Domain.Responses.UserTasks;
 
-public class UserTasks : Auditable
+public record UserTasksResponse
 {
+    public Guid Id { get; set; }
     public Guid UserId { get; set; } 
-    public User? User { get; set; } 
     public DateTime DateTime { get; set; } 
     public string Description { get; set; } 
     public UserTaskStatus TaskStatus { get; set; } 

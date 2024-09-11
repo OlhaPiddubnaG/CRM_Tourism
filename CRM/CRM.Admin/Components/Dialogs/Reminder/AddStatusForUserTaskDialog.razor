@@ -1,14 +1,13 @@
 @using CRM.Domain.Enums
 <MudDialog>
     <TitleContent>
-        <MudText Typo="Typo.h6">Змінити статус для </MudText>
+        <MudText Typo="Typo.h6">Змінити статус для нагадування</MudText>
     </TitleContent>
     <DialogContent>
-        <MudText Typo="Typo.subtitle1">@_clientUpdateDto.Surname @_clientUpdateDto.Name</MudText>
-        <MudSelect T="ClientStatus" @bind-Value="_clientUpdateDto.LatestStatus" Label="Статус">
-            @foreach (ClientStatus clientStatus in Enum.GetValues(typeof(ClientStatus)))
+        <MudSelect T="UserTaskStatus" @bind-Value="_userTasksUpdateDto.TaskStatus" Label="Статус">
+            @foreach (UserTaskStatus taskStatus in Enum.GetValues(typeof(UserTaskStatus)))
             {
-                <MudSelectItem Value="clientStatus">@clientStatus.ToString()</MudSelectItem>
+            <MudSelectItem Value="taskStatus">@taskStatus.ToString()</MudSelectItem>
             }
         </MudSelect>
     </DialogContent>
