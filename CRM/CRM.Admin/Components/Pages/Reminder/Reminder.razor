@@ -24,8 +24,14 @@
                 <MudGrid>
                     <MudItem xs="12">
                         <MudGrid Justify="Justify.SpaceBetween">
-                            <MudItem>
+                            <MudItem Class="d-flex align-items-center">
                                 <MudText Style="margin: 10px" Typo="Typo.h5">Перелік справ на @_selectedDate?.ToString("dd.MM.yyyy")</MudText>
+                                <MudTooltip Text="Всі нагадування">
+                                    <MudIconButton
+                                        OnClick="NavigateToAllReminders"
+                                        Icon="@Icons.Material.Filled.List"
+                                        Color="Color.Default"/>
+                                </MudTooltip>
                             </MudItem>
                             <MudItem>
                                 <MudButton
@@ -33,7 +39,7 @@
                                     OnClick="CreateReminder"
                                     StartIcon="@Icons.Material.Filled.Notifications"
                                     Class="buttonBase">
-                                    Додати нагадування
+                                    Додати нове
                                 </MudButton>
                             </MudItem>
                         </MudGrid>
@@ -56,16 +62,24 @@
                                                     Color="@(task.TaskStatus == UserTaskStatus.ToDo ? Color.Warning : task.TaskStatus == UserTaskStatus.InProgress ? Color.Primary : task.TaskStatus == UserTaskStatus.Done ? Color.Success : task.TaskStatus == UserTaskStatus.Canceled ? Color.Error : Color.Default)"/>
                                             </MudTooltip>
                                         </MudItem>
-                                        <MudItem xs="12" md="9">
+                                        <MudItem xs="12" md="7">
                                             <MudText Typo="Typo.body1">@task.Description</MudText>
                                             <MudText Typo="Typo.caption">@task.DateTime.ToString("g")</MudText>
                                         </MudItem>
                                         <MudItem xs="12" md="2" Class="d-flex align-items-center">
                                             <MudText Typo="Typo.body1">@task.TaskStatus</MudText>
+                                        </MudItem>
+                                        <MudItem xs="12" md="2" Class="d-flex align-items-end">
                                             <MudTooltip Text="Редагувати нагадування">
                                                 <MudIconButton
                                                     OnClick="() => UpdateReminder(task.Id)"
                                                     Icon="@Icons.Material.Filled.EditNotifications"
+                                                    Color="Color.Default"/>
+                                            </MudTooltip>
+                                            <MudTooltip Text="Видалити нагадування">
+                                                <MudIconButton
+                                                    OnClick="() => DeleteReminder(task.Id)"
+                                                    Icon="@Icons.Material.Filled.DeleteOutline"
                                                     Color="Color.Default"/>
                                             </MudTooltip>
                                         </MudItem>

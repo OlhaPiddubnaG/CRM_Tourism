@@ -4,7 +4,6 @@ using CRM.Admin.Components.Dialogs.Client;
 using CRM.Admin.Components.Dialogs.Order;
 using CRM.Helper;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 
 namespace CRM.Admin.Components.Layout;
@@ -12,7 +11,8 @@ namespace CRM.Admin.Components.Layout;
 public partial class AppBar
 {
     [Inject] IDialogService DialogService { get; set; } = default!;
-    [Inject] private AuthenticationStateProvider AuthenticationStateProvider  { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private CustomAuthenticationStateProvider AuthenticationStateProvider  { get; set; } = null!;
     [Inject] private AuthState AuthState  { get; set; } = null!;
     
     private DialogOptions _dialogOptions = new()
@@ -25,17 +25,26 @@ public partial class AppBar
     private ClaimsPrincipal _user;
     private Guid _companyId;
     bool _disabled = false;
-    private Guid _userId;
+    private Guid _userId; 
+    private string _userName;
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _user = authState.User;
-        
-        _userId = GetUserId();
-        AuthState.SetUserId(_userId);
-        
-        _companyId = GetCompanyId();
-        AuthState.SetCompanyId(_companyId);
+        if (_user.Identity is { IsAuthenticated: true })
+        {
+            _userId = GetUserId();
+            AuthState.SetUserId(_userId);
+
+            _userName = GetUserName();
+
+            _companyId = GetCompanyId();
+            AuthState.SetCompanyId(_companyId);
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/");
+        }
     }
 
     private Guid GetCompanyId()
@@ -57,7 +66,17 @@ public partial class AppBar
             return userId;
         }
         
-        throw new InvalidOperationException("Invalid CompanyId claim.");
+        throw new InvalidOperationException("Invalid UserId claim.");
+    }  
+    
+    private string GetUserName()
+    {
+        string? userNameClaim = _user.FindFirst(ClaimTypes.Name)?.Value; 
+        if (string.IsNullOrEmpty(userNameClaim))
+        {
+            throw new InvalidOperationException("Invalid Name claim.");
+        }
+        return userNameClaim;
     }
 
     private async Task NewClient()
@@ -80,5 +99,25 @@ public partial class AppBar
 
         if (dialogResult.Canceled)
             return;
+    }
+
+    private async Task NavigateToMyProfile()
+    {
+        NavigationManager.NavigateTo("/myProfile");
+    } 
+    
+    private async Task NavigateToMyAnalytic()
+    {
+        NavigationManager.NavigateTo("/analytic");
+    }
+    
+    private async Task NavigateToHelp()
+    {
+        NavigationManager.NavigateTo("/help");
+    }  
+    
+    private async Task Logout()
+    {
+        NavigationManager.NavigateTo("/");
     }
 }

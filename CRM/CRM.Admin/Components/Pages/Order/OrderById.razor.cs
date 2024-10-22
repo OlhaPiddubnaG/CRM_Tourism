@@ -5,20 +5,29 @@ using MudBlazor;
 
 namespace CRM.Admin.Components.Pages.Order;
 
-public partial class AllOrders
+public partial class OrderById
 {
     [Inject] private IOrderRequest OrderRequest { get; set; } = null!;
-    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
+    [Parameter] public required string ClientId { get; set; } 
+    
     private IEnumerable<OrderDto> _pagedData = null!;
     private MudTable<OrderDto> _table = null!;
+    
     private int _totalItems;
     private string _searchString = String.Empty;
- 
+    private Guid _id;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _id = Guid.Parse(ClientId);
+    }
+
     private async Task<TableData<OrderDto>> ServerReload(TableState state)
     {
-        var requestParameters = new OrderRequestParameters
+        var requestParameters = new FilteredOrdersRequestParameters
         {
+            ClientId =  _id,
             SearchString = _searchString,
             SortLabel = state.SortLabel,
             SortDirection = state.SortDirection,
@@ -26,7 +35,7 @@ public partial class AllOrders
             PageSize = state.PageSize
         };
 
-        var response = await OrderRequest.GetPagedDataAsync(requestParameters);
+        var response = await OrderRequest.GetPagedDataByClientIdAsync(requestParameters);
 
         _pagedData = response.Items;
         _totalItems = response.TotalItems;
@@ -43,10 +52,4 @@ public partial class AllOrders
         _searchString = text;
         _table.ReloadServerData();
     }
-
-    private void CreateOrder()
-    {
-        NavigationManager.NavigateTo("/newOrder");
-    }
 }
-

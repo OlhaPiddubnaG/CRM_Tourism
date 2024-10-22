@@ -1,0 +1,37 @@
+@page "/allReminders/{userId}"
+@using CRM.Admin.Data.UserTasksDto
+<MudTable ServerData="@(new Func<TableState, Task<TableData<UserTasksDto>>>(ServerReload))"
+          Dense="true" Hover="true" @ref="_table">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Всі нагадування</MudText>
+        <MudSpacer/>
+        <MudTextField T="string" ValueChanged="@(s => OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
+        </MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>
+            <MudTableSortLabel SortLabel="Date" T="UserTasksDto">Дата</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortLabel="Description" T="UserTasksDto">Текст</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortLabel="TaskStatus" T="UserTasksDto">Статус</MudTableSortLabel>
+        </MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Дата">@context.DateTime.ToShortDateString()</MudTd>
+        <MudTd DataLabel="Текст">@context.Description</MudTd>
+        <MudTd DataLabel="Статус">@context.TaskStatus</MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No matching records found</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager/>
+    </PagerContent>
+</MudTable>

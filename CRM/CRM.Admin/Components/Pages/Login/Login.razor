@@ -24,7 +24,7 @@
         @if (!string.IsNullOrEmpty(_message))
         {
             <MudItem xs="12">
-                <MudAlert Severity="_alertSeverity" OnClose="ClearMessage">@_message</MudAlert>
+                <MudAlert Severity="_alertSeverity">@_message</MudAlert>
             </MudItem>
         }
     </MudGrid>

@@ -34,8 +34,7 @@ public partial class NewOrder
     [Inject] private AuthState AuthState { get; set; }
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
     [Inject] IDialogService DialogService { get; set; } = default!;
-
-
+    
     private DialogOptions _dialogOptions = new()
     {
         CloseOnEscapeKey = true,
@@ -61,8 +60,7 @@ public partial class NewOrder
     private DateTime? _paymentData = DateTime.UtcNow;
     private DateTime? _selectedDate = DateTime.Today;
     private bool isValid;
- 
-
+    
     protected override async Task OnInitializedAsync()
     {
         _userId = AuthState.UserId;

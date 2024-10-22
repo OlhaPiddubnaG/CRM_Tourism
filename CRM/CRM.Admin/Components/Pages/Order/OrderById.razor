@@ -1,21 +1,10 @@
-@page "/allOrders"
-@using CRM.Admin.Data.OrderDto
+@page "/orderById/{clientId}"
 
-<MudGrid>
-    <MudItem xs="4">
-        <MudButton
-            Variant="Variant.Filled"
-            OnClick="CreateOrder"
-            StartIcon="@Icons.Material.Filled.AddCircleOutline"
-            Class="buttonBase">
-            СТВОРИТИ
-        </MudButton>
-    </MudItem>
-</MudGrid>
+@using CRM.Admin.Data.OrderDto
 <MudTable ServerData="@(new Func<TableState, Task<TableData<OrderDto>>>(ServerReload))"
           Dense="true" Hover="true" @ref="_table">
     <ToolBarContent>
-        <MudText Typo="Typo.h6">Інформація по замовленню</MudText>
+        <MudText Typo="Typo.h6">Подорожі туриста:</MudText>
         <MudSpacer/>
         <MudTextField T="string" ValueChanged="@(s => OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
@@ -24,9 +13,6 @@
     <HeaderContent>
         <MudTh>
             <MudTableSortLabel SortLabel="Date" T="OrderDto">Дата створення</MudTableSortLabel>
-        </MudTh>
-        <MudTh>
-            <MudTableSortLabel SortLabel="ClientName" T="OrderDto">Турист</MudTableSortLabel>
         </MudTh>
         <MudTh>
             <MudTableSortLabel SortLabel="CountryToName" T="OrderDto">Країна</MudTableSortLabel>
@@ -40,11 +26,6 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Дата створення">@context.CreatedAt.ToShortDateString()</MudTd>
-        <MudTd DataLabel="Турист">
-            <MudLink Href=@($"orderById/{context.ClientId}") Underline="Underline.None" Color="Color.Dark" Typo="Typo.overline">
-                @($"{context.ClientName}")
-            </MudLink>
-        </MudTd>
         <MudTd DataLabel="Країна">@context.CountryToName</MudTd>
         <MudTd DataLabel="Проживання">
             @foreach (var stay in context.Stays)

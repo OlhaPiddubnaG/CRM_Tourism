@@ -1,0 +1,38 @@
+@page "/myProfile"
+<MudGrid Style="margin-top: 20px">
+    <MudItem xs="12" md="7">
+        <MudCard>
+            <MudCardContent>
+                <MudItem xs="12">
+                    <MudTextField
+                        Class="mb-2"
+                        Label="Iм'я"
+                        Variant="Variant.Outlined"
+                        @bind-Value="_userUpdateDto.Name"/>
+                    <MudTextField
+                        Class="mb-5"
+                        Label="Прізвище"
+                        Variant="Variant.Outlined"
+                        @bind-Value="_userUpdateDto.Surname"/>
+                    <MudTextField
+                        Class="mb-5"
+                        Label="Email"
+                        Variant="Variant.Outlined"
+                        @bind-Value="_email"
+                        ReadOnly="true"
+                        Adornment="Adornment.End"
+                        AdornmentIcon="@Icons.Material.Filled.Info"
+                        OnAdornmentClick="ShowEmailWarning"/>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudButton
+                        Variant="Variant.Filled"
+                        OnClick="Update"
+                        Class="buttonBase">
+                        ЗБЕРЕГТИ ДАНІ
+                    </MudButton>
+                </MudItem>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>

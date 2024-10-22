@@ -30,3 +30,15 @@
            Disabled=@_disabled>
     Hовий підбір
 </MudButton>
+
+<MudMenu
+    StartIcon="@Icons.Material.Filled.Fingerprint"
+    EndIcon="@Icons.Material.Filled.MoreVert"
+    Label="@_userName" Variant="Variant.Outlined"
+    Color="Color.Inherit"
+    Style="text-transform:none; margin-bottom: 10px; margin-right: 10px; height: 41px;">
+    <MudMenuItem IconSize="Size.Small" IconColor="Color.Dark" Icon="@Icons.Material.Filled.SettingsSuggest" OnClick="NavigateToMyProfile">Мій профіль</MudMenuItem>
+    <MudMenuItem IconSize="Size.Small" IconColor="Color.Dark" Icon="@Icons.Material.Outlined.BarChart" OnClick="NavigateToMyAnalytic">Моя аналітика</MudMenuItem>
+    <MudMenuItem IconSize="Size.Small" IconColor="Color.Dark" Icon="@Icons.Material.Outlined.HelpOutline" OnClick="NavigateToHelp">Допомога</MudMenuItem>
+    <MudMenuItem IconSize="Size.Small" IconColor="Color.Dark" Icon="@Icons.Material.Outlined.Logout" OnClick="Logout">Вихід</MudMenuItem>
+</MudMenu>

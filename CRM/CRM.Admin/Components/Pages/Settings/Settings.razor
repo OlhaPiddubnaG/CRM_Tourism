@@ -1,0 +1,65 @@
+@page "/settings"
+
+@if (_user != null)
+{
+    if (_isCompanyAdmin)
+    {
+        <MudGrid Style="margin-top: 20px">
+            <MudItem xs="12" md="8">
+                <MudItem xs="12" md="6" Class="d-flex align-items-center">
+                    <MudText Style="margin-right: 10px" Typo="Typo.h5">Налаштування агенції</MudText>
+                </MudItem>
+                <MudCard>
+                    <MudCardContent>
+                        <MudGrid>
+                            <MudItem xs="12"  Class="d-flex align-items-center">
+                                <MudTextField
+                                    Variant="Variant.Outlined"
+                                    Label="Назва агентства"
+                                    @bind-Value="_сompanyUpdateDto.Name"
+                                    Style="margin-right: 10px;"/>
+                                <MudButton
+                                    OnClick="Update"
+                                    Variant="Variant.Filled"
+                                    Class="buttonBase"
+                                    StartIcon="@Icons.Material.Filled.Save">
+                                    ЗБЕРЕГТИ
+                                </MudButton>
+                            </MudItem>
+                        </MudGrid>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <MudItem xs="12" md="8">
+                <MudItem xs="12" md="8" Class="d-flex align-items-center">
+                    <MudText Style="margin-right: 10px" Typo="Typo.h5">Співробітники</MudText>
+                    <MudButton
+                        OnClick="CreateUser"
+                        Variant="Variant.Filled"
+                        StartIcon="@Icons.Material.Filled.Add"
+                        Class="buttonBase"
+                        Style="border-radius: 30px;">
+                        ДОДАТИ ПРАЦІВНИКА
+                    </MudButton>
+                </MudItem>
+                <TableOfUsersByCompany/>
+            </MudItem>
+        </MudGrid>
+    }
+    else
+    {
+        <MudGrid Style="margin-top: 20px">
+            <MudItem xs="12" md="8" Class="d-flex align-items-center">
+                <MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.Info"/>
+                <MudText Typo="Typo.body2" Color="Color.Error" HtmlTag="strong">Ви немаєте доступу до налаштувань агенції</MudText>
+            </MudItem>
+            <MudItem xs="12" md="8">
+                <MudItem xs="12" md="8" Class="d-flex align-items-center">
+                    <MudText Style="margin-right: 10px" Typo="Typo.h5">Співробітники</MudText>
+                </MudItem>
+                <TableOfUsersByCompany/>
+            </MudItem>
+        </MudGrid>
+    }
+}

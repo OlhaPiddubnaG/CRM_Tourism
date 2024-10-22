@@ -29,9 +29,9 @@ public class GetUserTaskByIdHandler : IRequestHandler<GetByIdRequest<UserTasksRe
     {
         var companyId = _currentUser.GetCompanyId();
         var userTask = await _context.UserTasks
-            .FirstOrDefaultAsync(s => s.Id == request.Id &&
-                                      s.User.CompanyId == companyId &&
-                                      !s.IsDeleted);
+            .FirstOrDefaultAsync(u => u.Id == request.Id &&
+                                      u.User.CompanyId == companyId &&
+                                      !u.IsDeleted);
 
         if (userTask == null)
         {

@@ -4,15 +4,15 @@
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 <MudLayout>
-    <MudAppBar Elevation="1" Dense="@dense" Class="appBar">
+    <MudAppBar Elevation="1" Dense="@_dense" Class="appBar">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer"/>
         <MudSpacer/>
         <AppBar/>
     </MudAppBar>
-    <MudDrawer @bind-Open="@open" ClipMode="clipMode" Breakpoint="@breakpoint" PreserveOpenState="@preserveOpenState" Elevation="1" Variant="@DrawerVariant.Mini">
-        @if (user != null)
+    <MudDrawer @bind-Open="@_open" ClipMode="_clipMode" Breakpoint="@_breakpoint" PreserveOpenState="@_preserveOpenState" Elevation="1" Variant="@DrawerVariant.Mini">
+        @if (_user != null)
         {
-            if (isAdmin)
+            if (_isAdmin)
             {
                 <AdminNavMenu/>
             }

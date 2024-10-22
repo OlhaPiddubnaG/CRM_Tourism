@@ -46,3 +46,7 @@
 .custom-margin {
     margin-top: 20px;
 }
+.email-readonly .mud-input {
+    background-color: #f5f5f5; 
+    cursor: not-allowed; 
+}

@@ -1,0 +1,49 @@
+@using CRM.Admin.Auth
+@using CRM.Admin.Data.UserDto
+@using CRM.Admin.Requests.UserRequests
+
+<MudDataGrid ServerData="@(new Func<GridState<UserDto>, Task<GridData<UserDto>>>(SetTableDataUserAsync))" Elevation="3"
+             T="UserDto" ColumnResizeMode="ResizeMode.Column" RowsPerPage="5" @ref="_tableUser">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Title="Ім'я"/>
+        <PropertyColumn Property="x => x.Surname" Title="Прізвище"/>
+        <PropertyColumn Property="x => x.Email" Title="Електронна пошта"/>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="UserDto" PageSizeOptions=@(new int[] { 5, 10, 20 })/>
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    [Inject] private IUserRequest UserRequest { get; set; } = null!;
+    [Inject] private AuthState AuthState { get; set; }
+
+    private Guid _companyId;
+    private MudDataGrid<UserDto> _tableUser = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _companyId = AuthState.CompanyId;
+    }
+
+    private async Task<GridData<UserDto>> SetTableDataUserAsync(GridState<UserDto> state)
+    {
+        if (_companyId == null)
+        {
+            return new GridData<UserDto>
+            {
+                Items = new List<UserDto>(),
+                TotalItems = 0
+            };
+        }
+
+        var users = await UserRequest.GetAllAsync();
+        var pagedData = users.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new GridData<UserDto>
+        {
+            Items = pagedData,
+            TotalItems = users.Count()
+        };
+    }
+
+}

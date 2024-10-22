@@ -9,7 +9,9 @@ namespace CRM.Admin.Components.Pages.Reminder;
 
 public partial class Reminder
 {
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private IDialogService DialogService { get; set; } = null!;
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
     [Inject] private IUserTasksRequest UserTasksRequest { get; set; } = null!;
     [Inject] private AuthState AuthState { get; set; }
 
@@ -67,8 +69,7 @@ public partial class Reminder
         {
             _tasksDtos.Add(newTasksDto);
         }
-    }
-
+    }  
     private async Task UpdateReminder(Guid taskId)
     {
         var parameters = new DialogParameters { { "Id", taskId } };
@@ -85,6 +86,28 @@ public partial class Reminder
                 _tasksDtos[index] = updatedTaskDto;
             }
         }
+    }
+    
+    private async Task DeleteReminder(Guid taskId)
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Увага",
+            "Ви впевнені, що хочете видалити вибраний об'єкт?",
+            yesText: "Так", cancelText: "Ні");
+
+        if (result is not null)
+        {
+            try
+            {
+                await UserTasksRequest.DeleteAsync(taskId);
+                Snackbar.Add("Компанія успішно видалена", Severity.Success);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Помилка видалення компанії: {ex.Message}", Severity.Error);
+            }
+        }
+        await LoadTasksForSelectedDate();
     }
 
     private async Task AddStatus(Guid taskId)
@@ -103,5 +126,10 @@ public partial class Reminder
                 _tasksDtos[index] = updatedStatusTaskDto;
             }
         }
+    }
+
+    private async Task NavigateToAllReminders()
+    {
+        NavigationManager.NavigateTo($"/allReminders/{_userId}");
     }
 }

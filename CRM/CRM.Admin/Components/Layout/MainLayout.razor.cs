@@ -1,37 +1,37 @@
 using System.Security.Claims;
+using CRM.Admin.Auth;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 
 namespace CRM.Admin.Components.Layout;
 
 public partial class MainLayout
 {
-    [Inject] AuthenticationStateProvider AuthenticationStateProvider  {get; set; }
+    [Inject] private CustomAuthenticationStateProvider AuthenticationStateProvider  {get; set; }
     
-    private ClaimsPrincipal user;
-    private bool isAdmin;
+    private ClaimsPrincipal _user;
+    private bool _isAdmin;
     
-    bool open = false;
-    bool dense = false;
-    bool preserveOpenState = false;
-    Breakpoint breakpoint = Breakpoint.Lg;
-    DrawerClipMode clipMode = DrawerClipMode.Never;
+    bool _open = false;
+    bool _dense = false;
+    bool _preserveOpenState = false;
+    Breakpoint _breakpoint = Breakpoint.Lg;
+    DrawerClipMode _clipMode = DrawerClipMode.Never;
   
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        user = authState.User;
+        _user = authState.User;
 
-        if (user.Identity.IsAuthenticated)
+        if (_user.Identity.IsAuthenticated)
         {
-            isAdmin = user.IsInRole("Admin");
+            _isAdmin = _user.IsInRole("Admin");
         }
     }
     
     void ToggleDrawer()
     {
-        open = !open;
+        _open = !_open;
     }
 }
 
