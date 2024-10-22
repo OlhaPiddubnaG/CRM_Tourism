@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
+using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using Newtonsoft.Json;
 
 namespace CRM.Admin.HttpRequests;
@@ -9,15 +9,15 @@ namespace CRM.Admin.HttpRequests;
 public class HttpRequests : IHttpRequests
 {
     private readonly HttpClient _httpClient;
-    private readonly IJSRuntime _jsRuntime;
+    private readonly ISessionStorageService _sessionStorage;
     private readonly NavigationManager _navManager;
 
-    public HttpRequests(IHttpClientFactory factory, NavigationManager navManager, IJSRuntime jsRuntime,
-        string clientName)
+    public HttpRequests(IHttpClientFactory factory, NavigationManager navManager, ISessionStorageService sessionStorage, 
+        string clientName) 
     {
         _httpClient = factory.CreateClient(clientName);
         _navManager = navManager;
-        _jsRuntime = jsRuntime;
+        _sessionStorage = sessionStorage;
     }
 
     public async Task<TResponse> SendGetRequestAsync<TResponse>(string requestUri)
@@ -67,7 +67,7 @@ public class HttpRequests : IHttpRequests
 
     private async Task AddAuthorizationHeaderAsync()
     {
-        var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+        var token = await _sessionStorage.GetItemAsync<string>("token");
         if (!string.IsNullOrEmpty(token))
         {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);

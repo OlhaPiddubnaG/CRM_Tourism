@@ -55,7 +55,6 @@ public class CompanyController : ControllerBase
     }
 
     [HttpPut]
-    [Authorize(Policy = "Admin")]
     [ProducesResponseType(typeof(ResultBaseResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadResponseResult), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(UpdateCompanyCommand request, CancellationToken token)

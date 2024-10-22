@@ -108,6 +108,26 @@ public class OrderRequest : IOrderRequest
                 parameters);
 
         return pagedResponse;
+    } 
+    
+    public async Task<PagedResponse<OrderDto>> GetPagedDataByClientIdAsync(FilteredOrdersRequestParameters parameters)
+    {
+        var queryParams = new Dictionary<string, string>
+        {
+            { "clientId", parameters.ClientId.ToString()},
+            { "searchString", parameters.SearchString ?? string.Empty },
+            { "sortLabel", parameters.SortLabel ?? string.Empty },
+            { "sortDirection", parameters.SortDirection.ToString() },
+            { "page", parameters.PageIndex.ToString() },
+            { "pageSize", parameters.PageSize.ToString() }
+        };
+
+        var queryString = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+        var pagedResponse =
+            await _httpRequests.SendPostRequestAsync<PagedResponse<OrderDto>>($"{RequestUri}/pagedByClient?{queryString}",
+                parameters);
+
+        return pagedResponse;
     }
 
     public async Task<OrderDto> GetByIdAsync(Guid id)

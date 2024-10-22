@@ -10,6 +10,7 @@ public interface IOrderRequest
     Task<ResultModel> CreateOrderWithRelatedAsync(OrderCreateDto dto);
     Task<List<OrderDto>> GetAllAsync();
     Task<PagedResponse<OrderDto>> GetPagedDataAsync(OrderRequestParameters parameters);
+    Task<PagedResponse<OrderDto>> GetPagedDataByClientIdAsync(FilteredOrdersRequestParameters parameters);
     Task<OrderDto> GetByIdAsync(Guid id);
     Task<bool> UpdateAsync(OrderUpdateDto dto);
     Task<bool> DeleteAsync(Guid id);

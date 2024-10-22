@@ -7,6 +7,7 @@ using CRM.Domain.Responses.UserTasks;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MudBlazor;
 
 namespace CRM.WebApi.Controllers;
 
@@ -44,7 +45,7 @@ public class UserTasksController : ControllerBase
     [HttpPost("byDay")]
     [ProducesResponseType(typeof(List<UserTasksResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadRequestResult), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetPagedFilteredAndSorted(
+    public async Task<IActionResult> GetPagedFiltered(
         [FromQuery] string userId,
         [FromQuery] string dateTime,
         CancellationToken token)
@@ -53,7 +54,6 @@ public class UserTasksController : ControllerBase
         {
             return BadRequest("Invalid User ID format.");
         }
-
         
         if (!DateTime.TryParse(dateTime, out DateTime parsedDateTime))
         {
@@ -70,6 +70,35 @@ public class UserTasksController : ControllerBase
         var request = new GetByIdAndDateRequest<UserTasksResponse>(
             parsedUserId,
             parsedDateTime);
+
+        var response = await _sender.Send(request, token);
+
+        return Ok(response);
+    }
+    
+    [HttpPost("paged")]
+    [ProducesResponseType(typeof(TableData<UserTasksResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadRequestResult), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetPagedFilteredAndSorted(
+        [FromQuery] string userId,
+        [FromQuery] string? searchString,
+        [FromQuery] string? sortLabel,
+        [FromQuery] SortDirection sortDirection,
+        [FromQuery] int page,
+        [FromQuery] int pageSize,
+        CancellationToken token)
+    {
+        if (!Guid.TryParse(userId, out Guid parsedUserId))
+        {
+            return BadRequest("Invalid User ID format.");
+        }
+        var request = new GetFilteredAndSortAllWithIdRequest<UserTasksResponse>(
+            parsedUserId,
+            searchString,
+            sortLabel,
+            sortDirection,
+            page,
+            pageSize);
 
         var response = await _sender.Send(request, token);
 

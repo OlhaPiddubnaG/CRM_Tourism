@@ -1,11 +1,10 @@
+using Blazored.SessionStorage;
 using CRM.Admin.Auth;
 using CRM.Admin.Components;
 using CRM.Admin.Extensions;
 using CRM.Admin.HttpRequests;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.JSInterop;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,21 +23,15 @@ builder.Services.AddScoped<IHttpRequests, HttpRequests>(
     serviceProvider => new HttpRequests(
         factory: serviceProvider.GetRequiredService<IHttpClientFactory>(),
         navManager: serviceProvider.GetRequiredService<NavigationManager>(),
-        jsRuntime: serviceProvider.GetRequiredService<IJSRuntime>(),
+        sessionStorage: serviceProvider.GetRequiredService<ISessionStorageService>(), 
         clientName: "CRMApi")
 );
 builder.Services.AddCustomServices();
-
+builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<CustomAuthenticationStateProvider>());
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-}).AddCookie();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<AuthState>();
 var app = builder.Build();

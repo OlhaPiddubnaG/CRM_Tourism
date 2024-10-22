@@ -1,4 +1,5 @@
 using CRM.Admin.Data;
+using CRM.Admin.Data.ClientDto;
 using CRM.Admin.Data.UserTasksDto;
 using CRM.Admin.HttpRequests;
 using MudBlazor;
@@ -85,6 +86,26 @@ public class UserTasksRequest : IUserTasksRequest
         var queryString = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
         var pagedResponse =
             await _httpRequests.SendPostRequestAsync<List<UserTasksDto>>($"{RequestUri}/byDay?{queryString}",
+                parameters);
+
+        return pagedResponse;
+    }
+    
+    public async Task<PagedResponse<UserTasksDto>> GetPagedDataAsync(FilteredTasksRequestParameters parameters)
+    {
+        var queryParams = new Dictionary<string, string>
+        {
+            { "userId", parameters.UserId.ToString()},
+            { "searchString", parameters.SearchString ?? string.Empty },
+            { "sortLabel", parameters.SortLabel ?? string.Empty },
+            { "sortDirection", parameters.SortDirection.ToString() },
+            { "page", parameters.PageIndex.ToString() },
+            { "pageSize", parameters.PageSize.ToString() }
+        };
+
+        var queryString = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+        var pagedResponse =
+            await _httpRequests.SendPostRequestAsync<PagedResponse<UserTasksDto>>($"{RequestUri}/paged?{queryString}",
                 parameters);
 
         return pagedResponse;

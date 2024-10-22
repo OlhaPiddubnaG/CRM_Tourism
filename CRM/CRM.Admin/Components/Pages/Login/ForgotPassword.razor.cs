@@ -30,9 +30,4 @@ public partial class ForgotPassword
             _alertSeverity = Severity.Error;
         }
     }
-
-    private void ClearMessage()
-    {
-        _message = string.Empty;
-    }
 }

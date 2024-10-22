@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
       <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.5" />
       <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.5" />
       <PackageReference Include="MudBlazor" Version="6.20.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
     </ItemGroup>
 
     <ItemGroup>
@@ -33,6 +33,7 @@
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Components\Dialogs\PassportInfo\CreateInternalPassportInfoDialog.razor" />
       <_ContentIncludedByDefault Remove="Components\Dialogs\PassportInfo\CreateInternationalPassportInfoDialog.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Logout\Logout.razor" />
     </ItemGroup>
 
     <ItemGroup>

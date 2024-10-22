@@ -65,6 +65,35 @@ public class OrderController : ControllerBase
         var response = await _sender.Send(request, token);
 
         return Ok(response);
+    } 
+    
+    [HttpPost("pagedByClient")]
+    [ProducesResponseType(typeof(TableData<OrderResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadRequestResult), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetPagedFilteredAndSortedByClientId(
+        [FromQuery] string clientId,
+        [FromQuery] string? searchString,
+        [FromQuery] string? sortLabel,
+        [FromQuery] SortDirection sortDirection,
+        [FromQuery] int page,
+        [FromQuery] int pageSize,
+        CancellationToken token)
+    {
+        if (!Guid.TryParse(clientId, out Guid parsedClientId))
+        {
+            return BadRequest("Invalid Client ID format.");
+        }
+        var request = new GetFilteredAndSortAllWithIdRequest<OrderResponse>(
+            parsedClientId,
+            searchString,
+            sortLabel,
+            sortDirection,
+            page,
+            pageSize);
+
+        var response = await _sender.Send(request, token);
+
+        return Ok(response);
     }
 
     [HttpPost]

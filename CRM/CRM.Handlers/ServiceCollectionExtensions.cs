@@ -89,7 +89,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<GetByIdRequest<UserTasksResponse>, UserTasksResponse>, GetUserTaskByIdHandler>();
         services.AddScoped<IRequestHandler<GetByIdReturnListRequest<UserTasksResponse>, List<UserTasksResponse>>, GetUserTasksByUserIdHandler>();
         services.AddScoped<IRequestHandler<GetByIdAndDateRequest<UserTasksResponse>, List<UserTasksResponse>>, GetTasksByUserIdAndDateHandler>();
-                
+        services.AddScoped<IRequestHandler<GetFilteredAndSortAllWithIdRequest<UserTasksResponse>, TableData<UserTasksResponse>>,
+                GetSortAllUserTasksHandler>();    
+        
         services.AddScoped<IRequestHandler<CreateClientCommand, CreatedResponse>, CreateClientHandler>();
         services.AddScoped<IRequestHandler<CreateClientWithRelatedCommand, ResultBaseResponse>,
                 CreateClientWithRelatedHandler>();
@@ -144,6 +146,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRequestHandler<GetAllRequest<OrderResponse>, List<OrderResponse>>, GetAllOrdersHandler>();
         services.AddScoped<IRequestHandler<GetFilteredAndSortAllRequest<OrderResponse>, TableData<OrderResponse>>,
                         GetSortAllOrdersHandler>();
+        services.AddScoped<IRequestHandler<GetFilteredAndSortAllWithIdRequest<OrderResponse>, TableData<OrderResponse>>,
+                GetSortAllOrdersByClientIdHandler>();    
 
         services.AddScoped<IRequestHandler<CreateTouroperatorCommand, CreatedResponse>, CreateTouroperatorHandler>();
         services.AddScoped<IRequestHandler<UpdateTouroperatorCommand, ResultBaseResponse>, UpdateTouroperatorHandler>();

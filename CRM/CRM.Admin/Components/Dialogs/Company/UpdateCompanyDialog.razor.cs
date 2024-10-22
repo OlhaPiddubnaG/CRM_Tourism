@@ -24,7 +24,7 @@ public partial class UpdateCompanyDialog
         }
         else
         {
-            Snackbar.Add($"Помилка завантаження користувача", Severity.Error);
+            Snackbar.Add($"Помилка завантаження компанії", Severity.Error);
         }
     }
 
